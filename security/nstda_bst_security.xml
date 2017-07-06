@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<openerp>
+	<data noupdate="1">
+
+		<record model="res.groups" id="base.group_nstda_bst_user">
+			<field name="name">User</field>
+			<field name="category_id" ref="base.module_category_bst" />
+		</record>
+
+		<record model="res.groups" id="base.group_nstda_bst_authorities">
+			<field name="name">Authorities</field>
+			<field name="category_id" ref="base.module_category_bst" />
+			<field name="implied_ids" 
+				eval="[(4, ref('base.group_nstda_bst_user'))]" 
+				/>
+			<field name="users"
+				eval="[
+				(4, ref('nstdaperm.group_nstda_emp002598')),
+				(4, ref('nstdaperm.group_nstda_emp001974')),
+				(4, ref('nstdaperm.group_nstda_emp000377')),
+				(4, ref('nstdaperm.group_nstda_emp003453')),]" 
+				/>
+		</record>
+
+		<record model="res.groups" id="base.group_nstda_bst_admin">
+			<field name="name">Admin</field>
+			<field name="category_id" ref="base.module_category_bst" />
+			<field name="implied_ids"
+				eval="[
+				(4, ref('base.group_nstda_bst_user')),
+				(4, ref('base.group_nstda_bst_authorities'))]" 
+				/>
+			<field name="users"
+				eval="[(4, ref('nstdaperm.group_nstda_emp003730')),]" 
+				/>
+		</record>
+
+		<record model="res.groups" id="nstdaperm.group_nstda_user">
+			<field name="implied_ids" 
+				eval="[(4, ref('base.group_nstda_bst_user'))]" 
+				/>
+		</record>
+
+		<record model="res.groups" id="nstdaperm.group_nstda_dep1058">
+			<field name="implied_ids" 
+				eval="[(4, ref('base.group_nstda_bst_admin'))]" 
+				/>
+		</record>
+
+		<record id="rule_bst_user" model="ir.rule">
+			<field name="name">User bst</field>
+			<field name="model_id" ref="model_nstda_bst_hbill" />
+			<field name="domain_force">['|','|','|','|',('inv_a','=',True),('inv_b','=',True),('inv_c','=',True),('inv_p','=',True),('inv_r','=',True)]
+				</field>
+			<field name="groups" 
+				eval="[(4, ref('base.group_nstda_bst_user'))]" 
+				/>
+			<field eval="0" name="perm_unlink" />
+			<field eval="1" name="perm_write" />
+			<field eval="1" name="perm_read" />
+			<field eval="1" name="perm_create" />
+		</record>
+
+<!-- 		<record id="rule_bst_admin" model="ir.rule"> -->
+<!-- 			<field name="name">Admin bst</field> -->
+<!-- 			<field name="model_id" ref="model_nstda_bst" /> -->
+<!--  			<field name="domain_force">['|','|','|','|',('inv_a','=',True),('inv_b','=',True),('inv_c','=',True),('inv_p','=',True),('inv_r','=',True)] -->
+<!-- 				</field> -->
+<!-- 			<field name="groups"  -->
+<!-- 				eval="[(4, ref('base.group_nstda_bst_admin'))]"  -->
+<!-- 				/> -->
+<!-- 			<field eval="1" name="perm_unlink" /> -->
+<!-- 			<field eval="1" name="perm_write" /> -->
+<!-- 			<field eval="1" name="perm_read" /> -->
+<!-- 			<field eval="1" name="perm_create" /> -->
+<!-- 		</record> -->
+
+
+	</data>
+</openerp>

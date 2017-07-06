@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		<!-- override the automatically generated list view for nstda_bst -->
+		<record model="ir.ui.view" id="nstda_bst_pick_report_tree_view">
+			<field name="name">nstda.bst.pick.report.tree.view</field>
+			<field name="model">nstda.bst.pick.report</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+
+				<tree string="nstda_bst_pick_report_tree_view" create="false" edit="false" delete="false">
+					<field name="status" invisible="1" />
+					<field name="matno" />
+					<field name="matdesc" />
+					<field name="unitprice" />
+					<field name="qty" />
+					<field name="uom" />
+				</tree>
+			</field>
+		</record>
+		
+		<!-- window action -->
+		<!-- The following tag is an action definition for a "window action", that 
+			is an action opening a view or a set of views -->
+		<record model="ir.actions.act_window" id="action_nstda_bst_pick_report_tree_view">
+			<field name="name">รายการเบิกคลัง</field>
+			<field name="res_model">nstda.bst.pick.report</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="context" eval="{}" />
+			<field name="limit">500</field>
+		</record>
+
+
+	</data>
+</openerp>

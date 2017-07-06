@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+	
+		<record model="ir.ui.view" id="nstda_bst_bill_report_search">
+			<field name="name">nstda.bst.bill.report.search</field>
+			<field name="model">nstda.bst.bill.report</field>
+			<field name="arch" type="xml">
+				<search string="nstda_bst_bill_report_search">
+					<field name="matno" string="สินค้า" />
+					<field name="empid" string="พนักงานผู้เบิก" />
+
+				</search>
+			</field>
+		</record>
+
+
+		<!-- override the automatically generated list view for nstda_bst -->
+		<record model="ir.ui.view" id="nstda_bst_bill_report_tree_view">
+			<field name="name">nstda.bst.bill.report.tree.view</field>
+			<field name="model">nstda.bst.bill.report</field>
+			<field name="arch" type="xml">
+				<tree string="nstda_bst_bill_report_tree_view" create="false" edit="false" delete="false">
+					<field name="docno" />
+					<field name="book_date" />
+					<field name="empid" />
+					<field name="boss_id" />
+					<field name="org" />
+					<field name="division" />
+					<field name="dept" />
+					<field name="prj_cct" />
+					<field name="objdesc" />
+					<field name="receive_emp_id" />
+					<field name="matno" />
+					<field name="matdesc" />
+					<field name="qty" />
+					<field name="uom" />
+					<field name="unitprice" />
+					<field name="amount_after_discount" />
+					
+				</tree>
+			</field>
+		</record>
+		
+		<!-- window action -->
+		<!-- The following tag is an action definition for a "window action", that 
+			is an action opening a view or a set of views -->
+		<record model="ir.actions.act_window" id="action_nstda_bst_bill_report">
+			<field name="name">สรุปรายงาน</field>
+			<field name="res_model">nstda.bst.bill.report</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="context" eval="{}" />
+			<field name="limit">500</field>
+		</record>
+
+
+	</data>
+</openerp>

@@ -1,0 +1,42 @@
+.alert-box {
+	color:#555; 
+	border-radius:10px;
+	font-family:Tahoma,Geneva,Arial,sans-serif;font-size:11px;
+	padding:10px 36px;
+	margin:10px;
+}
+
+.alert-box span {
+	font-weight:bold;
+	text-transform:uppercase;
+}
+
+.ann {
+	background:#e3f7fc url('/nstda_bst/static/src/img/ann_icon.png') no-repeat 10px 5%;
+	border:1px solid #8ed9f6;
+	vertical-align:text-top;
+	padding:10px 36px;
+	margin:10px;
+}
+
+.nstda_bst_dbill_tree_2 th[data-id='qty_res'] {
+	background:#afcfaf;
+	border: 1px solid #ccc;
+}
+
+.nstda_bst_dbill_tree_2 th[data-id='sum_res'] {
+	background:#afcfaf;
+	border: 1px solid #ccc;
+}
+
+.nstda_bst_tree_stock tr td[data-field="qty_res"] {
+	color:RED !important;
+}
+
+.nstda_bst_tree_stock [data-id="qty"] {
+	width: 10%;
+}
+
+.nstda_bst_tree_stock [data-id="qty_res"] {
+	width: 15%;
+}

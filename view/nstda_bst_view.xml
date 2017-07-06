@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+	<data>
+
+
+		<!-- TreeView -->
+		<record model="ir.ui.view" id="view_nstda_bst">
+			<field name="name">nstda.bst.tree</field>
+			<field name="model">nstda.bst</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+
+				<tree string="nstda_bst_tree">
+
+				</tree>
+			</field>
+		</record>
+		
+		
+		<!-- TreeView Cost Center-->
+		<record model="ir.ui.view" id="view_nstdamas_costcenter_tree_2">
+			<field name="name">nstdamas.costcenter.tree</field>
+			<field name="model">nstdamas.costcenter</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="nstdamas_costcenter_tree_2" create="false" delete="false" edit="false" >
+					<field name="cct_id" />
+					<field name="cct_shortname" />
+					<field name="cct_name" />
+					<field name="cct_groupcost" />
+					<field name="cct_org_id" />
+				</tree>
+			</field>
+		</record>
+
+		
+	</data>
+</openerp>
+

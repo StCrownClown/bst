@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+	<data>
+
+
+		<!-- TreeView -->
+		<record model="ir.ui.view" id="view_nstda_bst_dbill_tree">
+			<field name="name">nstda.bst.dbill.tree</field>
+			<field name="model">nstda.bst.dbill</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="nstda_bst_dbill_tree" class="nstda_bst_dbill_tree" create="true" delete="true" edit="true" >
+					<field name="status" invisible="1" />
+					<field name="no" />
+					<field name="matno" string="สินค้า" />
+<!-- 					<field name="matdesc" /> -->
+					<field name="qty" />
+					<field name="uom" />
+					<field name="unitprice" />
+					<field name="sum" />
+				</tree>
+			</field>
+		</record>
+		
+		
+		<!-- TreeView 2 -->
+		<record model="ir.ui.view" id="view_nstda_bst_dbill_tree_2">
+			<field name="name">nstda.bst.dbill.tree</field>
+			<field name="model">nstda.bst.dbill</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="nstda_bst_dbill_tree_2" class="nstda_bst_dbill_tree_2" editable="bottom" create="true" delete="true" edit="true" >
+					<field name="status" invisible="1" />
+					<field name="inv_r" invisible="1" />
+					<field name="no" />
+					<field name="matno" string="สินค้า" 
+						attrs="{'readonly':[('status','not in',['draft','ready',False])]}" />
+<!-- 					<field name="matdesc" /> -->
+					<field name="qty" readonly="1" />
+					<field name="uom" />
+					<field name="unitprice" />
+					<field name="sum" string="ราคารวม(อนุมัติ)" />
+				    <field name="qty_res" 
+				    	attrs="{'readonly':[('inv_r','=',False)], 
+				    			'required':[('status','in',['draft','pick','ready',False])]}" />
+				    <field name="sum_res" string="ราคารวม(จ่ายจริง)" />
+				</tree>
+			</field>
+		</record>
+		
+
+		<!-- TreeView Report -->
+		<record model="ir.ui.view" id="view_nstda_bst_dbill_report_tree">
+			<field name="name">nstda.bst.dbill.report.tree</field>
+			<field name="model">nstda.bst.dbill</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="nstda_bst_dbill_report_tree" create="false" delete="false" edit="false" default_order='hbill_ids desc' >
+					<field name="status" invisible="1" />
+					<field name="matno" string="สินค้า" />
+					<field name="dbill_empname" string="ชื่อผู้เบิก" />
+					<field name="dbill_prj_cct" string="หน่วยงาน/โครงการ" />
+					<field name="create_date" string="วันที่เบิก" />
+					<field name="unitprice" string="ราคา" />
+					<field name="dbill_discount" string="ส่วนลด(%)" />
+					<field name="qty" string="จำนวน" />
+					<field name="uom" string="หน่วยนับ" />
+					<field name="dbill_discount_sum" string="ราคารวม(ส่วนลด)" />
+				</tree>
+			</field>
+		</record>
+		
+
+		<!-- FormView -->
+		<record model="ir.ui.view" id="view_nstda_bst_dbill_form">
+			<field name="name">nstda.bst.dbill.form</field>
+			<field name="model">nstda.bst.dbill</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="nstda_bst_dbill" >
+					<group>
+						<field name="status" invisible="1" />
+						<field name="matno" />
+<!-- 						<field name="matdesc" /> -->
+						
+						<label for="balance" />
+						<div>
+							<field name="balance" style="width: 20%%" />
+							<field name="uom_1" style="width: 10%%;" 
+								attrs="{'invisible':[('matno','=',False)]}" />
+						</div>
+						
+						<label for="balance_rs" />
+						<div>
+							<field name="balance_rs" style="width: 20%%" />
+							<field name="uom_2" style="width: 10%%;" 
+								attrs="{'invisible':[('matno','=',False)]}" />
+						</div>
+						
+						<label for="qty" />
+						<div>
+							<field name="qty" style="width: 20%%" 
+								attrs="{'required':[('status','in',['draft','edit','wait_boss','wait_prjm',False])]}" />
+							<field name="uom" style="width: 10%%;" 
+								attrs="{'invisible':[('matno','=',False)]}" />
+						</div>
+						
+<!-- 						<field name="unitprice" /> -->
+						<label for="unitprice" />
+						<div>
+							<field name="unitprice" style="width: 20%%" />
+							<field name="currency" style="width: 10%%;" />
+						</div>
+						
+						<field name="sum" invisible="1" />
+					</group>
+				</form>
+			</field>
+		</record>
+
+
+	</data>
+</openerp>

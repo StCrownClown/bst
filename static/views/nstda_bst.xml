@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- vim:fdn=3: -->
+<openerp>
+	<data>
+        <template id="assets_backend" name="nstda_bst assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/nstda_bst/static/css/nstda_bst.css"/>
+<!-- 				<script type="text/javascript" src="/nstda_bst/static/js/nstda_bst.js"></script> -->
+            </xpath>
+        </template>
+	</data>
+</openerp>

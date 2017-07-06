@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+	<data>
+
+
+	<!-- TreeView -->
+		<record model="ir.ui.view" id="view_nstda_bst_stock">
+			<field name="name">nstda.bst.stock.tree</field>
+			<field name="model">nstda.bst.stock</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+
+				<tree string="nstda_bst_tree_stock" class="nstda_bst_tree_stock">
+					<field name="matno" />
+					<field name="matdesc" />
+					<field name="qty" />
+					<field name="qty_res" />
+					<field name="uom" />
+					<field name="unitprice" />
+				</tree>
+			</field>
+		</record>
+
+
+		<!-- FormView -->
+		<record model="ir.ui.view" id="view_nstda_bst_stock_form">
+			<field name="name">nstda.bst.stock.form</field>
+			<field name="model">nstda.bst.stock</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="nstda_bst_stock">
+
+					<group>
+						<sheet>
+							<group col="4">
+								<field name="saleorg" />
+								<field name="distribution" />
+								<field name="matno" />
+								<field name="matdesc" />
+								<field name="qty" />
+								<field name="uom" />
+								<field name="unitprice" />
+								<field name="barno" />
+								<field name="taxcode" />
+								<field name="plant" />
+								<field name="storage" />
+							</group>
+
+						</sheet>
+					</group>
+				</form>
+			</field>
+		</record>
+
+
+		<!-- Search -->
+		<record model="ir.ui.view" id="view_nstda_bst_stock_search">
+			<field name="name">nstda.bst.stock.search</field>
+			<field name="model">nstda.bst.stock</field>
+			<field name="arch" type="xml">
+				<search string="duration">
+			
+					<field name="matdesc" string="ชื่อสินค้า" 
+						filter_domain="[('matdesc','ilike',self)]" />
+					<field name="matno" string="รหัสสินค้า" 
+						filter_domain="[('matno','ilike',self)]"/>
+
+				</search>
+			</field>
+		</record>
+
+		
+	</data>
+</openerp>

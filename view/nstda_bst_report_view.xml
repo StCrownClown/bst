@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<openerp>
+	<data>
+
+
+		<record model="ir.ui.view" id="view_nstda_bst_report_form">
+			<field name="name">nstda.bst.report.form</field>
+			<field name="model">nstda.bst.report</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="nstda_bst_report" options="{'create': false, 'create_edit': false}">
+					<group col="4">
+					<field name="emp_name" style="width: 300px" create="false"/>
+					</group>
+					<group col="4">
+					<field name="book_date" style="width: 300px" create="false"/>
+					</group>
+					<button name="report" string="รายงาน " type="object" style="width: 300px" />
+				</form>
+			</field>
+		</record>
+
+
+		<record model="ir.ui.view" id="nstda_bst_manual_form_view">
+			<field name="name">nstda.bst.manual.form</field>
+			<field name="model">nstda.bst.manual</field>
+			<field name="arch" type="xml">
+				<form string="Manual Bookstore" version="7.0">
+					<div align="center">
+						<span>
+							<h2>
+								<a href="nstda_bst/static/src/bookstore_user.pdf" target="_blank">
+									Download คู่มือระบบ Bookstore
+								</a>
+							</h2>
+						</span>
+							<img src="nstda_bst/static/src/img/Slide1.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide2.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide3.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide4.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide5.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide6.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide7.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide8.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide9.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide10.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide11.PNG" width="100%%"></img>
+							<img src="nstda_bst/static/src/img/Slide12.PNG" width="100%%"></img>
+					</div>
+					<style>
+						.openerp .oe_view_manager table.oe_view_manager_header
+						.oe_view_manager_buttons, .oe_view_title {
+						white-space: nowrap;
+						display: none;
+						}
+					</style>
+				</form>
+			</field>
+		</record>
+		
+	</data>
+</openerp>
