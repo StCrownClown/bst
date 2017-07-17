@@ -114,6 +114,15 @@
 <!-- 			<field name="view_type">form</field> -->
 <!-- 			<field name="view_mode">form</field> -->
 <!-- 		</record> -->
+
+		<record model="ir.actions.act_window" id="action_nstda_bst_dbill_report">
+			<field name="name">รายงานการเบิกตามสินค้า</field>
+			<field name="res_model">nstda.bst.dbill</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="view_nstda_bst_dbill_report_tree" />
+			<field name="domain">[('status','=','success'),('hbill_ids','!=',False)]</field>
+		</record>
 		
 		<record model="ir.actions.act_window" id="action_nstda_bst_admin_hbill">
 			<field name="name">รายงานเบิกสินค้าทั้งหมด</field>
@@ -122,15 +131,6 @@
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_report_tree_1" />
 			<field name="domain">[('status','=','success')]</field>
-		</record>
-		
-		<record model="ir.actions.act_window" id="action_nstda_bst_dbill_report">
-			<field name="name">รายงานการเบิกตามสินค้า</field>
-			<field name="res_model">nstda.bst.dbill</field>
-			<field name="view_type">form</field>
-			<field name="view_mode">tree</field>
-			<field name="view_id" ref="view_nstda_bst_dbill_report_tree" />
-			<field name="domain">[('status','=','success'),('hbill_ids','!=',False)]</field>
 		</record>
 
 		<record model="ir.actions.act_window" id="action_nstda_bst_stock">
@@ -214,15 +214,15 @@
 			sequence="1"
 			groups="base.group_nstda_bst_authorities" />
 			
-		<menuitem name="รายงานเบิกสินค้าทั้งหมด" id="menu_nstda_bst_admin_hbill" parent="menu_nstda_bst_report"
-			action="action_nstda_bst_admin_hbill" 
-			sequence="2" />	
-			
 		<menuitem name="รายงานการเบิกตามสินค้า" id="menu_nstda_bst_dbill_report" parent="menu_nstda_bst_report"
 			action="action_nstda_bst_dbill_report" 
-			sequence="3" />
+			sequence="2" />
 			
-		<menuitem name="สรุปรายงาน" id="menu_nstda_bst_bill_report" parent="menu_nstda_bst_report"
+		<menuitem name="รายงานเบิกสินค้าทั้งหมด" id="menu_nstda_bst_admin_hbill" parent="menu_nstda_bst_report"
+			action="action_nstda_bst_admin_hbill" 
+			sequence="3" />	
+			
+		<menuitem name="สรุปรายงาน (ETL)" id="menu_nstda_bst_bill_report" parent="menu_nstda_bst_report"
 			action="action_nstda_bst_bill_report"
 			sequence="4"
 			groups="base.group_nstda_bst_authorities" />

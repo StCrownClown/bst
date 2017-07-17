@@ -202,6 +202,34 @@
     		<field name="target">new</field>
 		</record>
 		
+		
+		<!-- hbill action check qty wizard -->
+		<record id="view_nstda_bst_hbill_check_qty" model="ir.ui.view">
+            <field name="name">nstda.bst.check.qty.wizard</field>
+            <field name="model">nstda.bst.note</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Confirm" >
+                	<group>
+						<label string="ในสต๊อคไม่มีสินค้า กรุณาแจ้งกลับผู้เบิก เพื่อเปลี่ยนสินค้า หรือ ยกเลิกใบเบิกนี้"/>
+					</group>
+                    <footer>
+                        <button string="ปิด" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+		<record model="ir.actions.act_window" id="action_view_nstda_bst_hbill_check_qty">
+			<field name="name">ตรวจสอบ</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">nstda.bst.note</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_nstda_bst_hbill_check_qty" />
+    		<field name="target">new</field>
+		</record>
+		
 
     </data>
 </openerp>

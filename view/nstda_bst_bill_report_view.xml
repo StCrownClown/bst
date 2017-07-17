@@ -46,7 +46,7 @@
 		<!-- The following tag is an action definition for a "window action", that 
 			is an action opening a view or a set of views -->
 		<record model="ir.actions.act_window" id="action_nstda_bst_bill_report">
-			<field name="name">สรุปรายงาน</field>
+			<field name="name">สรุปรายงาน (ETL)</field>
 			<field name="res_model">nstda.bst.bill.report</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree</field>

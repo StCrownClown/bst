@@ -16,8 +16,8 @@
 							filter_domain="[('division','ilike',self)]" />
 						<field name="dept" string="งาน" 
 							filter_domain="[('dept','ilike',self)]" />
-						<field name="costct" string="หน่วยงาน" 
-							filter_domain="[('costct','ilike',self)]" />
+						<field name="costct" string="หน่วยงาน/โครงการ" 
+							filter_domain="['|',('costct','ilike',self),('prjno','ilike',self)]" />
 					</group>
 
 					<group expand="0" string="Group by">
@@ -27,8 +27,8 @@
 							context="{'group_by':'division'}" />
 						<filter name="dept" string="งาน" icon="terp-accessories-archiver"
 							context="{'group_by':'dept'}" />
-						<filter name="costct" string="หน่วยงาน" icon="terp-accessories-archiver"
-							context="{'group_by':'costct'}" />
+						<filter name="costct" string="หน่วยงาน/โครงการ" icon="terp-accessories-archiver"
+							context="{'group_by':'prj_cct'}" />
 					</group>
 					
 				</search>
@@ -218,6 +218,7 @@
 			<field name="arch" type="xml">
 
 				<tree string="nstda_bst_report_tree_1" create="false" delete="false" edit="false" >
+					<field name="docno" string="เลขที่เอกสาร" />
 					<field name="emp_code" string="รหัสผู้เบิก" />
 					<field name="empname" string="ชื่อผู้เบิก" />
 					<field name="prj_cct" string="หน่วยงาน/โครงการ" />
@@ -257,11 +258,18 @@
 <!-- 								confirm="คุณต้องการอนุมัติวงเงินการเบิก?" /> -->
 
 							<button name="%(action_view_nstda_bst_hbill_submit_approval)d" string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':[('status','!=','wait_approvers')]}"
+								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_check','=',False)]}"
 								context="{'bst_id': id}"
 								groups="base.group_nstda_bst_authorities" />
 <!-- 								attrs="{'invisible':['|',('inv_a','=',False),('status','!=','wait_approvers')]}" -->
 <!-- 								confirm="คุณต้องการอนุมัติการเบิกสินค้า?"  -->
+
+							<button name="%(action_view_nstda_bst_hbill_check_qty)d" string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_check','!=',False)]}" 
+								context="{'bst_id': id}"
+								groups="base.group_nstda_bst_authorities" />
+<!-- 								attrs="{'invisible':['|',('inv_r','=',False),('status','!=','pick')]}"  -->
+<!-- 								confirm="คุณต้องการยืนยันการเตรียมสินค้า?"  -->
 
 							<button name="%(action_view_nstda_bst_hbill_submit_pick)d" string="ยืนยันการเตรียมสินค้า" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':[('status','!=','pick')]}" 
@@ -373,12 +381,12 @@
 							<label for="d_bill_ids" string="รายละเอียดสินค้า" colspan="3" />
 							<field name="d_bill_ids" nolabel="1" colspan="6"
 								context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree'}" 
-								attrs="{'invisible':[('status','in',['pick','ready','success'])], 
+								attrs="{'invisible':[('status','in',['wait_approvers','pick','ready','success'])], 
 										'readonly':['&amp;','&amp;','&amp;',('inv_b','=',False),('inv_c','=',False),('inv_p','=',False),('inv_r','=',False)]}" />
 							<field name="t_bill_ids" nolabel="1" colspan="6"
 								context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree_2'}" 
-								attrs="{'invisible':[('status','not in',['pick','ready','success'])], 
-										'readonly':[('inv_r','=',False),('status','=','success')]}" />
+								attrs="{'invisible':[('status','not in',['wait_approvers','pick','ready','success'])], 
+										'readonly':[('inv_a','=',False),('inv_r','=',False),('status','in',['pick','success'])]}" />
 								
 						<group>
 <!-- 							<group class="oe_subtotal_footer oe_left" -->
@@ -496,10 +504,12 @@
 						<field name="prjm_id" invisible="1" />
 						<field name="boss_id" invisible="1" />
 						<field name="approver" invisible="1" />
+						<field name="qty_check" invisible="1" />
 						<field name="inv_c" invisible="1" />
 						<field name="inv_p" invisible="1" />
 						<field name="inv_b" invisible="1" />
 						<field name="inv_a" invisible="1" />
+						<field name="inv_k" invisible="1" />
 						<field name="inv_r" invisible="1" />
 
 					</sheet>

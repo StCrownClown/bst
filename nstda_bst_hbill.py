@@ -116,11 +116,10 @@ class nstda_bst_hbill(models.Model):
         self.discount_value_right = (self.amount_before_discount_right * self.discount) / 100
         self.amount_after_discount = self.amount_before_discount_right - self.discount_value_right
         
-        if self.t_bill_ids != False:
-            if self.amount_after_t == 0:
-                self.amount_before_t = sum((line.qty_res * line.unitprice) for line in self.t_bill_ids)
-                self.discount_t = (self.amount_before_t * self.discount) / 100
-                self.amount_after_t = self.amount_before_t - self.discount_t
+        if (self.t_bill_ids):
+            self.amount_before_t = sum((line.qty_res * line.unitprice) for line in self.t_bill_ids)
+            self.discount_t = (self.amount_before_t * self.discount) / 100
+            self.amount_after_t = self.amount_before_t - self.discount_t
             
             
     @api.one
@@ -149,6 +148,8 @@ class nstda_bst_hbill(models.Model):
             elif self.costct_prjno_selection == 'prjno':
                 if (self.prjm_id):
                     self.costct = self.prjm_emp_id.emp_dpm_id.dpm_cct_id.id
+                else:
+                    self.costct = self.boss_emp_id.emp_dpm_id.dpm_cct_id.id
         except:
             pass
         
@@ -185,20 +186,24 @@ class nstda_bst_hbill(models.Model):
         
     @api.one
     @api.depends('boss_id','prjm_id','approver')
+    @api.onchange('boss_id','prjm_id','approver')
     def _set_approve_info(self):
         if(self.boss_id):
             self.boss_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.boss_id.id)]).id
             if(self.boss_emp_id):
                 self.bossname = self.boss_emp_id.emp_fname + ' ' + self.boss_emp_id.emp_lname
+            elif(self.prjm_id):
+                self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
+                self.bossname = self.prjm_emp_id.emp_fname + ' ' + self.prjm_emp_id.emp_lname
             else:
-                self.approvername = 'ไม่พบข้อมูล'
+                self.bossname = 'ไม่พบข้อมูล'
               
         if(self.prjm_id):
             self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
             if(self.prjm_emp_id):
                 self.prjmname = self.prjm_emp_id.emp_fname + ' ' + self.prjm_emp_id.emp_lname
             else:
-                self.approvername = 'ไม่พบข้อมูล'
+                self.prjmname = 'ไม่พบข้อมูล'
                  
         if(self.approver):
             self.approver_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.approver.id)]).id
@@ -240,11 +245,16 @@ class nstda_bst_hbill(models.Model):
                 self.inv_a = True
             else:
                 self.inv_a = False  
-        elif self.status in ['pick', 'ready']:
+        elif self.status == 'pick':
+            if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
+                self.inv_k = True
+            else:
+                self.inv_k = False
+        elif self.status =='ready':
             if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_r = True
             else:
-                self.inv_r = False       
+                self.inv_r = False   
         elif self.status == 'draft' or self.status == 'edit':
             cr_user = self.cr_user_id.emp_rusers_id.id
             emp_user = self.empid.emp_rusers_id.id
@@ -256,7 +266,18 @@ class nstda_bst_hbill(models.Model):
         if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
             self.inv_p = True
             self.inv_b = True
-        
+            
+            
+    @api.one
+    @api.onchange('cr_user_id','status')
+    @api.depends('status')
+    def _check(self):
+        for v in self.d_bill_ids:
+            if v.matno.qty - v.qty < 0:
+                self.qty_check = False
+            else:
+                self.qty_check = True
+            
 
     _name = 'nstda.bst.hbill'
     _inherit = ['mail.thread', 'ir.needaction_mixin']
@@ -275,9 +296,9 @@ class nstda_bst_hbill(models.Model):
     boss_emp_id = fields.Many2one('nstdamas.employee', 'ผู้อนุมัติเบิกจ่าย', readonly=True, store=False, compute='_set_approve_info')
     prjm_emp_id = fields.Many2one('nstdamas.employee', 'หัวหน้าโครงการ', readonly=True, store=False, compute='_set_approve_info')
     approver_id = fields.Many2one('nstdamas.employee', 'เจ้าหน้าที่ศูนย์หนังสือ', readonly=True, compute='_set_approve_info')
-    bossname = fields.Char('ผู้อนุมัติ', readonly=True)
-    prjmname = fields.Char('ผู้อนุมัติ', readonly=True)
-    approvername = fields.Char('เจ้าหน้าที่ศูนย์หนังสือ', readonly=True)
+    bossname = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_approve_info')
+    prjmname = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_approve_info')
+    approvername = fields.Char('เจ้าหน้าที่ศูนย์หนังสือ', readonly=True, store=False, compute='_set_approve_info')
     
     cr_user_id = fields.Many2one('nstdamas.employee', 'พนักงานผู้บันทึก', readonly=True, required=True, default=lambda self:self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]))
     cr_user_name = fields.Char('ผู้บันทึก', readonly=True, compute='_set_emp_info')
@@ -344,17 +365,20 @@ class nstda_bst_hbill(models.Model):
 
     discount_t = fields.Float('ส่วนลด', store=False, compute='_compute_amount_last')
     amount_before_t = fields.Float(string='รวม', readonly=True, compute='_compute_amount_last',)
-    amount_after_t = fields.Float(string='ราคารวมสุทธิ', store=True, readonly=True, compute='_compute_amount_last')
+    amount_after_t = fields.Float(string='ราคารวมสุทธิ', store=False, readonly=True, compute='_compute_amount_last')
     
     d_bill_ids = fields.One2many('nstda.bst.dbill', 'hbill_ids', 'รายละเอียดสินค้า')
-    t_bill_ids = fields.One2many('nstda.bst.dbill', 'tbill_ids', 'รายละเอียดสินค้า')
+    t_bill_ids = fields.One2many('nstda.bst.dbill', 'tbill_ids', 'รายละเอียดสินค้า', store=True, related='d_bill_ids')
+    
+    qty_check = fields.Boolean('Check qty', readonly=True, compute='_check')
     
     inv_c = fields.Boolean('Check user', readonly=True, compute='_inv')
     inv_p = fields.Boolean('Check prjm_id', readonly=True, compute='_inv')
     inv_b = fields.Boolean('Check boss_id', readonly=True, compute='_inv')
     inv_a = fields.Boolean('Check approver', readonly=True, compute='_inv')
-    inv_r = fields.Boolean('Check pick', readonly=True, compute='_inv')
-    
+    inv_k = fields.Boolean('Check pick', readonly=True, compute='_inv')
+    inv_r = fields.Boolean('Check ready', readonly=True, compute='_inv')
+
     
     @api.one
     def bst_sum_record(self):
@@ -431,7 +455,8 @@ class nstda_bst_hbill(models.Model):
                         Project_Leader = str(self.prjno.id)
                         self.env.cr.execute("SELECT prjm_emp_id FROM nstdamas_projectmember WHERE prjm_prj_id = " + Project_Leader + " AND prjm_position = '00'")
                         pjboss_obj = self.env.cr.fetchone()[0]
-    #                     pjboss_obj = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',Project_Leader), ('prjm_position','=','00')]).prjm_emp_id
+                        if pjboss_obj == False:
+                            pjboss_obj = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',Project_Leader), ('prjm_position','=','00')]).prjm_emp_id
                         get_prjm_id = self.env['nstdamas.employee'].search([['id', '=', pjboss_obj]]).emp_rusers_id.id
                         self.prjm_id = get_prjm_id
                           
@@ -538,15 +563,13 @@ class nstda_bst_hbill(models.Model):
                             }}
             self.status = 'pick'
             
-            self.t_bill_ids = self.d_bill_ids
-            
         else:
             raise Warning('สำหรับเจ้าหน้าที่อนุมัติ')
     
     
     @api.one     
     def bst_submit_pick(self):
-        if self.inv_r == True:
+        if self.inv_k == True:
             self.pick_date = datetime.now()
             self.pick_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]).id
             
@@ -582,7 +605,7 @@ class nstda_bst_hbill(models.Model):
                     WHERE """ + res + """
                     AND nstda_bst_dbill.status = 'success'
                     AND nstda_bst_dbill.cut_stock = False
-                    AND nstda_bst_dbill.t_bill_ids != 0
+                    AND nstda_bst_dbill.tbill_ids != 0
                     ) hb
                     WHERE hb.matno = nstda_bst_stock.id;
                     """)

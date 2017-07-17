@@ -57,7 +57,7 @@ class nstda_bst_dbill(models.Model):
     qty = fields.Integer('จำนวนที่ต้องการ', required=False)
     sum = fields.Float(string="ราคารวม", store=True, compute='_set_sum')
     qty_res = fields.Integer('จำนวนที่ต้องการ', store=True, readonly=False)
-    sum_res = fields.Float(string="ราคารวม", store=True, compute='_set_sum_res')
+    sum_res = fields.Float(string="ราคารวม", store=False, compute='_set_sum_res')
     cut_stock = fields.Boolean('ตัดสต็อกสำเร็จ', store=True, default=False)
     dbill_discount_sum = fields.Float(string="ราคารวม(ส่วนลด)", store=True, compute='_set_discount')
     
@@ -84,6 +84,7 @@ class nstda_bst_dbill(models.Model):
                                ('success', 'รับสินค้าแล้ว')], 'สถานะ', store=True, readonly=True, track_visibility='always', compute='_get_state')
 
     inv_r = fields.Boolean('Check pick', store=False, readonly=True, compute='_get_inv')
+    inv_a = fields.Boolean('Check approvers', store=False, readonly=True, compute='_get_inv')
     
 #     _sql_constraints = [
 #                         ('_check_qty', 'กรุณาระบุจำนวนในรายละเอียดสินค้าให้ถูกต้อง(จำนวนต้องไม่น้อยกว่าหรือเท่ากับศูนย์)', ['qty'])
@@ -111,12 +112,14 @@ class nstda_bst_dbill(models.Model):
         
     @api.one
     @api.onchange('status','tbill_ids')
-    @api.depends('status','hbill_ids.inv_r','tbill_ids.inv_r')
+    @api.depends('status','hbill_ids','tbill_ids')
     def _get_inv(self):
         if (self.hbill_ids.status):
             self.inv_r = self.hbill_ids.inv_r
+            self.inv_a = self.hbill_ids.inv_a
         elif (self.tbill_ids.status):
             self.inv_r = self.tbill_ids.inv_r
+            self.inv_a = self.tbill_ids.inv_a
 
 
 #     @api.one
@@ -135,28 +138,24 @@ class nstda_bst_dbill(models.Model):
     def _set_sum(self):
         self.sum  = self.unitprice * self.qty
 
-            
+
     @api.one
-    @api.onchange('sum_res')
-    @api.depends('sum_res')
+    @api.depends('qty_res','tbill_ids','status')
+    @api.onchange('qty_res','tbill_ids','status')
     def _set_discount(self):
-        if self.dbill_discount == False:
-            res = self.env['nstda.bst.discount'].search([],limit=1,order="id DESC")
-            if(res.discount):
-                self.dbill_discount = res.discount  
-                discount_value = (self.sum_res * self.dbill_discount)/100
-                self.dbill_discount_sum = self.sum_res - discount_value
-            else:
-                self.dbill_discount = 0
-                self.dbill_discount_sum = self.sum_res
+        if(self.dbill_discount):
+            discount_value = ((self.qty_res * self.unitprice) * self.dbill_discount)/100
+            self.dbill_discount_sum = (self.qty_res * self.unitprice) - discount_value
+        else:
+            self.dbill_discount = 0
+            self.dbill_discount_sum = (self.qty_res * self.unitprice)
 
 
     @api.one
-    @api.depends('qty_res','tbill_ids','tbill_ids.amount_after_t')
-    @api.onchange('qty_res','tbill_ids')
+    @api.depends('qty_res','tbill_ids','status')
+    @api.onchange('qty_res','tbill_ids','status')
     def _set_sum_res(self):
         self.sum_res  = self.qty_res * self.unitprice
-        
         
 #     def bst_dbill_success(self, cr, uid, ids, context=None):
        

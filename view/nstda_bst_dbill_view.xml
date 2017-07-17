@@ -18,6 +18,7 @@
 					<field name="uom" />
 					<field name="unitprice" />
 					<field name="sum" />
+					<field name="dbill_discount_sum" invisible="1" />
 				</tree>
 			</field>
 		</record>
@@ -32,6 +33,7 @@
 				<tree string="nstda_bst_dbill_tree_2" class="nstda_bst_dbill_tree_2" editable="bottom" create="true" delete="true" edit="true" >
 					<field name="status" invisible="1" />
 					<field name="inv_r" invisible="1" />
+					<field name="inv_a" invisible="1" />
 					<field name="no" />
 					<field name="matno" string="สินค้า" 
 						attrs="{'readonly':[('status','not in',['draft','ready',False])]}" />
@@ -41,9 +43,10 @@
 					<field name="unitprice" />
 					<field name="sum" string="ราคารวม(อนุมัติ)" />
 				    <field name="qty_res" 
-				    	attrs="{'readonly':[('inv_r','=',False)], 
-				    			'required':[('status','in',['draft','pick','ready',False])]}" />
+				    	attrs="{'readonly':[('inv_r','=',False),('inv_a','=',False)], 
+				    			'required':[('status','in',['draft','wait_approvers','pick','ready',False])]}" />
 				    <field name="sum_res" string="ราคารวม(จ่ายจริง)" />
+				    <field name="dbill_discount_sum" invisible="1" />
 				</tree>
 			</field>
 		</record>
@@ -77,7 +80,7 @@
 			<field name="model">nstda.bst.dbill</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="nstda_bst_dbill" >
+				<form string="nstda_bst_dbill" class="nstda_bst_dbill_form" >
 					<group>
 						<field name="status" invisible="1" />
 						<field name="matno" />
@@ -113,6 +116,7 @@
 						</div>
 						
 						<field name="sum" invisible="1" />
+						<field name="dbill_discount_sum" invisible="1" />
 					</group>
 				</form>
 			</field>

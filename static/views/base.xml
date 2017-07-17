@@ -22,5 +22,26 @@
 	        <t t-if="widget.needaction_counter3 &lt;= 99"> <t t-esc="widget.needaction_counter3" /> </t>
 	    </div>
 	</t>
+	
+<!-- 	<t t-name="AbstractFormPopup.buttons"> -->
+<!-- 	    <t t-if="! readonly"> -->
+<!-- 	        <t t-if="! multi_select"> -->
+<!-- 	            <button type="button" class="oe_button oe_abstractformpopup-form-save oe_highlight">Save</button> -->
+<!-- 	        </t> -->
+<!-- 	        <t t-if="multi_select"> -->
+<!-- 	            <button type="button" class="oe_button oe_abstractformpopup-form-save oe_highlight">Save &amp; Close</button> -->
+<!-- 	            <button type="button" class="oe_button oe_abstractformpopup-form-save-new oe_highlight">Save &amp; New</button> -->
+<!-- 	        </t> -->
+<!-- 	        or -->
+<!-- 	    </t> -->
+<!-- 	    <a class="oe_abstractformpopup-form-close oe_bold oe_form_button_cancel" href="javascript:void(0)"> -->
+<!-- 	        <t t-if="! readonly"> -->
+<!-- 	            Discard -->
+<!-- 	        </t> -->
+<!-- 	        <t t-if="readonly"> -->
+<!-- 	            Close -->
+<!-- 	        </t> -->
+<!-- 	    </a> -->
+<!-- 	</t> -->
 
 </templates>

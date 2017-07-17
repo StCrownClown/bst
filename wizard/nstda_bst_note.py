@@ -57,7 +57,7 @@ class nstda_bst_note(osv.osv_memory):
         
 #         self.pool.get('nstda.bst.stock')._cut_stock(cr, uid, ids, context=context)
 #         self.pool.get('nstda.bst.stock').bst_dbill_success(cr, uid, ids, context=context)
-        self.pool.get('nstda.bst.hbill')._submit_success(cr, uid, ids, context=context)
+        self.pool.get('nstda.bst.hbill')._submit_success(cr, uid, context['bst_id'], context=context)
         
         return {'type': 'ir.actions.act_window_close'}
     
