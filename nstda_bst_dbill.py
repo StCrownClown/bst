@@ -52,13 +52,14 @@ class nstda_bst_dbill(models.Model):
     no = fields.Integer(string="ลำดับ ", store=True, readonly=True, default=0)
     matno = fields.Many2one('nstda.bst.stock', 'รหัสสินค้า', required=True, domain=[('qty','>','0')])
     hbill_ids = fields.Many2one('nstda.bst.hbill','รายละเอียดสินค้า')
-    tbill_ids = fields.Many2one('nstda.bst.hbill','รายละเอียดสินค้า')
+    tbill_ids = fields.Many2one('nstda.bst.hbill','รายละเอียดสินค้า', store=True, compute='_set_dup_tb')
 
     qty = fields.Integer('จำนวนที่ต้องการ', required=False)
     sum = fields.Float(string="ราคารวม", store=True, compute='_set_sum')
     qty_res = fields.Integer('จำนวนที่ต้องการ', store=True, readonly=False)
     sum_res = fields.Float(string="ราคารวม", store=False, compute='_set_sum_res')
     cut_stock = fields.Boolean('ตัดสต็อกสำเร็จ', store=True, default=False)
+    return_stock = fields.Boolean('คืนสต็อกสำเร็จ', store=True, compute='check_qty_equal')
     dbill_discount_sum = fields.Float(string="ราคารวม(ส่วนลด)", store=True, compute='_set_discount')
     
     matdesc = fields.Char('รายละเอียดสินค้า', readonly=True, related='matno.matdesc') 
@@ -81,10 +82,11 @@ class nstda_bst_dbill(models.Model):
                                ('wait_approvers', 'รอเบิก'),
                                ('pick', 'รอจัดเตรียมสินค้า'),
                                ('ready', 'รอรับสินค้า'),
-                               ('success', 'รับสินค้าแล้ว')], 'สถานะ', store=True, readonly=True, track_visibility='always', compute='_get_state')
+                               ('success', 'รับสินค้าแล้ว')], 'สถานะ', store=True, readonly=True, track_visibility='always', related='hbill_ids.status')
 
-    inv_r = fields.Boolean('Check pick', store=False, readonly=True, compute='_get_inv')
-    inv_a = fields.Boolean('Check approvers', store=False, readonly=True, compute='_get_inv')
+    inv_b = fields.Boolean('Check pick', store=False, readonly=True, related='hbill_ids.inv_b')
+    inv_p = fields.Boolean('Check approvers', store=False, readonly=True, related='hbill_ids.inv_p')
+    inv_r = fields.Boolean('Check pick', store=False, readonly=True, related='hbill_ids.inv_r')
     
 #     _sql_constraints = [
 #                         ('_check_qty', 'กรุณาระบุจำนวนในรายละเอียดสินค้าให้ถูกต้อง(จำนวนต้องไม่น้อยกว่าหรือเท่ากับศูนย์)', ['qty'])
@@ -93,33 +95,29 @@ class nstda_bst_dbill(models.Model):
 
     @api.constrains('qty')
     def _check_qty(self):
-        if self.hbill_ids.status not in ['pick','ready','success'] or self.status != False:
+        if self.hbill_ids.status not in ['wait_approvers','pick','ready','success'] or self.status != False:
             for record in self:
                 if record.qty <= 0:
                     raise ValidationError("กรุณาระบุจำนวนในรายละเอียดสินค้าให้ถูกต้อง(จำนวนต้องไม่น้อยกว่าหรือเท่ากับศูนย์)")
+                
+                
+    @api.one
+    @api.depends('qty_res','tbill_ids')
+    @api.onchange('qty_res','tbill_ids')
+    def check_qty_equal(self):
+        if self.status != 'success':
+            if self.qty_res == self.qty:
+                self.return_stock = True
+            else:
+                self.return_stock = False
 
-    
+
     @api.one
-    @api.depends('hbill_ids.status','tbill_ids.status')
-    @api.onchange('hbill_ids.status','tbill_ids.status')
-    def _get_state(self):
-        if(self.status) == False:
-            if (self.hbill_ids):
-                self.status = self.hbill_ids.status
-            elif (self.tbill_ids):
-                self.status = self.tbill_ids.status
-        
-        
-    @api.one
-    @api.onchange('status','tbill_ids')
-    @api.depends('status','hbill_ids','tbill_ids')
-    def _get_inv(self):
-        if (self.hbill_ids.status):
-            self.inv_r = self.hbill_ids.inv_r
-            self.inv_a = self.hbill_ids.inv_a
-        elif (self.tbill_ids.status):
-            self.inv_r = self.tbill_ids.inv_r
-            self.inv_a = self.tbill_ids.inv_a
+    @api.depends('status')
+    @api.onchange('status')
+    def _set_dup_tb(self):
+        if self.status in ['wait_boss','wait_prjm','wait_approvers','pick','ready','success']:
+            self.tbill_ids = self.hbill_ids
 
 
 #     @api.one
@@ -140,8 +138,8 @@ class nstda_bst_dbill(models.Model):
 
 
     @api.one
-    @api.depends('qty_res','tbill_ids','status')
-    @api.onchange('qty_res','tbill_ids','status')
+    @api.depends('sum','tbill_ids')
+    @api.onchange('sum','tbill_ids')
     def _set_discount(self):
         if(self.dbill_discount):
             discount_value = ((self.qty_res * self.unitprice) * self.dbill_discount)/100
@@ -152,13 +150,27 @@ class nstda_bst_dbill(models.Model):
 
 
     @api.one
-    @api.depends('qty_res','tbill_ids','status')
-    @api.onchange('qty_res','tbill_ids','status')
+    @api.depends('qty_res','tbill_ids')
+    @api.onchange('qty_res','tbill_ids')
     def _set_sum_res(self):
         self.sum_res  = self.qty_res * self.unitprice
         
-#     def bst_dbill_success(self, cr, uid, ids, context=None):
-       
+        
+    def _dbill_cut_success(self, cr, uid, ids, context=None):
+        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', ids)], context=context)
+        
+        for dbill in self.pool.get('nstda.bst.dbill').browse(cr, uid, ids):
+            find_dbill = self.pool.get('nstda.bst.dbill').browse(cr, uid, dbill.id)
+            find_dbill.cut_stock = True
+        
+        
+    def _dbill_return_success(self, cr, uid, ids, context=None):
+        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', ids)], context=context)
+        
+        for dbill in self.pool.get('nstda.bst.dbill').browse(cr, uid, ids):
+            find_dbill = self.pool.get('nstda.bst.dbill').browse(cr, uid, dbill.id)
+            find_dbill.return_stock = True
+        
        
     @api.multi
     @api.onchange('matno','qty')           
@@ -191,7 +203,7 @@ class nstda_bst_dbill(models.Model):
         
         
     @api.multi
-    @api.onchange('qty_res','matno','sum_res')      
+    @api.onchange('qty_res','sum_res')      
     def _onchange_qty_res(self):
         res = {}
         limit = {}
@@ -247,3 +259,8 @@ class nstda_bst_dbill(models.Model):
         res = super(nstda_bst_dbill, self).create(values)
         return res
     
+    
+#     @api.multi
+#     def write(self, values):
+#         res_id = super(nstda_bst_dbill, self).write(values)
+#         return res_id

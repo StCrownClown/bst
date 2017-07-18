@@ -20,7 +20,6 @@ class nstda_bst_note(osv.osv_memory):
     
     
     _defaults = {
-#         'assign_emp_id': set_assign_emp_id,
     }
     
     
@@ -55,9 +54,7 @@ class nstda_bst_note(osv.osv_memory):
                                                        'assign_emp_id': emp.id,
                                                        'post_date':datetime.datetime.now(timezone('UTC')) })
         
-#         self.pool.get('nstda.bst.stock')._cut_stock(cr, uid, ids, context=context)
-#         self.pool.get('nstda.bst.stock').bst_dbill_success(cr, uid, ids, context=context)
-        self.pool.get('nstda.bst.hbill')._submit_success(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
         return {'type': 'ir.actions.act_window_close'}
     
@@ -68,10 +65,12 @@ class nstda_bst_note(osv.osv_memory):
         
     def bst_prjm_submit(self, cr, uid, ids, context=None):
         model_obj = self.pool.get('nstda.bst.hbill').bst_prjm_submit(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
         
         
     def bst_submit_limit(self, cr, uid, ids, context=None):    
         model_obj = self.pool.get('nstda.bst.hbill').bst_submit_limit(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
         
         
     def bst_submit_approval(self, cr, uid, ids, context=None):   

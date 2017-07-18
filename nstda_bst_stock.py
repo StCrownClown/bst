@@ -51,12 +51,25 @@ class nstda_bst_stock(models.Model):
         set_sum = sum(line.qty for line in getbill_rs)
         self.qty_res = set_sum
         
-           
-#     @api.one
-#     def _cut_stock(self):
-#         getbill_rec = self.env['nstda.bst.dbill'].search([('tbill_ids','!=',False),('qty_res','!=',False),('cut_stock','!=',False)])
-#         for id in getbill_rec:
-#             self.qty = self.qty - id.qty_res
+        
+    def _cut_stock(self, cr, uid, ids, context=None):
+        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', context['bst_id']),('cut_stock','=',False)], context=context)
+        
+        for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
+            find_mat = self.pool.get('nstda.bst.stock').browse(cr, uid, mat_bill.matno.id)
+            find_mat.qty -= mat_bill.qty
+            
+            self.pool.get('nstda.bst.dbill')._dbill_cut_success(cr, uid, mat_bill.id, context=context)
+
+
+    def _return_stock(self, cr, uid, ids, context=None):
+        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', context['bst_id']),('return_stock','=',False)], context=context)
+        
+        for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
+            find_mat = self.pool.get('nstda.bst.stock').browse(cr, uid, mat_bill.matno.id)
+            find_mat.qty += mat_bill.qty - mat_bill.qty_res
+            
+            self.pool.get('nstda.bst.dbill')._dbill_return_success(cr, uid, mat_bill.id, context=context)
         
     
     _name = 'nstda.bst.stock'
@@ -76,5 +89,6 @@ class nstda_bst_stock(models.Model):
     qty = fields.Integer('จำนวนคงเหลือ')
     qty_res = fields.Integer('จำนวนขอเบิกรออนุมัติ', readonly=True, store=False, compute=_set_qty)
     pacode = fields.Char('รหัสปี')
+
 
 nstda_bst_stock()

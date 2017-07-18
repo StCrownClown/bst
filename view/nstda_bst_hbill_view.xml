@@ -381,84 +381,49 @@
 							<label for="d_bill_ids" string="รายละเอียดสินค้า" colspan="3" />
 							<field name="d_bill_ids" nolabel="1" colspan="6"
 								context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree'}" 
-								attrs="{'invisible':[('status','in',['wait_approvers','pick','ready','success'])], 
-										'readonly':['&amp;','&amp;','&amp;',('inv_b','=',False),('inv_c','=',False),('inv_p','=',False),('inv_r','=',False)]}" />
+								attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
+										'readonly':[('inv_c','=',False)]}" />
 							<field name="t_bill_ids" nolabel="1" colspan="6"
 								context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree_2'}" 
-								attrs="{'invisible':[('status','not in',['wait_approvers','pick','ready','success'])], 
-										'readonly':[('inv_a','=',False),('inv_r','=',False),('status','in',['pick','success'])]}" />
+								attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
+										'readonly':[('inv_b','=',False),('inv_p','=',False),('inv_r','=',False),('status','in',['wait_approvers','pick','success'])]}" />
 								
 						<group>
-<!-- 							<group class="oe_subtotal_footer oe_left" -->
-<!-- 								name="sale_total"> -->
-<!-- 								<field name="amount_before_discount" widget='monetary' -->
-<!-- 									options="{'currency_field': 'currency_id'}"  -->
-<!-- 									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" /> -->
-<!-- 								<field name="discount_value" widget='monetary' -->
-<!-- 									options="{'currency_field': 'currency_id'}"  -->
-<!-- 									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" /> -->
-<!-- 								<field name="amount_before_approve" class="oe_subtotal_footer_separator" widget='monetary' -->
-<!-- 									options="{'currency_field': 'currency_id'}"  -->
-<!-- 									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" /> -->
-<!-- 							</group> -->
-
-<!-- 							<group class="oe_subtotal_footer oe_right"  -->
-<!-- 								name="sale_total"> -->
-<!-- 								<field name="amount_before_discount_right" widget='monetary' -->
-<!-- 									options="{'currency_field': 'currency_id'}"  -->
-<!-- 									attrs="{'invisible':[('status','in',['pick','ready','success'])]}" /> -->
-<!-- 								<field name="discount_value_right" widget='monetary' -->
-<!-- 									options="{'currency_field': 'currency_id'}"  -->
-<!-- 									attrs="{'invisible':[('status','in',['pick','ready','success'])]}" /> -->
-<!-- 								<field name="amount_after_discount" class="oe_subtotal_footer_separator" widget='monetary' -->
-<!-- 									options="{'currency_field': 'currency_id'}"  -->
-<!-- 									attrs="{'invisible':[('status','in',['pick','ready','success'])]}" /> -->
-							
-<!-- 								<field name="amount_before_t" widget='monetary' -->
-<!-- 									options="{'currency_field': 'currency_id'}"  -->
-<!-- 									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" /> -->
-<!-- 								<field name="discount_t" widget='monetary' -->
-<!-- 									options="{'currency_field': 'currency_id'}"  -->
-<!-- 									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" />	 -->
-<!-- 								<field name="amount_after_t" class="oe_subtotal_footer_separator" widget='monetary' -->
-<!-- 									options="{'currency_field': 'currency_id'}"  -->
-<!-- 									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" /> -->
-<!-- 							</group> -->
 
 							<group class="oe_subtotal_footer oe_left"
 								name="sale_total">
 								<field name="amount_before_discount" widget='monetary'
 									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 								<field name="discount_value" widget='monetary'
 									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 								<field name="amount_before_approve" class="oe_subtotal_footer_separator" widget='monetary'
 									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 							</group>
 
 							<group class="oe_subtotal_footer oe_right" 
 								name="sale_total">
 								<field name="amount_before_discount_right" widget='monetary'
 									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','in',['pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 								<field name="discount_value_right" widget='monetary'
 									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','in',['pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 								<field name="amount_after_discount" class="oe_subtotal_footer_separator" widget='monetary'
 									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','in',['pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 							
 								<field name="amount_before_t" widget='monetary'
 									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 								<field name="discount_t" widget='monetary'
 									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" />	
+									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />	
 								<field name="amount_after_t" class="oe_subtotal_footer_separator" widget='monetary'
 									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','not in',['pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 							</group>
 						</group>
 						

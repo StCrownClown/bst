@@ -30,10 +30,11 @@
 			<field name="model">nstda.bst.dbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
-				<tree string="nstda_bst_dbill_tree_2" class="nstda_bst_dbill_tree_2" editable="bottom" create="true" delete="true" edit="true" >
+				<tree string="nstda_bst_dbill_tree_2" class="nstda_bst_dbill_tree_2" editable="bottom" create="true" delete="false" edit="true" >
 					<field name="status" invisible="1" />
+					<field name="inv_b" invisible="1" />
+					<field name="inv_p" invisible="1" />
 					<field name="inv_r" invisible="1" />
-					<field name="inv_a" invisible="1" />
 					<field name="no" />
 					<field name="matno" string="สินค้า" 
 						attrs="{'readonly':[('status','not in',['draft','ready',False])]}" />
@@ -43,8 +44,8 @@
 					<field name="unitprice" />
 					<field name="sum" string="ราคารวม(อนุมัติ)" />
 				    <field name="qty_res" 
-				    	attrs="{'readonly':[('inv_r','=',False),('inv_a','=',False)], 
-				    			'required':[('status','in',['draft','wait_approvers','pick','ready',False])]}" />
+				    	attrs="{'readonly':[('inv_b','=',False),('inv_p','=',False),('inv_r','=',False)], 
+				    			'required':[('status','in',['draft','wait_boss','wait_prjm','ready',False])]}" />
 				    <field name="sum_res" string="ราคารวม(จ่ายจริง)" />
 				    <field name="dbill_discount_sum" invisible="1" />
 				</tree>
@@ -103,7 +104,7 @@
 						<label for="qty" />
 						<div>
 							<field name="qty" style="width: 20%%" 
-								attrs="{'required':[('status','in',['draft','edit','wait_boss','wait_prjm',False])]}" />
+								attrs="{'required':[('status','in',['draft','edit',False])]}" />
 							<field name="uom" style="width: 10%%;" 
 								attrs="{'invisible':[('matno','=',False)]}" />
 						</div>

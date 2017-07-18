@@ -38,6 +38,12 @@ class nstda_bst_hbill(models.Model):
         values['docno'] = self.env['ir.sequence'].get(seq_code) or ''
         res_id = super(nstda_bst_hbill, self).create(values)
         return res_id
+    
+    
+#     @api.multi
+#     def write(self, values):
+#         res_id = super(nstda_bst_hbill, self).write(values)
+#         return res_id
 
 
     def _needaction_count(self, cr, uid, domain=None, context=None):
@@ -115,11 +121,6 @@ class nstda_bst_hbill(models.Model):
         self.amount_before_discount_right = sum((line.qty * line.unitprice) for line in self.d_bill_ids)
         self.discount_value_right = (self.amount_before_discount_right * self.discount) / 100
         self.amount_after_discount = self.amount_before_discount_right - self.discount_value_right
-        
-        if (self.t_bill_ids):
-            self.amount_before_t = sum((line.qty_res * line.unitprice) for line in self.t_bill_ids)
-            self.discount_t = (self.amount_before_t * self.discount) / 100
-            self.amount_after_t = self.amount_before_t - self.discount_t
             
             
     @api.one
@@ -130,26 +131,16 @@ class nstda_bst_hbill(models.Model):
         self.discount_t = (self.amount_before_t * self.discount) / 100
         self.amount_after_t = self.amount_before_t - self.discount_t
 
-    
-    @api.one
-    @api.depends('status')
-    @api.onchange('status')
-    def _set_db_state(self):
-        self.env['nstda.bst.dbill']._get_state()
-
 
     @api.one
-    @api.depends('empid','costct_prjno_selection','prjm_emp_id')
+    @api.depends('empid','prjm_emp_id')
     @api.onchange('empid','costct_prjno_selection')
     def _set_prj_cct(self):
         try:
             if self.costct_prjno_selection == 'costct':
                 self.costct = self.empid.emp_dpm_id.dpm_cct_id.id
             elif self.costct_prjno_selection == 'prjno':
-                if (self.prjm_id):
-                    self.costct = self.prjm_emp_id.emp_dpm_id.dpm_cct_id.id
-                else:
-                    self.costct = self.boss_emp_id.emp_dpm_id.dpm_cct_id.id
+                self.costct = self.prjm_emp_id.emp_dpm_id.dpm_cct_id.id
         except:
             pass
         
@@ -159,14 +150,11 @@ class nstda_bst_hbill(models.Model):
     @api.one
     @api.depends('costct','prjno')
     def _set_prj_cct_name(self):
-        try:
-            if self.costct_prjno_selection == 'costct':
-                self.prj_cct = self.costct.cct_id + ' - '  + self.costct.cct_name
-            
-            elif self.costct_prjno_selection == 'prjno':
-                self.prj_cct = self.prjno.prj_name
-        except:
-            pass
+        if self.costct_prjno_selection == 'costct':
+            self.prj_cct = self.costct.cct_id + ' - '  + self.costct.cct_name
+        
+        elif self.costct_prjno_selection == 'prjno':
+            self.prj_cct = self.prjno.prj_name
             
             
     @api.one
@@ -192,9 +180,6 @@ class nstda_bst_hbill(models.Model):
             self.boss_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.boss_id.id)]).id
             if(self.boss_emp_id):
                 self.bossname = self.boss_emp_id.emp_fname + ' ' + self.boss_emp_id.emp_lname
-            elif(self.prjm_id):
-                self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
-                self.bossname = self.prjm_emp_id.emp_fname + ' ' + self.prjm_emp_id.emp_lname
             else:
                 self.bossname = 'ไม่พบข้อมูล'
               
@@ -368,7 +353,7 @@ class nstda_bst_hbill(models.Model):
     amount_after_t = fields.Float(string='ราคารวมสุทธิ', store=False, readonly=True, compute='_compute_amount_last')
     
     d_bill_ids = fields.One2many('nstda.bst.dbill', 'hbill_ids', 'รายละเอียดสินค้า')
-    t_bill_ids = fields.One2many('nstda.bst.dbill', 'tbill_ids', 'รายละเอียดสินค้า', store=True, related='d_bill_ids')
+    t_bill_ids = fields.One2many('nstda.bst.dbill', 'tbill_ids', 'รายละเอียดสินค้า')
     
     qty_check = fields.Boolean('Check qty', readonly=True, compute='_check')
     
@@ -582,44 +567,10 @@ class nstda_bst_hbill(models.Model):
             raise Warning('สำหรับเจ้าหน้าที่อนุมัติ')
         
         
-    @api.one
-    def _submit_success(self):
-        chk = 0
-        res = ""
-        for id in self.t_bill_ids:
-            if id:
-                bid = str(id.id)
-                res += "nstda_bst_dbill.id=" + bid + " OR "
-        res = res[:-4]
+    def _submit_cut_stock(self, cr, uid, ids, context=None):
+        self.pool.get('nstda.bst.stock')._cut_stock(cr, uid, context['bst_id'], context=context)
         
-        try:
-            self.env.cr.execute("""
-                    UPDATE nstda_bst_stock
-                    SET qty = hb.rs
-                    FROM
-                    (
-                    SELECT nstda_bst_dbill.matno, (st.qty - nstda_bst_dbill.qty_res) as rs, nstda_bst_dbill.status
-                    FROM nstda_bst_dbill
-                    join nstda_bst_stock st
-                    ON nstda_bst_dbill.matno = st.id
-                    WHERE """ + res + """
-                    AND nstda_bst_dbill.status = 'success'
-                    AND nstda_bst_dbill.cut_stock = False
-                    AND nstda_bst_dbill.tbill_ids != 0
-                    ) hb
-                    WHERE hb.matno = nstda_bst_stock.id;
-                    """)
-            chk = 1
-        except:
-            pass
+    
+    def _submit_return_stock(self, cr, uid, ids, context=None):
+        self.pool.get('nstda.bst.stock')._return_stock(cr, uid, context['bst_id'], context=context)
         
-        if chk == 1:
-            self.env.cr.execute("""
-                    UPDATE nstda_bst_dbill
-                    SET cut_stock = True
-                    WHERE """ + res + """
-                    AND nstda_bst_dbill.status = 'success';
-                    """)
-            chk = 0
-        else:
-            pass
