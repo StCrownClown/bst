@@ -386,7 +386,7 @@
 							<field name="t_bill_ids" nolabel="1" colspan="6"
 								context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree_2'}" 
 								attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
-										'readonly':[('inv_b','=',False),('inv_p','=',False),('inv_r','=',False),('status','in',['wait_approvers','pick','success'])]}" />
+										'readonly':[('inv_b','=',False),('inv_p','=',False),('inv_r','=',False),('status','=','success')]}" />
 								
 						<group>
 

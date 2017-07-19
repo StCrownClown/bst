@@ -84,9 +84,9 @@ class nstda_bst_dbill(models.Model):
                                ('ready', 'รอรับสินค้า'),
                                ('success', 'รับสินค้าแล้ว')], 'สถานะ', store=True, readonly=True, track_visibility='always', related='hbill_ids.status')
 
-    inv_b = fields.Boolean('Check pick', store=False, readonly=True, related='hbill_ids.inv_b')
-    inv_p = fields.Boolean('Check approvers', store=False, readonly=True, related='hbill_ids.inv_p')
-    inv_r = fields.Boolean('Check pick', store=False, readonly=True, related='hbill_ids.inv_r')
+    inv_b = fields.Boolean('Check boss', store=False, readonly=True, compute='_get_inv_b')
+    inv_p = fields.Boolean('Check prjm', store=False, readonly=True, compute='_get_inv_p')
+    inv_r = fields.Boolean('Check ready', store=False, readonly=True, compute='_get_inv_r')
     
 #     _sql_constraints = [
 #                         ('_check_qty', 'กรุณาระบุจำนวนในรายละเอียดสินค้าให้ถูกต้อง(จำนวนต้องไม่น้อยกว่าหรือเท่ากับศูนย์)', ['qty'])
@@ -99,6 +99,27 @@ class nstda_bst_dbill(models.Model):
             for record in self:
                 if record.qty <= 0:
                     raise ValidationError("กรุณาระบุจำนวนในรายละเอียดสินค้าให้ถูกต้อง(จำนวนต้องไม่น้อยกว่าหรือเท่ากับศูนย์)")
+                
+                
+    @api.one
+    @api.onchange('matno')
+    @api.depends('matno')
+    def _get_inv_b(self):
+        self.inv_b = self.tbill_ids.inv_b
+            
+
+    @api.one
+    @api.onchange('matno')
+    @api.depends('matno')
+    def _get_inv_p(self):
+        self.inv_p = self.tbill_ids.inv_p
+        
+        
+    @api.one
+    @api.onchange('matno')
+    @api.depends('matno')
+    def _get_inv_r(self):
+        self.inv_r = self.tbill_ids.inv_r
                 
                 
     @api.one

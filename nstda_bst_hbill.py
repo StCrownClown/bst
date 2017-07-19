@@ -104,7 +104,6 @@ class nstda_bst_hbill(models.Model):
     
     @api.one
     @api.depends('d_bill_ids')
-    @api.onchange('d_bill_ids')
     def _set_discount(self):
         if self.discount == False :
             res = self.env['nstda.bst.discount'].search([], limit=1, order="id DESC")
@@ -133,17 +132,31 @@ class nstda_bst_hbill(models.Model):
 
 
     @api.one
-    @api.depends('empid','prjm_emp_id')
+    @api.depends('empid','costct_prjno_selection')
     @api.onchange('empid','costct_prjno_selection')
     def _set_prj_cct(self):
         try:
             if self.costct_prjno_selection == 'costct':
                 self.costct = self.empid.emp_dpm_id.dpm_cct_id.id
-            elif self.costct_prjno_selection == 'prjno':
+        except:
+            pass
+        
+        
+    @api.one
+    @api.depends('prjm_emp_id')
+    @api.onchange('prjm_emp_id')
+    def _set_prjm_cct(self):
+        try:
+            if self.costct_prjno_selection == 'prjno':
                 self.costct = self.prjm_emp_id.emp_dpm_id.dpm_cct_id.id
         except:
             pass
         
+    
+    @api.one
+    @api.depends('costct')
+    @api.onchange('costct')
+    def _set_cct_group(self):
         self.cct_group = self.env['nstdamas.costcenter'].search([('id','=',self.empid.emp_dpm_id.dpm_cct_id.id)]).cct_groupcost
         
     
@@ -158,7 +171,7 @@ class nstda_bst_hbill(models.Model):
             
             
     @api.one
-    @api.depends('empid','cr_user_id')
+    @api.depends('empid')
     def _set_emp_info(self):
         if(self.empid):
             self.emp_code = self.empid.emp_id
@@ -167,29 +180,46 @@ class nstda_bst_hbill(models.Model):
             self.org = self.empid.emp_org_id
             self.division = self.empid.emp_dvs_id
             self.dept = self.empid.emp_dpm_id
+
             
+    @api.one
+    @api.depends('cr_user_id')
+    def _set_cr_info(self):
         if(self.cr_user_id):
             self.cr_user_name = self.cr_user_id.emp_fname + ' ' + self.cr_user_id.emp_lname
         
         
     @api.one
-    @api.depends('boss_id','prjm_id','approver')
-    @api.onchange('boss_id','prjm_id','approver')
-    def _set_approve_info(self):
+    @api.depends('boss_id')
+    @api.onchange('boss_id')
+    def _set_boss_info(self):
         if(self.boss_id):
             self.boss_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.boss_id.id)]).id
             if(self.boss_emp_id):
                 self.bossname = self.boss_emp_id.emp_fname + ' ' + self.boss_emp_id.emp_lname
             else:
                 self.bossname = 'ไม่พบข้อมูล'
-              
+        
+        
+    @api.one
+    @api.depends('prjm_id')
+    @api.onchange('prjm_id')
+    def _set_prjm_info(self):
         if(self.prjm_id):
             self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
+            
+            self._set_prjm_cct()
+            
             if(self.prjm_emp_id):
                 self.prjmname = self.prjm_emp_id.emp_fname + ' ' + self.prjm_emp_id.emp_lname
             else:
                 self.prjmname = 'ไม่พบข้อมูล'
-                 
+        
+        
+    @api.one
+    @api.depends('approver')
+    @api.onchange('approver')
+    def _set_approve_info(self):   
         if(self.approver):
             self.approver_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.approver.id)]).id
             if(self.approver_id):
@@ -199,63 +229,107 @@ class nstda_bst_hbill(models.Model):
             
             
     @api.one
-    @api.depends('pick_emp_id','assign_emp_id','receive_emp_id')
-    def _set_pick_assign_receive(self):
+    @api.depends('pick_emp_id')
+    def _set_pick_assign_emp(self):
         if(self.pick_emp_id):
             self.pick_emp_name = self.pick_emp_id.emp_fname + ' ' + self.pick_emp_id.emp_lname
-            
+
+
+    @api.one
+    @api.depends('assign_emp_id')
+    def _set_assign_emp(self):
         if(self.assign_emp_id):
             self.assign_emp_name = self.assign_emp_id.emp_fname + ' ' + self.assign_emp_id.emp_lname
-     
+
+
+    @api.one
+    @api.depends('receive_emp_id')
+    def _set_receive_emp(self):
         if(self.receive_emp_id):
             self.receive_emp_name = self.receive_emp_id.emp_fname + ' ' + self.receive_emp_id.emp_lname
             
             
     @api.one
     @api.onchange('cr_user_id','status')
-    @api.depends('status')
-    def _inv(self):
+    @api.depends('cr_user_id','status')
+    def _inv_p(self):
         if self.status == 'wait_prjm':
-            if self.prjm_id.id == self._uid:
+            if self.prjm_id.id == self._uid or self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_p = True
             else:
                 self.inv_p = False
-        elif self.status == 'wait_boss':
-            if self.boss_id.id == self._uid:
+#         if self._uid == 1:
+#             self.inv_p = True
+
+
+    @api.one
+    @api.onchange('cr_user_id','status')
+    @api.depends('cr_user_id','status')
+    def _inv_b(self):
+        if self.status == 'wait_boss':
+            if self.boss_id.id == self._uid or self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_b = True
             else:
                 self.inv_b = False
-        elif self.status == 'wait_approvers':
+#         if self._uid == 1:
+#             self.inv_b = True
+
+
+    @api.one
+    @api.onchange('cr_user_id','status')
+    @api.depends('cr_user_id','status')
+    def _inv_a(self):
+        if self.status == 'wait_approvers':
             if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_a = True
             else:
-                self.inv_a = False  
-        elif self.status == 'pick':
+                self.inv_a = False
+
+
+    @api.one
+    @api.onchange('cr_user_id','status')
+    @api.depends('cr_user_id','status')
+    def _inv_k(self):
+        if self.status == 'pick':
             if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_k = True
             else:
                 self.inv_k = False
-        elif self.status =='ready':
+                
+                
+    @api.one
+    @api.onchange('cr_user_id','status')
+    @api.depends('cr_user_id','status')
+    def _inv_r(self):
+        if self.status == 'ready':
             if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_r = True
             else:
-                self.inv_r = False   
-        elif self.status == 'draft' or self.status == 'edit':
+                self.inv_r = False
+
+
+    @api.one
+    @api.onchange('cr_user_id','status')
+    @api.depends('cr_user_id','status')
+    def _inv_c(self):
+        if self.status == 'draft' or self.status == 'edit':
             cr_user = self.cr_user_id.emp_rusers_id.id
             emp_user = self.empid.emp_rusers_id.id
             if cr_user == self._uid or emp_user == self._uid:
                 self.inv_c = True
             else:
                 self.inv_c = False
-            
-        if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
-            self.inv_p = True
-            self.inv_b = True
-            
+                
+    @api.one
+    @api.depends('status')
+    @api.onchange('status')
+    def _set_db_state(self):
+        self.env['nstda.bst.dbill']._get_state()
+
             
     @api.one
-    @api.onchange('cr_user_id','status')
-    @api.depends('status')
+    @api.onchange('d_bill_ids','status')
+    @api.depends('d_bill_ids','status')
     def _check(self):
         for v in self.d_bill_ids:
             if v.matno.qty - v.qty < 0:
@@ -278,16 +352,16 @@ class nstda_bst_hbill(models.Model):
     emp_code = fields.Char('รหัสผู้เบิก', readonly=True, compute='_set_emp_info')
     empname = fields.Char('พนักงานผู้เบิก', readonly=True, compute='_set_emp_info')
     
-    boss_emp_id = fields.Many2one('nstdamas.employee', 'ผู้อนุมัติเบิกจ่าย', readonly=True, store=False, compute='_set_approve_info')
-    prjm_emp_id = fields.Many2one('nstdamas.employee', 'หัวหน้าโครงการ', readonly=True, store=False, compute='_set_approve_info')
+    boss_emp_id = fields.Many2one('nstdamas.employee', 'ผู้อนุมัติเบิกจ่าย', readonly=True, store=False, compute='_set_boss_info')
+    prjm_emp_id = fields.Many2one('nstdamas.employee', 'หัวหน้าโครงการ', readonly=True, store=False, compute='_set_prjm_info')
     approver_id = fields.Many2one('nstdamas.employee', 'เจ้าหน้าที่ศูนย์หนังสือ', readonly=True, compute='_set_approve_info')
-    bossname = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_approve_info')
-    prjmname = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_approve_info')
+    bossname = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_boss_info')
+    prjmname = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_prjm_info')
     approvername = fields.Char('เจ้าหน้าที่ศูนย์หนังสือ', readonly=True, store=False, compute='_set_approve_info')
     
     cr_user_id = fields.Many2one('nstdamas.employee', 'พนักงานผู้บันทึก', readonly=True, required=True, default=lambda self:self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]))
-    cr_user_name = fields.Char('ผู้บันทึก', readonly=True, compute='_set_emp_info')
-    
+    cr_user_name = fields.Char('ผู้บันทึก', readonly=True, compute='_set_cr_info')
+
     org = fields.Many2one('nstdamas.org', 'ศูนย์ที่สังกัด', readonly=True, store=True, compute='_set_emp_info')
     division = fields.Many2one('nstdamas.division', 'ฝ่ายที่สังกัด', readonly=True, store=True, compute='_set_emp_info')
     dept = fields.Many2one('nstdamas.department', 'งานที่สังกัด', readonly=True, store=True, compute='_set_emp_info')
@@ -297,7 +371,7 @@ class nstda_bst_hbill(models.Model):
     costct = fields.Many2one(
                              'nstdamas.costcenter',
                              'หน่วยงานที่เบิก', default=_set_prj_cct)
-    cct_group = fields.Char('cctgroup', computer=_set_prj_cct)
+    cct_group = fields.Char('cctgroup', compute=_set_cct_group)
     
     prjno = fields.Many2one('nstdamas.project', 'โครงการที่เบิก', domain=[('prj_end', '>=', datetime.now().strftime('%Y-%m-%d'))])
     objdesc = fields.Text('วัตถุประสงค์ในการเบิก', required=True)
@@ -307,9 +381,9 @@ class nstda_bst_hbill(models.Model):
     pick_emp_id = fields.Many2one('nstdamas.employee', 'ผู้จัดเตรียมสินค้า', readonly=True)
     assign_emp_id = fields.Many2one('nstdamas.employee', 'ผู้จ่ายสินค้า', readonly=True)
     receive_emp_id = fields.Many2one('nstdamas.employee', 'ผู้รับสินค้า')
-    pick_emp_name = fields.Char('ผู้จัดเตรียมสินค้า', readonly=True, compute='_set_pick_assign_receive')
-    assign_emp_name = fields.Char('ผู้จ่ายสินค้า', readonly=True, compute='_set_pick_assign_receive')
-    receive_emp_name = fields.Char('ผู้รับสินค้า', readonly=True, compute='_set_pick_assign_receive')
+    pick_emp_name = fields.Char('ผู้จัดเตรียมสินค้า', readonly=True, compute='_set_pick_assign_emp')
+    assign_emp_name = fields.Char('ผู้จ่ายสินค้า', readonly=True, compute='_set_assign_emp')
+    receive_emp_name = fields.Char('ผู้รับสินค้า', readonly=True, compute='_set_receive_emp')
     
     book_date = fields.Datetime('วันที่ยืนยันการเบิก', readonly=True)
     boss_adate = fields.Datetime('วันที่อนุมัติเบิกจ่าย', readonly=True)
@@ -357,12 +431,12 @@ class nstda_bst_hbill(models.Model):
     
     qty_check = fields.Boolean('Check qty', readonly=True, compute='_check')
     
-    inv_c = fields.Boolean('Check user', readonly=True, compute='_inv')
-    inv_p = fields.Boolean('Check prjm_id', readonly=True, compute='_inv')
-    inv_b = fields.Boolean('Check boss_id', readonly=True, compute='_inv')
-    inv_a = fields.Boolean('Check approver', readonly=True, compute='_inv')
-    inv_k = fields.Boolean('Check pick', readonly=True, compute='_inv')
-    inv_r = fields.Boolean('Check ready', readonly=True, compute='_inv')
+    inv_c = fields.Boolean('Check user', readonly=True, compute='_inv_c')
+    inv_p = fields.Boolean('Check prjm', readonly=True, compute='_inv_p')
+    inv_b = fields.Boolean('Check boss', readonly=True, compute='_inv_b')
+    inv_a = fields.Boolean('Check approver', readonly=True, compute='_inv_a')
+    inv_k = fields.Boolean('Check pick', readonly=True, compute='_inv_k')
+    inv_r = fields.Boolean('Check ready', readonly=True, compute='_inv_r')
 
     
     @api.one

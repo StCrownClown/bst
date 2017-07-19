@@ -30,14 +30,14 @@
 			<field name="model">nstda.bst.dbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
-				<tree string="nstda_bst_dbill_tree_2" class="nstda_bst_dbill_tree_2" editable="bottom" create="true" delete="false" edit="true" >
+				<tree string="nstda_bst_dbill_tree_2" class="nstda_bst_dbill_tree_2" editable="bottom" create="true" delete="true" edit="true" >
 					<field name="status" invisible="1" />
 					<field name="inv_b" invisible="1" />
 					<field name="inv_p" invisible="1" />
 					<field name="inv_r" invisible="1" />
 					<field name="no" />
 					<field name="matno" string="สินค้า" 
-						attrs="{'readonly':[('status','not in',['draft','ready',False])]}" />
+						attrs="{'readonly':[('status','not in',['draft','wait_boss','wait_prjm','ready',False])]}" />
 <!-- 					<field name="matdesc" /> -->
 					<field name="qty" readonly="1" />
 					<field name="uom" />
@@ -96,7 +96,7 @@
 						
 						<label for="balance_rs" />
 						<div>
-							<field name="balance_rs" style="width: 20%%" />
+							<field name="balance_rs" style="color:Red;width: 20%%" />
 							<field name="uom_2" style="width: 10%%;" 
 								attrs="{'invisible':[('matno','=',False)]}" />
 						</div>
