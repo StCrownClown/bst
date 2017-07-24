@@ -9,6 +9,7 @@ from dateutil import parser
 from datetime import datetime, timedelta
 from datetime import datetime
 from dateutil import relativedelta as rdelta
+from openerp.osv import osv
 
 import time
 import re
@@ -52,12 +53,12 @@ class nstda_bst_dbill(models.Model):
     no = fields.Integer(string="ลำดับ ", store=True, readonly=True, default=0)
     matno = fields.Many2one('nstda.bst.stock', 'รหัสสินค้า', required=True, domain=[('qty','>','0')])
     hbill_ids = fields.Many2one('nstda.bst.hbill','รายละเอียดสินค้า')
-    tbill_ids = fields.Many2one('nstda.bst.hbill','รายละเอียดสินค้า', store=True, compute='_set_dup_tb')
+    tbill_ids = fields.Many2one('nstda.bst.hbill','รายละเอียดสินค้า', store=True)
 
     qty = fields.Integer('จำนวนที่ต้องการ', required=False)
     sum = fields.Float(string="ราคารวม", store=True, compute='_set_sum')
     qty_res = fields.Integer('จำนวนที่ต้องการ', store=True, readonly=False)
-    sum_res = fields.Float(string="ราคารวม", store=False, compute='_set_sum_res')
+    sum_res = fields.Float(string="ราคารวม", store=True, compute='_set_sum_res')
     cut_stock = fields.Boolean('ตัดสต็อกสำเร็จ', store=True, default=False)
     return_stock = fields.Boolean('คืนสต็อกสำเร็จ', store=True, compute='check_qty_equal')
     dbill_discount_sum = fields.Float(string="ราคารวม(ส่วนลด)", store=True, compute='_set_discount')
@@ -82,7 +83,7 @@ class nstda_bst_dbill(models.Model):
                                ('wait_approvers', 'รอเบิก'),
                                ('pick', 'รอจัดเตรียมสินค้า'),
                                ('ready', 'รอรับสินค้า'),
-                               ('success', 'รับสินค้าแล้ว')], 'สถานะ', store=True, readonly=True, track_visibility='always', related='hbill_ids.status')
+                               ('success', 'รับสินค้าแล้ว')], 'สถานะ', store=True, readonly=True, track_visibility='always', related='tbill_ids.status')
 
     inv_b = fields.Boolean('Check boss', store=False, readonly=True, compute='_get_inv_b')
     inv_p = fields.Boolean('Check prjm', store=False, readonly=True, compute='_get_inv_p')
@@ -95,7 +96,7 @@ class nstda_bst_dbill(models.Model):
 
     @api.constrains('qty')
     def _check_qty(self):
-        if self.hbill_ids.status not in ['wait_approvers','pick','ready','success'] or self.status != False:
+        if self.hbill_ids.status not in ['wait_boss','wait_prjm','ready'] or self.status != False:
             for record in self:
                 if record.qty <= 0:
                     raise ValidationError("กรุณาระบุจำนวนในรายละเอียดสินค้าให้ถูกต้อง(จำนวนต้องไม่น้อยกว่าหรือเท่ากับศูนย์)")
@@ -133,12 +134,13 @@ class nstda_bst_dbill(models.Model):
                 self.return_stock = False
 
 
-    @api.one
-    @api.depends('status')
-    @api.onchange('status')
-    def _set_dup_tb(self):
-        if self.status in ['wait_boss','wait_prjm','wait_approvers','pick','ready','success']:
-            self.tbill_ids = self.hbill_ids
+    def _set_dup_tb(self, cr, uid, ids, context=None):
+        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('hbill_ids', '=', context['bst_id'])], context=context)
+         
+        for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
+            mat_bill.tbill_ids = mat_bill.hbill_ids
+            mat_bill.qty_res = mat_bill.qty
+            mat_bill.sum_res = mat_bill.qty_res * mat_bill.unitprice
 
 
 #     @api.one
@@ -219,8 +221,6 @@ class nstda_bst_dbill(models.Model):
             if neg:
                 self.qty = 0
                 return neg
-            
-            self.qty_res = self.qty
         
         
     @api.multi
@@ -230,7 +230,7 @@ class nstda_bst_dbill(models.Model):
         limit = {}
         neg = {}
         
-        if self.tbill_ids.amount_after_t > self.tbill_ids.amount_before_approve:
+        if self.tbill_ids.amount_after_t > self.tbill_ids.amount_after_discount:
             limit = {'warning': {
                 'title': _('Warning'),
                 'message': _('ไม่สามารถแก้ไขรายการเบิกได้ เนื่องจากจำนวนเงินสุทธิเกินวงเงินที่อนุมัติ')
@@ -259,6 +259,8 @@ class nstda_bst_dbill(models.Model):
         if neg:
             self.qty_res = 0
             return neg
+        
+        self.hbill_ids = self.tbill_ids
                     
 
     def read(self, cr, uid, ids, fields=None, context=None, load='_classic_read'):

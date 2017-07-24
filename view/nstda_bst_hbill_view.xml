@@ -288,7 +288,7 @@
 								context="{'bst_id': id, 'status':'reject'}" />
 
 							<field name="status" widget="statusbar"
-								statusbar_visible="draft,wait_prjm,wait_boss,wait_approvers,reject,pick,ready,success" />
+								statusbar_visible="reject,draft,wait_prjm,wait_boss,wait_approvers,pick,ready,success" />
 						</div>
 					</header>
 

@@ -19,6 +19,7 @@ from dateutil.relativedelta import relativedelta
 from openerp.exceptions import except_orm, Warning, RedirectWarning
 from openerp import http
 from openerp.http import request
+from openerp.exceptions import ValidationError
 
 # from openerp.tools.translate import _
 # from email import _name
@@ -111,6 +112,13 @@ class nstda_bst_hbill(models.Model):
                 self.discount = res.discount       
             else:
                 self.discount = 0
+        
+        
+#     @api.one
+#     def compute_amount_before_approve(self):
+#         self.amount_before_discount = sum((line.qty * line.unitprice) for line in self.d_bill_ids)
+#         self.discount_value = (self.amount_before_discount * self.discount) / 100
+#         self.amount_before_approve = self.amount_before_discount - self.discount_value
         
         
     @api.one
@@ -312,30 +320,31 @@ class nstda_bst_hbill(models.Model):
     @api.onchange('cr_user_id','status')
     @api.depends('cr_user_id','status')
     def _inv_c(self):
-        if self.status == 'draft' or self.status == 'edit':
+        if self.status == 'draft':
             cr_user = self.cr_user_id.emp_rusers_id.id
             emp_user = self.empid.emp_rusers_id.id
             if cr_user == self._uid or emp_user == self._uid:
                 self.inv_c = True
             else:
                 self.inv_c = False
-                
-    @api.one
-    @api.depends('status')
-    @api.onchange('status')
-    def _set_db_state(self):
-        self.env['nstda.bst.dbill']._get_state()
 
             
     @api.one
-    @api.onchange('d_bill_ids','status')
-    @api.depends('d_bill_ids','status')
+    @api.onchange('t_bill_ids','status')
+    @api.depends('t_bill_ids','status')
     def _check(self):
-        for v in self.d_bill_ids:
+        for v in self.t_bill_ids:
             if v.matno.qty - v.qty < 0:
                 self.qty_check = False
             else:
                 self.qty_check = True
+                
+                
+    @api.constrains('amount_after_t')
+    def _check_limit(self):
+        if self.status not in ['draft','wait_boss','wait_prjm']:
+            if self.amount_after_t > self.amount_after_discount:
+                raise ValidationError("ไม่สามารถแก้ไขรายการเบิกได้ เนื่องจากจำนวนเงินสุทธิเกินวงเงินที่อนุมัติ")
             
 
     _name = 'nstda.bst.hbill'
@@ -375,7 +384,6 @@ class nstda_bst_hbill(models.Model):
     
     prjno = fields.Many2one('nstdamas.project', 'โครงการที่เบิก', domain=[('prj_end', '>=', datetime.now().strftime('%Y-%m-%d'))])
     objdesc = fields.Text('วัตถุประสงค์ในการเบิก', required=True)
-    dbill_desc = fields.Char('จำนวน', readonly=True)
     prj_cct = fields.Char('หน่วยงาน/โครงการ', readonly=True, compute='_set_prj_cct_name', store=True)
     
     pick_emp_id = fields.Many2one('nstdamas.employee', 'ผู้จัดเตรียมสินค้า', readonly=True)
@@ -414,6 +422,9 @@ class nstda_bst_hbill(models.Model):
                   
     discount = fields.Float('ส่วนลด(%)', store=True, compute='_set_discount') 
     
+#     discount_value = fields.Float('ส่วนลด', store=False, readonly=True, compute=compute_amount_before_approve)
+#     amount_before_discount = fields.Float(string='รวม', store=False, readonly=True, compute=compute_amount_before_approve)
+#     amount_before_approve = fields.Float(string='ยอดเบิกสุทธิ', store=True, readonly=True, compute=compute_amount_before_approve)
     discount_value = fields.Float('ส่วนลด', store=False, readonly=True, related='discount_value_right')
     amount_before_discount = fields.Float(string='รวม', store=False, readonly=True, related='amount_before_discount_right')
     amount_before_approve = fields.Float(string='ยอดเบิกสุทธิ', store=False, readonly=True, related='amount_after_discount')   
@@ -424,7 +435,7 @@ class nstda_bst_hbill(models.Model):
 
     discount_t = fields.Float('ส่วนลด', store=False, compute='_compute_amount_last')
     amount_before_t = fields.Float(string='รวม', readonly=True, compute='_compute_amount_last',)
-    amount_after_t = fields.Float(string='ราคารวมสุทธิ', store=False, readonly=True, compute='_compute_amount_last')
+    amount_after_t = fields.Float(string='ราคารวมสุทธิ', store=True, readonly=True, compute='_compute_amount_last')
     
     d_bill_ids = fields.One2many('nstda.bst.dbill', 'hbill_ids', 'รายละเอียดสินค้า')
     t_bill_ids = fields.One2many('nstda.bst.dbill', 'tbill_ids', 'รายละเอียดสินค้า')
@@ -442,32 +453,61 @@ class nstda_bst_hbill(models.Model):
     @api.one
     def bst_sum_record(self):
         res = ""
-        if self.d_bill_ids:
-            for id in self.d_bill_ids:
+        
+        if self.t_bill_ids:
+            for id in self.t_bill_ids:
                 if id:
                     bid = str(id.id)
                     res += "nstda_bst_dbill.id=" + bid + " OR "
             res = res[:-4]
         else:
             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
+
+        if self.status == 'draft':
+            self.env.cr.execute("""
+                UPDATE nstda_bst_dbill SET qty = t2.result
+                FROM ( SELECT matno,hbill_ids,sum(qty) result 
+                FROM nstda_bst_dbill t1 GROUP BY hbill_ids,matno) t2 
+                WHERE ( nstda_bst_dbill.hbill_ids = t2.hbill_ids 
+                AND nstda_bst_dbill.matno = t2.matno )
+                AND ( """ 
+                + res +
+                 ');')
             
-        self.env.cr.execute("""
-            UPDATE nstda_bst_dbill SET qty = t2.result , qty_res = t2.result
-            FROM ( SELECT matno,hbill_ids,sum(qty) result 
-            FROM nstda_bst_dbill t1 GROUP BY hbill_ids,matno) t2 
-            WHERE ( nstda_bst_dbill.hbill_ids = t2.hbill_ids 
-            AND nstda_bst_dbill.matno = t2.matno )
-            AND ( """ + res + ');')
-        
-        self.env.cr.execute("""
-            DELETE FROM nstda_bst_dbill 
-            WHERE id IN ( SELECT id FROM nstda_bst_dbill y1 
-            WHERE EXISTS ( SELECT * FROM nstda_bst_dbill y2 
-            WHERE y1.matno = y2.matno 
-            AND y1.qty = y2.qty 
-            AND y1.hbill_ids = y2.hbill_ids 
-            AND y1.id < y2.id
-            AND ( """ + res + ')));')
+            self.env.cr.execute("""
+                DELETE FROM nstda_bst_dbill 
+                WHERE id IN ( SELECT id FROM nstda_bst_dbill y1 
+                WHERE EXISTS ( SELECT * FROM nstda_bst_dbill y2 
+                WHERE y1.matno = y2.matno 
+                AND y1.qty = y2.qty 
+                AND y1.hbill_ids = y2.hbill_ids 
+                AND y1.id < y2.id
+                AND ( """ 
+                + res +
+                 ')));')
+            
+        else:
+            self.env.cr.execute("""
+                UPDATE nstda_bst_dbill SET qty_res = t2.result
+                FROM ( SELECT matno,tbill_ids,sum(qty_res) result 
+                FROM nstda_bst_dbill t1 GROUP BY tbill_ids,matno) t2 
+                WHERE ( nstda_bst_dbill.tbill_ids = t2.tbill_ids 
+                AND nstda_bst_dbill.matno = t2.matno )
+                AND ( """ 
+                + res +
+                 ');')
+            
+            self.env.cr.execute("""
+                DELETE FROM nstda_bst_dbill 
+                WHERE id IN ( SELECT id FROM nstda_bst_dbill y1 
+                WHERE EXISTS ( SELECT * FROM nstda_bst_dbill y2 
+                WHERE y1.matno = y2.matno 
+                AND y1.qty_res = y2.qty_res 
+                AND y1.tbill_ids = y2.tbill_ids 
+                AND y1.id < y2.id
+                AND ( """ 
+                + res +
+                 ')));')
     
     
     @api.one
@@ -475,7 +515,7 @@ class nstda_bst_hbill(models.Model):
         
         if self.amount_after_discount > 0:
   
-            for v in self.d_bill_ids:
+            for v in self.t_bill_ids:
                 if v.matno.qty - v.qty < 0:
                     return {'warning': {
                             'title': _('Warning'),
@@ -563,7 +603,7 @@ class nstda_bst_hbill(models.Model):
     @api.one
     def bst_prjm_submit(self):
         
-        if self.amount_after_discount > 0:
+        if self.amount_after_t > 0:
             
             if self.amount_after_discount <= 10000:
                 if self.inv_p == True:
@@ -591,7 +631,7 @@ class nstda_bst_hbill(models.Model):
     @api.one
     def bst_submit_limit(self):
         
-        if self.amount_after_discount > 0:
+        if self.amount_after_t > 0:
             
             if self.inv_b == True:
                 self.boss_adate = datetime.now()
@@ -614,7 +654,7 @@ class nstda_bst_hbill(models.Model):
             self.approver = self._uid
             self.adate = datetime.now()
             
-            for v in self.d_bill_ids:
+            for v in self.t_bill_ids:
                 if v.matno.qty - v.qty < 0:
                     return {'warning': {
                             'title': _('Warning'),
