@@ -67,7 +67,7 @@ class nstda_bst_dbill(models.Model):
     balance = fields.Integer('จำนวนคงเหลือ', readonly=True, store=False, related='matno.qty')
     unitprice = fields.Float('ราคา/ชิ้น', readonly=True, store=True, related='matno.unitprice')
     currency = fields.Char('สกุลเงิน', readonly=True, store=False, related='matno.currency')
-    balance_rs = fields.Integer('จำนวนขอเบิกรออนุมัติ', readonly=True, related='matno.qty_res')
+    balance_rs = fields.Integer('จำนวนขอเบิกรออนุมัติ', readonly=True, related='matno.qty_rs')
     uom = fields.Char('หน่วยนับ', readonly=True, store=True, related='matno.uom')
     uom_1 = fields.Char('หน่วยนับ', readonly=True, store=False, related='uom')
     uom_2 = fields.Char('หน่วยนับ', readonly=True, store=False, related='uom')
@@ -87,6 +87,8 @@ class nstda_bst_dbill(models.Model):
 
     inv_b = fields.Boolean('Check boss', store=False, readonly=True, compute='_get_inv_b')
     inv_p = fields.Boolean('Check prjm', store=False, readonly=True, compute='_get_inv_p')
+    inv_a = fields.Boolean('Check approve', store=False, readonly=True, compute='_get_inv_a')
+    inv_k = fields.Boolean('Check approve', store=False, readonly=True, compute='_get_inv_k')
     inv_r = fields.Boolean('Check ready', store=False, readonly=True, compute='_get_inv_r')
     
 #     _sql_constraints = [
@@ -96,7 +98,7 @@ class nstda_bst_dbill(models.Model):
 
     @api.constrains('qty')
     def _check_qty(self):
-        if self.hbill_ids.status not in ['wait_boss','wait_prjm','ready'] or self.status != False:
+        if self.tbill_ids.status not in ['wait_boss','wait_prjm','ready'] or self.status != False:
             for record in self:
                 if record.qty <= 0:
                     raise ValidationError("กรุณาระบุจำนวนในรายละเอียดสินค้าให้ถูกต้อง(จำนวนต้องไม่น้อยกว่าหรือเท่ากับศูนย์)")
@@ -114,6 +116,20 @@ class nstda_bst_dbill(models.Model):
     @api.depends('matno')
     def _get_inv_p(self):
         self.inv_p = self.tbill_ids.inv_p
+        
+        
+    @api.one
+    @api.onchange('matno')
+    @api.depends('matno')
+    def _get_inv_a(self):
+        self.inv_a = self.tbill_ids.inv_a
+        
+        
+    @api.one
+    @api.onchange('matno')
+    @api.depends('matno')
+    def _get_inv_k(self):
+        self.inv_k = self.tbill_ids.inv_k
         
         
     @api.one
@@ -139,7 +155,13 @@ class nstda_bst_dbill(models.Model):
          
         for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
             mat_bill.tbill_ids = mat_bill.hbill_ids
-            mat_bill.qty_res = mat_bill.qty
+    
+    
+    def _set_res_tb(self, cr, uid, ids, context=None):
+        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('hbill_ids', '=', context['bst_id'])], context=context)
+         
+        for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
+            mat_bill.sum = mat_bill.qty * mat_bill.unitprice
             mat_bill.sum_res = mat_bill.qty_res * mat_bill.unitprice
 
 
@@ -196,7 +218,7 @@ class nstda_bst_dbill(models.Model):
         
        
     @api.multi
-    @api.onchange('matno','qty')           
+    @api.onchange('matno','qty')
     def _onchange_qty(self):
         res = {}
         neg = {}
@@ -229,38 +251,29 @@ class nstda_bst_dbill(models.Model):
         res = {}
         limit = {}
         neg = {}
-        
-        if self.tbill_ids.amount_after_t > self.tbill_ids.amount_after_discount:
-            limit = {'warning': {
-                'title': _('Warning'),
-                'message': _('ไม่สามารถแก้ไขรายการเบิกได้ เนื่องจากจำนวนเงินสุทธิเกินวงเงินที่อนุมัติ')
-            },
-             'value':False }
-        if limit:
-            self.qty_res = 0
-            return limit
+    
+        if self.matno.id != False:
+            if self.qty_res > self.balance:
+                res = {'warning': {
+                    'title': _('Warning'),
+                    'message': _('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                },
+                 'value':False }
+            if res:
+                self.qty_res = 0
+                return res
               
-        if self.qty_res > self.balance:
-            res = {'warning': {
-                'title': _('Warning'),
-                'message': _('จำนวนสินค้าในสต็อกไม่เพียงพอ')
-            },
-             'value':False }
-        if res:
-            self.qty_res = 0
-            return res
-          
-        if self.qty_res < 0:
-            neg = {'warning': {
-                'title': _('Warning'),
-                'message': _('กรุณาระบุจำนวนให้ถูกต้อง')
-            },
-             'value':False }
-        if neg:
-            self.qty_res = 0
-            return neg
-        
-        self.hbill_ids = self.tbill_ids
+            if self.qty_res < 0:
+                neg = {'warning': {
+                    'title': _('Warning'),
+                    'message': _('กรุณาระบุจำนวนให้ถูกต้อง')
+                },
+                 'value':False }
+            if neg:
+                self.qty_res = 0
+                return neg
+            
+            self.hbill_ids = self.tbill_ids
                     
 
     def read(self, cr, uid, ids, fields=None, context=None, load='_classic_read'):

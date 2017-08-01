@@ -14,7 +14,7 @@
 					<field name="matno" />
 					<field name="matdesc" />
 					<field name="qty" />
-					<field name="qty_res" />
+					<field name="qty_rs" />
 					<field name="uom" />
 					<field name="unitprice" />
 				</tree>
@@ -38,6 +38,7 @@
 								<field name="matno" />
 								<field name="matdesc" />
 								<field name="qty" />
+								<field name="qty_rs" />
 								<field name="uom" />
 								<field name="unitprice" />
 								<field name="barno" />

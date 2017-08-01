@@ -122,12 +122,21 @@ class nstda_bst_hbill(models.Model):
         
         
     @api.one
-    @api.depends('d_bill_ids')
-    @api.onchange('d_bill_ids')
+    @api.depends('d_bill_ids','t_bill_ids')
+    @api.onchange('d_bill_ids','t_bill_ids')
     def _compute_amount_right(self):
-        self.amount_before_discount_right = sum((line.qty * line.unitprice) for line in self.d_bill_ids)
-        self.discount_value_right = (self.amount_before_discount_right * self.discount) / 100
-        self.amount_after_discount = self.amount_before_discount_right - self.discount_value_right
+        if self.status == 'draft':
+            self.amount_before_discount_right = sum((line.qty * line.unitprice) for line in self.d_bill_ids)
+            self.discount_value_right = (self.amount_before_discount_right * self.discount) / 100
+            self.amount_after_discount = self.amount_before_discount_right - self.discount_value_right
+        elif self.status in ['wait_boss','wait_prjm']:
+            self.amount_before_discount_right = sum((line.qty_res * line.unitprice) for line in self.t_bill_ids)
+            self.discount_value_right = (self.amount_before_discount_right * self.discount) / 100
+            self.amount_after_discount = self.amount_before_discount_right - self.discount_value_right
+        else:
+            self.amount_before_discount_right = sum((line.qty * line.unitprice) for line in self.t_bill_ids)
+            self.discount_value_right = (self.amount_before_discount_right * self.discount) / 100
+            self.amount_after_discount = self.amount_before_discount_right - self.discount_value_right
             
             
     @api.one
@@ -463,12 +472,12 @@ class nstda_bst_hbill(models.Model):
         else:
             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
 
-        if self.status == 'draft':
+        if self.status in ['draft','wait_boss','wait_prjm']:
             self.env.cr.execute("""
-                UPDATE nstda_bst_dbill SET qty = t2.result
-                FROM ( SELECT matno,hbill_ids,sum(qty) result 
-                FROM nstda_bst_dbill t1 GROUP BY hbill_ids,matno) t2 
-                WHERE ( nstda_bst_dbill.hbill_ids = t2.hbill_ids 
+                UPDATE nstda_bst_dbill SET qty = t2.result, qty_res = t2.result
+                FROM ( SELECT matno,tbill_ids,sum(qty) result 
+                FROM nstda_bst_dbill t1 GROUP BY tbill_ids,matno) t2 
+                WHERE ( nstda_bst_dbill.tbill_ids = t2.tbill_ids 
                 AND nstda_bst_dbill.matno = t2.matno )
                 AND ( """ 
                 + res +
@@ -480,7 +489,7 @@ class nstda_bst_hbill(models.Model):
                 WHERE EXISTS ( SELECT * FROM nstda_bst_dbill y2 
                 WHERE y1.matno = y2.matno 
                 AND y1.qty = y2.qty 
-                AND y1.hbill_ids = y2.hbill_ids 
+                AND y1.tbill_ids = y2.tbill_ids 
                 AND y1.id < y2.id
                 AND ( """ 
                 + res +
@@ -488,7 +497,7 @@ class nstda_bst_hbill(models.Model):
             
         else:
             self.env.cr.execute("""
-                UPDATE nstda_bst_dbill SET qty_res = t2.result
+                UPDATE nstda_bst_dbill SET qty = t2.result, qty_res = t2.result
                 FROM ( SELECT matno,tbill_ids,sum(qty_res) result 
                 FROM nstda_bst_dbill t1 GROUP BY tbill_ids,matno) t2 
                 WHERE ( nstda_bst_dbill.tbill_ids = t2.tbill_ids 
@@ -504,7 +513,7 @@ class nstda_bst_hbill(models.Model):
                 WHERE y1.matno = y2.matno 
                 AND y1.qty_res = y2.qty_res 
                 AND y1.tbill_ids = y2.tbill_ids 
-                AND y1.id < y2.id
+                AND y1.id > y2.id
                 AND ( """ 
                 + res +
                  ')));')
@@ -618,11 +627,11 @@ class nstda_bst_hbill(models.Model):
                     self.status = 'wait_boss'
                 else:
                     raise Warning('สำหรับหัวหน้าโครงการอนุมัติ')
-                
-            try:
-                self.bst_sum_record()
-            except:
-                pass
+            else:    
+                try:
+                    self.bst_sum_record()
+                except:
+                    pass
             
         else:
             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')

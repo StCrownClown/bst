@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <openerp>
 	<data>
-	
-	
-	<!-- Search View -->
+
+
+		<!-- Search View -->
 		<record model="ir.ui.view" id="view_nstda_bst_hbill_search">
 			<field name="name">nstda.bst.hbill.search</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="arch" type="xml">
 				<search string="Bookstore">
 					<group expand="0" string="Search by">
-						<field name="org" string="ศูนย์" 
-							filter_domain="[('org','ilike',self)]" />
-						<field name="division" string="ฝ่าย " 
-							filter_domain="[('division','ilike',self)]" />
-						<field name="dept" string="งาน" 
-							filter_domain="[('dept','ilike',self)]" />
-						<field name="costct" string="หน่วยงาน/โครงการ" 
+						<field name="org" string="ศูนย์" filter_domain="[('org','ilike',self)]" />
+						<field name="division" string="ฝ่าย " filter_domain="[('division','ilike',self)]" />
+						<field name="dept" string="งาน" filter_domain="[('dept','ilike',self)]" />
+						<field name="costct" string="หน่วยงาน/โครงการ"
 							filter_domain="['|',('costct','ilike',self),('prjno','ilike',self)]" />
 					</group>
 
@@ -30,7 +27,7 @@
 						<filter name="costct" string="หน่วยงาน/โครงการ" icon="terp-accessories-archiver"
 							context="{'group_by':'prj_cct'}" />
 					</group>
-					
+
 				</search>
 			</field>
 		</record>
@@ -42,13 +39,13 @@
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
-<!-- 			<field name="act_window_id" ref="view_nstda_bst_hbill_form"/> -->
+				<!-- <field name="act_window_id" ref="view_nstda_bst_hbill_form"/> -->
 
-				<tree string="nstda_bst_hbill_tree" 
+				<tree string="nstda_bst_hbill_tree"
 					colors="red:status=='reject';
 							blue:status=='wait_prjm';blue:status=='wait_boss';
 							orange:status=='wait_approvers';orange:status=='pick';orange:status=='ready';
-							limegreen:status=='success'" >
+							limegreen:status=='success'">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -58,15 +55,14 @@
 					<field name="bossname" />
 					<field name="receive_emp_id" invisible="1" />
 					<field name="receive_emp_name" />
-					<field name="amount_after_discount" 
-						options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
-					
+
 				</tree>
 			</field>
 		</record>
-		
-		
+
+
 		<!-- TreeView Boss -->
 		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_boss">
 			<field name="name">nstda.bst.tree</field>
@@ -74,7 +70,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_boss" create="true" delete="true" edit="true" >
+				<tree string="nstda_bst_hbill_tree_boss" create="true" delete="true"
+					edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -84,14 +81,13 @@
 					<field name="prj_cct" />
 					<field name="boss_id" invisible="1" />
 					<field name="bossname" />
-					<field name="amount_after_discount" 
-						options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
 		</record>
-		
-		
+
+
 		<!-- TreeView Wait Suppliers -->
 		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_wait">
 			<field name="name">nstda.bst.tree</field>
@@ -99,7 +95,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_wait" create="true" delete="true" edit="true" >
+				<tree string="nstda_bst_hbill_tree_wait" create="true" delete="true"
+					edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -109,26 +106,26 @@
 					<field name="prj_cct" />
 					<field name="boss_id" invisible="1" />
 					<field name="bossname" />
-					<field name="amount_after_discount" 
-						options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
 		</record>
-		
-		
-		<!-- TreeView Suppliers Master-->
+
+
+		<!-- TreeView Suppliers Master -->
 		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_sup">
 			<field name="name">nstda.bst.tree</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_sup" create="false" delete="true" edit="true"
+				<tree string="nstda_bst_hbill_tree_sup" create="false" delete="true"
+					edit="true"
 					colors="red:status=='reject';
 							blue:status=='wait_prjm';blue:status=='wait_boss';
 							orange:status=='wait_approvers';orange:status=='pick';orange:status=='ready';
-							limegreen:status=='success'" >
+							limegreen:status=='success'">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -144,14 +141,13 @@
 					<field name="assign_emp_name" />
 					<field name="receive_emp_id" invisible="1" />
 					<field name="receive_emp_name" />
-					<field name="amount_after_discount" 
-						options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
 		</record>
-		
-		
+
+
 		<!-- TreeView Ready -->
 		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_ready">
 			<field name="name">nstda.bst.tree</field>
@@ -159,7 +155,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_ready" create="true" delete="false" edit="true" >
+				<tree string="nstda_bst_hbill_tree_ready" create="true" delete="false"
+					edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -171,14 +168,13 @@
 					<field name="bossname" />
 					<field name="pick_emp_id" invisible="1" />
 					<field name="pick_emp_name" />
-					<field name="amount_after_discount" 
-						options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
 		</record>
-		
-		
+
+
 		<!-- TreeView Success -->
 		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_success">
 			<field name="name">nstda.bst.tree</field>
@@ -186,7 +182,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_success" create="true" delete="false" edit="true" >
+				<tree string="nstda_bst_hbill_tree_success" create="true"
+					delete="false" edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -202,14 +199,13 @@
 					<field name="assign_emp_name" />
 					<field name="receive_emp_id" invisible="1" />
 					<field name="receive_emp_name" />
-					<field name="amount_after_discount" 
-						options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
 		</record>
-		
-		
+
+
 		<!-- TreeView Report 1 -->
 		<record model="ir.ui.view" id="view_nstda_bst_report_tree_1">
 			<field name="name">nstda.bst.tree</field>
@@ -217,7 +213,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_report_tree_1" create="false" delete="false" edit="false" >
+				<tree string="nstda_bst_report_tree_1" create="false" delete="false"
+					edit="false">
 					<field name="docno" string="เลขที่เอกสาร" />
 					<field name="emp_code" string="รหัสผู้เบิก" />
 					<field name="empname" string="ชื่อผู้เบิก" />
@@ -227,63 +224,65 @@
 				</tree>
 			</field>
 		</record>
-		
-		
+
+
 		<!-- Form View -->
 		<record model="ir.ui.view" id="view_nstda_bst_hbill_form">
 			<field name="name">nstda.bst.hbill.form</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">form</field>
 			<field name="arch" type="xml">
-				<form string="nstda_bst_hbill_form" create="false" edit="true" delete="true">
+				<form string="nstda_bst_hbill_form" create="false" edit="true"
+					delete="true">
 					<header>
 						<div class="oe_inline">
 
-							<button name="%(action_view_nstda_bst_hbill_send_approval)d" string="ยืนยันการเบิก" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':[('status','!=','draft')]}" 
-								context="{'bst_id': id}" />
-<!-- 								attrs="{'invisible':[('inv_c','=',False)]}"  -->
-<!-- 								confirm="คุณต้องการยืนยันการเบิกสินค้า ?" /> -->
-								
-							<button name="%(action_view_nstda_bst_hbill_prjm_submit)d" string="หัวหน้าโครงการอนุมัติ" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':[('status','!=','wait_prjm')]}"
-								context="{'bst_id': id}" />
-<!-- 								attrs="{'invisible':[('inv_p','=',False)]}"  -->
-<!-- 								confirm="คุณต้องการอนุมัติการเบิกสินค้า ?" /> -->
+							<button name="%(action_view_nstda_bst_hbill_send_approval)d"
+								string="ยืนยันการเบิก" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':[('status','!=','draft')]}" context="{'bst_id': id}" />
+							<!-- attrs="{'invisible':[('inv_c','=',False)]}" -->
+							<!-- confirm="คุณต้องการยืนยันการเบิกสินค้า ?" /> -->
 
-							<button name="%(action_view_nstda_bst_hbill_submit_limit)d" string="อนุมัติวงเงินการเบิก" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':[('status','!=','wait_boss')]}" 
-								context="{'bst_id': id}" />
-<!-- 								attrs="{'invisible':[('inv_b','=',False)]}"  -->
-<!-- 								confirm="คุณต้องการอนุมัติวงเงินการเบิก?" /> -->
+							<button name="%(action_view_nstda_bst_hbill_prjm_submit)d"
+								string="หัวหน้าโครงการอนุมัติ" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':[('status','!=','wait_prjm')]}" context="{'bst_id': id}" />
+							<!-- attrs="{'invisible':[('inv_p','=',False)]}" -->
+							<!-- confirm="คุณต้องการอนุมัติการเบิกสินค้า ?" /> -->
 
-							<button name="%(action_view_nstda_bst_hbill_submit_approval)d" string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
+							<button name="%(action_view_nstda_bst_hbill_submit_limit)d"
+								string="อนุมัติวงเงินการเบิก" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':[('status','!=','wait_boss')]}" context="{'bst_id': id}" />
+							<!-- attrs="{'invisible':[('inv_b','=',False)]}" -->
+							<!-- confirm="คุณต้องการอนุมัติวงเงินการเบิก?" /> -->
+
+							<button name="%(action_view_nstda_bst_hbill_submit_approval)d"
+								string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_check','=',False)]}"
-								context="{'bst_id': id}"
-								groups="base.group_nstda_bst_authorities" />
-<!-- 								attrs="{'invisible':['|',('inv_a','=',False),('status','!=','wait_approvers')]}" -->
-<!-- 								confirm="คุณต้องการอนุมัติการเบิกสินค้า?"  -->
+								context="{'bst_id': id}" groups="base.group_nstda_bst_authorities" />
+							<!-- attrs="{'invisible':['|',('inv_a','=',False),('status','!=','wait_approvers')]}" -->
+							<!-- confirm="คุณต้องการอนุมัติการเบิกสินค้า?" -->
 
-							<button name="%(action_view_nstda_bst_hbill_check_qty)d" string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_check','!=',False)]}" 
-								context="{'bst_id': id}"
-								groups="base.group_nstda_bst_authorities" />
-<!-- 								attrs="{'invisible':['|',('inv_r','=',False),('status','!=','pick')]}"  -->
-<!-- 								confirm="คุณต้องการยืนยันการเตรียมสินค้า?"  -->
+							<button name="%(action_view_nstda_bst_hbill_check_qty)d"
+								string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_check','!=',False)]}"
+								context="{'bst_id': id}" groups="base.group_nstda_bst_authorities" />
+							<!-- attrs="{'invisible':['|',('inv_r','=',False),('status','!=','pick')]}" -->
+							<!-- confirm="คุณต้องการยืนยันการเตรียมสินค้า?" -->
 
-							<button name="%(action_view_nstda_bst_hbill_submit_pick)d" string="ยืนยันการเตรียมสินค้า" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':[('status','!=','pick')]}" 
-								context="{'bst_id': id}"
+							<button name="%(action_view_nstda_bst_hbill_submit_pick)d"
+								string="ยืนยันการเตรียมสินค้า" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':[('status','!=','pick')]}" context="{'bst_id': id}"
 								groups="base.group_nstda_bst_authorities" />
-<!-- 								attrs="{'invisible':['|',('inv_r','=',False),('status','!=','pick')]}"  -->
-<!-- 								confirm="คุณต้องการยืนยันการเตรียมสินค้า?"  -->
+							<!-- attrs="{'invisible':['|',('inv_r','=',False),('status','!=','pick')]}" -->
+							<!-- confirm="คุณต้องการยืนยันการเตรียมสินค้า?" -->
 
-							<button name="%(action_view_nstda_bst_note_ready)d" string="ยืนยันการจ่ายสินค้า" type="action" class="oe_read_only oe_highlight"
+							<button name="%(action_view_nstda_bst_note_ready)d"
+								string="ยืนยันการจ่ายสินค้า" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':['|',('inv_r','=',False),('status','!=','ready')]}"
-								context="{'bst_id': id, 'status':'success'}" 
-								groups="base.group_nstda_bst_authorities" />
-								
-							<button name="%(action_view_nstda_bst_note_cancel)d" string="ยกเลิกการเบิก" type="action" class="oe_read_only oe_highlight"
+								context="{'bst_id': id, 'status':'success'}" groups="base.group_nstda_bst_authorities" />
+
+							<button name="%(action_view_nstda_bst_note_cancel)d"
+								string="ยกเลิกการเบิก" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':[('status','in',['reject','pick','ready','success'])]}"
 								context="{'bst_id': id, 'status':'reject'}" />
 
@@ -295,157 +294,168 @@
 					<sheet>
 
 						<group>
-						<h1>
-							<label string="เลขที่เอกสาร   " />
-							<field name="docno" class="oe_inline" />
-						</h1>
+							<h1>
+								<label string="เลขที่เอกสาร   " />
+								<field name="docno" class="oe_inline" />
+							</h1>
 						</group>
-						
+
 						<group>
-							<field name="cr_user_id" 
-								attrs="{'readonly':[('status','!=','draft')]}" />
-							<field name="empid" 
-								attrs="{'readonly':[('status','!=','draft')]}" />
-							<field name="costct_prjno_selection" 
-								attrs="{'readonly':[('status','!=','draft')]}" />
+							<field name="cr_user_id" attrs="{'readonly':[('status','!=','draft')]}" />
+							<field name="empid" attrs="{'readonly':[('status','!=','draft')]}" />
+							<field name="costct_prjno_selection" attrs="{'readonly':[('status','!=','draft')]}" />
 							<field name="costct" style="display:inline;"
 								attrs="{'invisible':['|','|',('costct_prjno_selection','=','prjno'), ('costct_prjno_selection','=',False)],
- 										'required':[('costct_prjno_selection','=','costct')], 'readonly':[('status','!=','draft')]}" 
- 								context="{'tree_view_ref' : 'nstda_bst.view_nstdamas_costcenter_tree_2'}"
- 								domain="[('cct_groupcost','=',cct_group)]" />
- 							<field name="cct_group" invisible="1" />
+ 										'required':[('costct_prjno_selection','=','costct')], 'readonly':[('status','!=','draft')]}"
+								context="{'tree_view_ref' : 'nstda_bst.view_nstdamas_costcenter_tree_2'}"
+								domain="[('cct_groupcost','=',cct_group)]" />
+							<field name="cct_group" invisible="1" />
 							<field name="prjno" style="display:inline;"
 								attrs="{'invisible':['|','|',('costct_prjno_selection','=','costct'), ('costct_prjno_selection','=',False)],
  										'required':[('costct_prjno_selection','=','prjno')], 'readonly':[('status','!=','draft')]}" />
-							<field name="objdesc"
-								attrs="{'readonly':[('status','!=','draft')]}" />
+							<field name="objdesc" attrs="{'readonly':[('status','!=','draft')]}" />
 						</group>
-						
+
 						<group>
 							<field name="prjm_emp_id"
 								attrs="{'invisible':['|',('status','=','draft'),('costct_prjno_selection','=','costct')]}" />
 
 							<label for="boss_emp_id" string="ผู้อนุมัติเบิกจ่าย"
-								attrs="{'invisible':[('status','=','draft')]}"  />
-								<div>
+								attrs="{'invisible':[('status','=','draft')]}" />
+							<div>
 								<span>
 									<field name="boss_emp_id" style="width: 300px"
-										attrs="{'invisible':[('status','=','draft')]}"  />
+										attrs="{'invisible':[('status','=','draft')]}" />
 								</span>
-								
+
 								<span>
-								<label for="boss_adate" string="วันที่อนุมัติเบิกจ่าย"
-									attrs="{'invisible':[('status','=','draft')]}" />
+									<label for="boss_adate" string="วันที่อนุมัติเบิกจ่าย"
+										attrs="{'invisible':[('status','=','draft')]}" />
 									<field name="boss_adate" style="width: 200px"
-										attrs="{'invisible':[('status','=','draft')]}"  />
+										attrs="{'invisible':[('status','=','draft')]}" />
 								</span>
-								</div>
+							</div>
 
 							<label for="approver_id" string="เจ้าหน้าที่ศูนย์หนังสือ"
-								attrs="{'invisible':[('status','=','draft')]}"  />
-								<div>	
+								attrs="{'invisible':[('status','=','draft')]}" />
+							<div>
 								<span>
 									<field name="approver_id" style="width: 300px"
 										attrs="{'invisible':[('status','=','draft')]}" />
 								</span>
-								
+
 								<span>
-								<label for="adate" string="วันที่เจ้าหน้าที่อนุมัติ"
-									attrs="{'invisible':[('status','=','draft')]}"  />
+									<label for="adate" string="วันที่เจ้าหน้าที่อนุมัติ"
+										attrs="{'invisible':[('status','=','draft')]}" />
 									<field name="adate" style="width: 200px"
 										attrs="{'invisible':[('status','=','draft')]}" />
 								</span>
-								</div>
-						</group>
-						
-						<group>
-						<label for="receive_emp_id" string="ผู้รับสินค้า"
-							attrs="{'invisible':[('status','!=','success')]}"  />
-							<div>	
-							<span>
-								<field name="receive_emp_id" style="width: 300px" readonly="1"
-									attrs="{'invisible':[('status','!=','success')]}" />
-							</span>
-							<span>
-							
-							<label for="post_date" string="วันที่รับสินค้า"
-								attrs="{'invisible':[('status','!=','success')]}" />
-								<field name="post_date" style="width: 200px"
-									attrs="{'invisible':[('status','!=','success')]}" />
-							</span>
 							</div>
 						</group>
-						
+
+						<group>
+							<label for="receive_emp_id" string="ผู้รับสินค้า"
+								attrs="{'invisible':[('status','!=','success')]}" />
+							<div>
+								<span>
+									<field name="receive_emp_id" style="width: 300px"
+										readonly="1" attrs="{'invisible':[('status','!=','success')]}" />
+								</span>
+								<span>
+
+									<label for="post_date" string="วันที่รับสินค้า"
+										attrs="{'invisible':[('status','!=','success')]}" />
+									<field name="post_date" style="width: 200px"
+										attrs="{'invisible':[('status','!=','success')]}" />
+								</span>
+							</div>
+						</group>
+
 						<hr />
 
-							<label for="d_bill_ids" string="รายละเอียดสินค้า" colspan="3" />
-							<field name="d_bill_ids" nolabel="1" colspan="6"
-								context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree'}" 
-								attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
-										'readonly':[('inv_c','=',False)]}" />
-							<field name="t_bill_ids" nolabel="1" colspan="6"
-								context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree_2'}" 
-								attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
-										'readonly':[('inv_b','=',False),('inv_p','=',False),('inv_r','=',False),('status','in',['wait_approvers','pick','success'])]}" />
-								
+						<label for="d_bill_ids" string="รายละเอียดสินค้า" colspan="3" />
+						<field name="d_bill_ids" nolabel="1" colspan="6"
+							context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree'}"
+							attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
+									'readonly':[('inv_c','=',False)]}" />
+						<field name="t_bill_ids" nolabel="1" colspan="6"
+							context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree_2'}"
+							attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
+									'readonly':[('inv_b','=',False),('inv_p','=',False),('inv_a','=',False),('inv_k','=',False),('inv_r','=',False)]}" />
+
 						<group>
 
-							<group class="oe_subtotal_footer oe_left"
-								name="sale_total">
+							<group class="oe_subtotal_footer oe_left" name="sale_total">
 								<field name="amount_before_discount" widget='monetary'
-									options="{'currency_field': 'currency_id'}" 
+									options="{'currency_field': 'currency_id'}"
 									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 								<field name="discount_value" widget='monetary'
-									options="{'currency_field': 'currency_id'}" 
+									options="{'currency_field': 'currency_id'}"
 									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
-								<field name="amount_before_approve" class="oe_subtotal_footer_separator" widget='monetary'
-									options="{'currency_field': 'currency_id'}" 
+								<field name="amount_before_approve" class="oe_subtotal_footer_separator"
+									widget='monetary' options="{'currency_field': 'currency_id'}"
 									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 							</group>
 
-							<group class="oe_subtotal_footer oe_right" 
-								name="sale_total">
+							<group class="oe_subtotal_footer oe_right" name="sale_total">
 								<field name="amount_before_discount_right" widget='monetary'
-									options="{'currency_field': 'currency_id'}" 
+									options="{'currency_field': 'currency_id'}"
 									attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 								<field name="discount_value_right" widget='monetary'
-									options="{'currency_field': 'currency_id'}" 
+									options="{'currency_field': 'currency_id'}"
 									attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
-								<field name="amount_after_discount" class="oe_subtotal_footer_separator" widget='monetary'
-									options="{'currency_field': 'currency_id'}" 
+								<field name="amount_after_discount" class="oe_subtotal_footer_separator"
+									widget='monetary' options="{'currency_field': 'currency_id'}"
 									attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
-							
+
 								<field name="amount_before_t" widget='monetary'
-									options="{'currency_field': 'currency_id'}" 
+									options="{'currency_field': 'currency_id'}"
 									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 								<field name="discount_t" widget='monetary'
-									options="{'currency_field': 'currency_id'}" 
-									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />	
-								<field name="amount_after_t" class="oe_subtotal_footer_separator" widget='monetary'
-									options="{'currency_field': 'currency_id'}" 
+									options="{'currency_field': 'currency_id'}"
+									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+								<field name="amount_after_t" class="oe_subtotal_footer_separator"
+									widget='monetary' options="{'currency_field': 'currency_id'}"
 									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
 							</group>
 						</group>
-						
+
 						<div class="alert-box ann"
 							style="color:#555;border-radius:10px;font-family:Tahoma,Geneva,Arial,sans-serif;font-size:12px;padding:10px 36px;margin:10px;"
-							attrs="{'invisible':[('status','!=','draft')]}" >
-						<hr />
+							attrs="{'invisible':[('status','!=','draft')]}">
+							<hr />
 							<span>Info: </span>
-							<br/>ข้อมูลเบื้องต้นสำหรับเบิกสินค้า
-							<br/>"เกณฑ์ในการเบิกสินค้าภายในของสำนักงานฯ"
-							<br/>1. กรอกแบบฟอร์มการขอเบิกสินค้าในระบบให้สมบูรณ์ ล่วงหน้าวันที่ต้องการรับสินค้าอย่างน้อย 2 วัน
-							<br/>2. การเบิกสินค้าที่สมบูรณ์จะต้องได้รับการอนุมัติจากผู้บังคับบัญชาของท่าน
-							<br/>3. สินค้าที่จะเบิก ต้องมีวัตถุประสงค์เพื่อใช้ในกิจการของสำนักงานฯ เท่านั้น และไม่ควรเบิกเก็บไว้เป็นสต็อคของท่าน
-							<br/>    หรือเพื่อให้พนักงานนำไปใช้ส่วนตัว 
-							<br/>    *สำหรับพนักงานที่ต้องการนำไปใช้เองนั้น สามารถซื้อสินค้าดังกล่าวได้ที่หน้าร้านของศูนย์หนังสือ สวทช.*
-							<br/>วงเงินในการอนุมัติเพื่อเบิกสินค้าภายในของสำนักงาน (ตามประกาศในคู่มืออำนาจการดำเนินงานของ สวทช. ณ วันที่ 20/03/2560)
-							<br/>1. ผช.ผพว./ รอง ผอ.ศูนย์/ รอง ผศจ. ไม่เกิน 150,000 บาท 
-							<br/>2. ผอ.ฝ่าย/ ผอ.หน่วยวิจัย ไม่เกิน 60,000 บาท
-							<br/>3. หัวหน้างาน/ ผู้จัดการ ไม่เกิน 10,000 บาท
-							<br/>สอบถามข้อมูลเพิ่มเติมได้ที่ nstdabookstore@nstda.or.th
+							<br />
+							ข้อมูลเบื้องต้นสำหรับเบิกสินค้า
+							<br />
+							"เกณฑ์ในการเบิกสินค้าภายในของสำนักงานฯ"
+							<br />
+							1. กรอกแบบฟอร์มการขอเบิกสินค้าในระบบให้สมบูรณ์
+							ล่วงหน้าวันที่ต้องการรับสินค้าอย่างน้อย 2 วัน
+							<br />
+							2.
+							การเบิกสินค้าที่สมบูรณ์จะต้องได้รับการอนุมัติจากผู้บังคับบัญชาของท่าน
+							<br />
+							3. สินค้าที่จะเบิก ต้องมีวัตถุประสงค์เพื่อใช้ในกิจการของสำนักงานฯ
+							เท่านั้น และไม่ควรเบิกเก็บไว้เป็นสต็อคของท่าน
+							<br />
+							หรือเพื่อให้พนักงานนำไปใช้ส่วนตัว
+							<br />
+							*สำหรับพนักงานที่ต้องการนำไปใช้เองนั้น
+							สามารถซื้อสินค้าดังกล่าวได้ที่หน้าร้านของศูนย์หนังสือ สวทช.*
+							<br />
+							วงเงินในการอนุมัติเพื่อเบิกสินค้าภายในของสำนักงาน
+							(ตามประกาศในคู่มืออำนาจการดำเนินงานของ สวทช. ณ วันที่ 20/03/2560)
+							<br />
+							1. ผช.ผพว./ รอง ผอ.ศูนย์/ รอง ผศจ. ไม่เกิน 150,000 บาท
+							<br />
+							2. ผอ.ฝ่าย/ ผอ.หน่วยวิจัย ไม่เกิน 60,000 บาท
+							<br />
+							3. หัวหน้างาน/ ผู้จัดการ ไม่เกิน 10,000 บาท
+							<br />
+							สอบถามข้อมูลเพิ่มเติมได้ที่ nstdabookstore@nstda.or.th
 						</div>
-					
+
 						<hr />
 						<footer>
 							<group>
@@ -465,7 +475,7 @@
 								</group>
 							</group>
 						</footer>
-						
+
 						<field name="prjm_id" invisible="1" />
 						<field name="boss_id" invisible="1" />
 						<field name="approver" invisible="1" />
@@ -478,7 +488,7 @@
 						<field name="inv_r" invisible="1" />
 
 					</sheet>
-					
+
 				</form>
 			</field>
 		</record>

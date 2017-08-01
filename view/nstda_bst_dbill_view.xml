@@ -34,18 +34,20 @@
 					<field name="status" invisible="1" />
 					<field name="inv_b" invisible="1" />
 					<field name="inv_p" invisible="1" />
+					<field name="inv_a" invisible="1" />
+					<field name="inv_k" invisible="1" />
 					<field name="inv_r" invisible="1" />
 					<field name="no" />
 					<field name="matno" string="สินค้า" 
-						attrs="{'readonly':[('status','not in',['draft','wait_boss','wait_prjm','ready',False])]}" />
+						attrs="{'readonly':[('status','not in',['draft','wait_boss','wait_prjm','wait_approvers','pick','ready',False])]}" />
 <!-- 					<field name="matdesc" /> -->
 					<field name="qty" readonly="1" />
 					<field name="uom" />
 					<field name="unitprice" />
 					<field name="sum" string="ราคารวม(อนุมัติ)" />
 				    <field name="qty_res" 
-				    	attrs="{'readonly':[('inv_b','=',False),('inv_p','=',False),('inv_r','=',False)], 
-				    			'required':[('status','in',['draft','wait_boss','wait_prjm','ready',False])]}" />
+				    	attrs="{'readonly':[('inv_b','=',False),('inv_p','=',False),('inv_a','=',False),('inv_k','=',False),('inv_r','=',False)], 
+				    			'required':[('status','in',['draft','wait_boss','wait_prjm','wait_approvers','pick','ready',False])]}" />
 				    <field name="sum_res" string="ราคารวม(จ่ายจริง)" />
 				    <field name="dbill_discount_sum" invisible="1" />
 				</tree>

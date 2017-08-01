@@ -47,9 +47,9 @@ class nstda_bst_stock(models.Model):
 
     @api.one
     def _set_qty(self):
-        getbill_rs = self.env['nstda.bst.dbill'].search([('matno', '=', self.id),('hbill_ids','!=',False)])
-        set_sum = sum(line.qty for line in getbill_rs)
-        self.qty_res = set_sum
+        getbill_rs = self.env['nstda.bst.dbill'].search([('matno', '=', self.id),('tbill_ids','!=',False),('status','!=','success')])
+        set_sum = sum(line.qty_res for line in getbill_rs)
+        self.qty_rs = set_sum
         
         
     def _cut_stock(self, cr, uid, ids, context=None):
@@ -87,7 +87,7 @@ class nstda_bst_stock(models.Model):
     plant = fields.Char('ศูนย์ที่จัดเก็บสินค้า', readonly=True)
     storage = fields.Char('คลังที่จัดเก็บสินค้า', readonly=True)
     qty = fields.Integer('จำนวนคงเหลือ')
-    qty_res = fields.Integer('จำนวนขอเบิกรออนุมัติ', readonly=True, store=False, compute=_set_qty)
+    qty_rs = fields.Integer('จำนวนขอเบิกรออนุมัติ', readonly=True, store=False, compute=_set_qty)
     pacode = fields.Char('รหัสปี')
 
 
