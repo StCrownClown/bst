@@ -57,9 +57,12 @@ class nstda_bst_stock(models.Model):
         
         for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
             find_mat = self.pool.get('nstda.bst.stock').browse(cr, uid, mat_bill.matno.id)
-            find_mat.qty -= mat_bill.qty
+            find_mat.qty -= mat_bill.qty_res
+#             context['last_cs'] = mat_bill.qty_res
             
-            self.pool.get('nstda.bst.dbill')._dbill_cut_success(cr, uid, mat_bill.id, context=context)
+#             self.pool.get('nstda.bst.dbill')._dbill_cut_success(cr, uid, mat_bill.id, context=context)
+            self.pool.get('nstda.bst.dbill').write(cr, uid, mat_bill.id, {'last_cs': mat_bill.qty_res}, context=context)
+            self.pool.get('nstda.bst.dbill').write(cr, uid, mat_bill.id, {'cut_stock': True}, context=context)
 
 
     def _return_stock(self, cr, uid, ids, context=None):
@@ -67,9 +70,10 @@ class nstda_bst_stock(models.Model):
         
         for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
             find_mat = self.pool.get('nstda.bst.stock').browse(cr, uid, mat_bill.matno.id)
-            find_mat.qty += mat_bill.qty - mat_bill.qty_res
+            find_mat.qty += mat_bill.last_cs - mat_bill.qty_res
             
-            self.pool.get('nstda.bst.dbill')._dbill_return_success(cr, uid, mat_bill.id, context=context)
+#             self.pool.get('nstda.bst.dbill')._dbill_return_success(cr, uid, mat_bill.id, context=context)
+            self.pool.get('nstda.bst.dbill').write(cr, uid, mat_bill.id, {'return_stock': True}, context=context)
         
     
     _name = 'nstda.bst.stock'

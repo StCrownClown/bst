@@ -36,6 +36,9 @@ class nstda_bst_note(osv.osv_memory):
                 emp_name = "(" + str(self.pool.get('nstdamas.employee').name_get(cr, uid, emp_id)[0][1])[:6] + ")"
                 bst_obj.write(cr, uid, context['bst_id'], {'bst_cancel_uid': emp_id})
             bst_obj.write(cr, uid, context['bst_id'], {'status': context['status'], 'bst_cancel_date':datetime.datetime.now(timezone('UTC')), 'bst_note': wizard.bst_note + emp_name })
+            
+            self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
+            
         return {'type': 'ir.actions.act_window_close'}
     
     
@@ -70,20 +73,26 @@ class nstda_bst_note(osv.osv_memory):
         self.pool.get('nstda.bst.hbill').bst_prjm_submit(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.dbill')._set_res_tb(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
         
     def bst_submit_limit(self, cr, uid, ids, context=None):   
         self.pool.get('nstda.bst.hbill').bst_submit_limit(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.dbill')._set_res_tb(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
         
     def bst_submit_approval(self, cr, uid, ids, context=None):   
-        self.pool.get('nstda.bst.hbill').bst_submit_approval(cr, uid, context['bst_id'], context=context) 
+        self.pool.get('nstda.bst.hbill').bst_submit_approval(cr, uid, context['bst_id'], context=context)
+#         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
         
     def bst_submit_pick(self, cr, uid, ids, context=None):    
         self.pool.get('nstda.bst.hbill').bst_submit_pick(cr, uid, context['bst_id'], context=context)
+#         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
 
 nstda_bst_note()

@@ -20,6 +20,7 @@ from openerp.exceptions import except_orm, Warning, RedirectWarning
 from openerp import http
 from openerp.http import request
 from openerp.exceptions import ValidationError
+import collections
 
 # from openerp.tools.translate import _
 # from email import _name
@@ -288,8 +289,6 @@ class nstda_bst_hbill(models.Model):
                 self.inv_b = True
             else:
                 self.inv_b = False
-#         if self._uid == 1:
-#             self.inv_b = True
 
 
     @api.one
@@ -471,18 +470,31 @@ class nstda_bst_hbill(models.Model):
             res = res[:-4]
         else:
             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
+            
+#         SOLUTION
+#         $[id matno tbill_ids qty qty_res]
+#         0[1  2     1         1   1      ]
+#         1[2  2     1         2   1      ]
+#         2[3  2     1         3   1      ]
 
-        if self.status in ['draft','wait_boss','wait_prjm']:
+#         RESULT
+#         $[id matno tbill_ids qty qty_res flag]
+#         0[1  2     1         6   3       1   ]
+#         1[2  2     1         1   1       0   ]
+#         2[3  2     1         1   1       0   ]
+
+#         dbill = self.env['nstda.bst.dbill'].search([('hbill_ids','=',self.id)])
+#         d_list = [item for item, count in collections.Counter(dbill).items() if count > 1]
+
+        if self.status == 'draft' :
             self.env.cr.execute("""
                 UPDATE nstda_bst_dbill SET qty = t2.result, qty_res = t2.result
                 FROM ( SELECT matno,tbill_ids,sum(qty) result 
                 FROM nstda_bst_dbill t1 GROUP BY tbill_ids,matno) t2 
                 WHERE ( nstda_bst_dbill.tbill_ids = t2.tbill_ids 
                 AND nstda_bst_dbill.matno = t2.matno )
-                AND ( """ 
-                + res +
-                 ');')
-            
+                AND ( %s ); 
+                """ % res)
             self.env.cr.execute("""
                 DELETE FROM nstda_bst_dbill 
                 WHERE id IN ( SELECT id FROM nstda_bst_dbill y1 
@@ -491,21 +503,38 @@ class nstda_bst_hbill(models.Model):
                 AND y1.qty = y2.qty 
                 AND y1.tbill_ids = y2.tbill_ids 
                 AND y1.id < y2.id
-                AND ( """ 
-                + res +
-                 ')));')
+                AND ( %s ))); 
+                """ % res)
             
-        else:
+        elif self.status in ['wait_boss','wait_approvers']:
             self.env.cr.execute("""
                 UPDATE nstda_bst_dbill SET qty = t2.result, qty_res = t2.result
                 FROM ( SELECT matno,tbill_ids,sum(qty_res) result 
                 FROM nstda_bst_dbill t1 GROUP BY tbill_ids,matno) t2 
                 WHERE ( nstda_bst_dbill.tbill_ids = t2.tbill_ids 
                 AND nstda_bst_dbill.matno = t2.matno )
-                AND ( """ 
-                + res +
-                 ');')
-            
+                AND ( %s ); 
+                """ % res)
+            self.env.cr.execute("""
+                DELETE FROM nstda_bst_dbill 
+                WHERE id IN ( SELECT id FROM nstda_bst_dbill y1 
+                WHERE EXISTS ( SELECT * FROM nstda_bst_dbill y2 
+                WHERE y1.matno = y2.matno 
+                AND y1.qty_res = y2.qty_res 
+                AND y1.tbill_ids = y2.tbill_ids 
+                AND y1.id < y2.id
+                AND ( %s ))); 
+                """ % res)
+              
+        else:
+            self.env.cr.execute("""
+                UPDATE nstda_bst_dbill SET qty = t2.result, qty_res = t2.result_res
+                FROM ( SELECT matno,tbill_ids,sum(qty) result,sum(qty_res) result_res
+                FROM nstda_bst_dbill t1 GROUP BY tbill_ids,matno) t2 
+                WHERE ( nstda_bst_dbill.tbill_ids = t2.tbill_ids 
+                AND nstda_bst_dbill.matno = t2.matno )
+                AND ( %s ); 
+                """ % res)
             self.env.cr.execute("""
                 DELETE FROM nstda_bst_dbill 
                 WHERE id IN ( SELECT id FROM nstda_bst_dbill y1 
@@ -514,9 +543,8 @@ class nstda_bst_hbill(models.Model):
                 AND y1.qty_res = y2.qty_res 
                 AND y1.tbill_ids = y2.tbill_ids 
                 AND y1.id > y2.id
-                AND ( """ 
-                + res +
-                 ')));')
+                AND ( %s )));
+                """ % res)
     
     
     @api.one

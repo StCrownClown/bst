@@ -59,7 +59,7 @@ class nstda_bst_dbill(models.Model):
     sum = fields.Float(string="ราคารวม", store=True, compute='_set_sum')
     qty_res = fields.Integer('จำนวนที่ต้องการ', store=True, readonly=False)
     sum_res = fields.Float(string="ราคารวม", store=True, compute='_set_sum_res')
-    cut_stock = fields.Boolean('ตัดสต็อกสำเร็จ', store=True, default=False)
+    cut_stock = fields.Boolean('ตัดสต็อกสำเร็จ', store=True, default=False, compute='check_qty_more')
     return_stock = fields.Boolean('คืนสต็อกสำเร็จ', store=True, compute='check_qty_equal')
     dbill_discount_sum = fields.Float(string="ราคารวม(ส่วนลด)", store=True, compute='_set_discount')
     
@@ -71,6 +71,7 @@ class nstda_bst_dbill(models.Model):
     uom = fields.Char('หน่วยนับ', readonly=True, store=True, related='matno.uom')
     uom_1 = fields.Char('หน่วยนับ', readonly=True, store=False, related='uom')
     uom_2 = fields.Char('หน่วยนับ', readonly=True, store=False, related='uom')
+    last_cs = fields.Integer('จำนวนตัดสต็อกล่าสุด', readonly=True)
 
     dbill_discount = fields.Float('nstda.bst.hbill', readonly=True, store=False, related='hbill_ids.discount')
     dbill_empname = fields.Char('nstda.bst.hbill', readonly=True, store=False, related='hbill_ids.empname')
@@ -98,7 +99,7 @@ class nstda_bst_dbill(models.Model):
 
     @api.constrains('qty')
     def _check_qty(self):
-        if self.tbill_ids.status not in ['wait_boss','wait_prjm','ready'] or self.status != False:
+        if self.tbill_ids.status not in ['wait_boss','wait_prjm','wait_approvers','pick','ready'] or self.status != False:
             for record in self:
                 if record.qty <= 0:
                     raise ValidationError("กรุณาระบุจำนวนในรายละเอียดสินค้าให้ถูกต้อง(จำนวนต้องไม่น้อยกว่าหรือเท่ากับศูนย์)")
@@ -148,6 +149,17 @@ class nstda_bst_dbill(models.Model):
                 self.return_stock = True
             else:
                 self.return_stock = False
+                
+                
+    @api.one
+    @api.depends('qty_res','tbill_ids')
+    @api.onchange('qty_res','tbill_ids')
+    def check_qty_more(self):
+        if self.status != 'success':
+            if self.qty_res > self.qty:
+                self.cut_stock = False
+            else:
+                self.cut_stock = True
 
 
     def _set_dup_tb(self, cr, uid, ids, context=None):
@@ -201,20 +213,20 @@ class nstda_bst_dbill(models.Model):
         self.sum_res  = self.qty_res * self.unitprice
         
         
-    def _dbill_cut_success(self, cr, uid, ids, context=None):
-        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', ids)], context=context)
-        
-        for dbill in self.pool.get('nstda.bst.dbill').browse(cr, uid, ids):
-            find_dbill = self.pool.get('nstda.bst.dbill').browse(cr, uid, dbill.id)
-            find_dbill.cut_stock = True
-        
-        
-    def _dbill_return_success(self, cr, uid, ids, context=None):
-        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', ids)], context=context)
-        
-        for dbill in self.pool.get('nstda.bst.dbill').browse(cr, uid, ids):
-            find_dbill = self.pool.get('nstda.bst.dbill').browse(cr, uid, dbill.id)
-            find_dbill.return_stock = True
+#     def _dbill_cut_success(self, cr, uid, ids, context=None):
+#         getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', ids)], context=context)
+#         
+#         for dbill in self.pool.get('nstda.bst.dbill').browse(cr, uid, ids):
+#             find_dbill = self.pool.get('nstda.bst.dbill').browse(cr, uid, dbill.id)
+#             find_dbill.cut_stock = True
+#         
+#         
+#     def _dbill_return_success(self, cr, uid, ids, context=None):
+#         getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', ids)], context=context)
+#         
+#         for dbill in self.pool.get('nstda.bst.dbill').browse(cr, uid, ids):
+#             find_dbill = self.pool.get('nstda.bst.dbill').browse(cr, uid, dbill.id)
+#             find_dbill.return_stock = True
         
        
     @api.multi
