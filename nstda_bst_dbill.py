@@ -31,8 +31,34 @@ from openerp.exceptions import ValidationError
 
 
 class nstda_bst_dbill(models.Model):  
+                        
+
+    def read(self, cr, uid, ids, fields=None, context=None, load='_classic_read'):
+        if context is None:
+            context = {}
+        res = super(nstda_bst_dbill, self).read(cr, uid, ids, fields=fields, context=context, load=load)
+        idx = 0
+        for r in res:
+            if r.has_key('no'):
+                r['no'] = int(idx + 1)
+            res[idx] = r
+            idx = idx + 1
+        return res
+        
+        
+    @api.model
+    def create(self, values):
+        values['no'] = 0
+        res = super(nstda_bst_dbill, self).create(values)
+        return res
     
     
+#     @api.multi
+#     def write(self, values):
+#         res_id = super(nstda_bst_dbill, self).write(values)
+#         return res_id 
+
+
     def _needaction_count(self, cr, uid, domain=None, context=None):
         dom = []
         if not domain:
@@ -43,7 +69,7 @@ class nstda_bst_dbill(models.Model):
         if not dom:
             return 0
         res = self.search(cr, uid, (domain or []) + dom, limit=100, order='id DESC', context=context)
-        return len(res) 
+        return len(res)
       
       
     _name = 'nstda.bst.dbill'
@@ -176,16 +202,6 @@ class nstda_bst_dbill(models.Model):
             mat_bill.sum = mat_bill.qty * mat_bill.unitprice
             mat_bill.sum_res = mat_bill.qty_res * mat_bill.unitprice
 
-
-#     @api.one
-#     @api.depends('matno')
-#     @api.onchange('matno')        
-#     def _onchange_uom(self):
-#         self.matdesc = self.matno.matdesc
-#         self.unitprice = self.matno.unitprice
-#         self.balance = self.matno.qty
-#         self.uom = self.matno.uom
-            
        
     @api.one
     @api.onchange('qty','matno')
@@ -286,29 +302,3 @@ class nstda_bst_dbill(models.Model):
                 return neg
             
             self.hbill_ids = self.tbill_ids
-                    
-
-    def read(self, cr, uid, ids, fields=None, context=None, load='_classic_read'):
-        if context is None:
-            context = {}
-        res = super(nstda_bst_dbill, self).read(cr, uid, ids, fields=fields, context=context, load=load)
-        idx = 0
-        for r in res:
-            if r.has_key('no'):
-                r['no'] = int(idx + 1)
-            res[idx] = r
-            idx = idx + 1
-        return res
-        
-        
-    @api.model
-    def create(self, values):
-        values['no'] = 0
-        res = super(nstda_bst_dbill, self).create(values)
-        return res
-    
-    
-#     @api.multi
-#     def write(self, values):
-#         res_id = super(nstda_bst_dbill, self).write(values)
-#         return res_id

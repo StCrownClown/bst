@@ -47,7 +47,7 @@ class nstda_bst_stock(models.Model):
 
     @api.one
     def _set_qty(self):
-        getbill_rs = self.env['nstda.bst.dbill'].search([('matno', '=', self.id),('tbill_ids','!=',False),('status','!=','success')])
+        getbill_rs = self.env['nstda.bst.dbill'].search([('matno', '=', self.id),('tbill_ids','!=',False),('status','not in',['success','reject'])])
         set_sum = sum(line.qty_res for line in getbill_rs)
         self.qty_rs = set_sum
         
@@ -70,10 +70,10 @@ class nstda_bst_stock(models.Model):
         
         for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
             find_mat = self.pool.get('nstda.bst.stock').browse(cr, uid, mat_bill.matno.id)
-            find_mat.qty += mat_bill.last_cs - mat_bill.qty_res
-            
-#             self.pool.get('nstda.bst.dbill')._dbill_return_success(cr, uid, mat_bill.id, context=context)
-            self.pool.get('nstda.bst.dbill').write(cr, uid, mat_bill.id, {'return_stock': True}, context=context)
+            if mat_bill.status != 'reject' and find_mat.last_cs != 0:
+                
+                find_mat.qty += mat_bill.last_cs - mat_bill.qty_res
+                self.pool.get('nstda.bst.dbill').write(cr, uid, mat_bill.id, {'return_stock': True}, context=context)
         
     
     _name = 'nstda.bst.stock'

@@ -85,13 +85,11 @@ class nstda_bst_note(osv.osv_memory):
         
     def bst_submit_approval(self, cr, uid, ids, context=None):   
         self.pool.get('nstda.bst.hbill').bst_submit_approval(cr, uid, context['bst_id'], context=context)
-#         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
         
     def bst_submit_pick(self, cr, uid, ids, context=None):    
         self.pool.get('nstda.bst.hbill').bst_submit_pick(cr, uid, context['bst_id'], context=context)
-#         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
 

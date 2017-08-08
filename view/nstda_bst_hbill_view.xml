@@ -283,7 +283,7 @@
 
 							<button name="%(action_view_nstda_bst_note_cancel)d"
 								string="ยกเลิกการเบิก" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':[('status','in',['reject','pick','ready','success'])]}"
+								attrs="{'invisible':[('status','in',['reject','success'])]}"
 								context="{'bst_id': id, 'status':'reject'}" />
 
 							<field name="status" widget="statusbar"
