@@ -91,7 +91,7 @@ class nstda_bst_dbill(models.Model):
     
     matdesc = fields.Char('รายละเอียดสินค้า', readonly=True, related='matno.matdesc') 
     balance = fields.Integer('จำนวนคงเหลือ', readonly=True, store=False, related='matno.qty')
-    unitprice = fields.Float('ราคา/ชิ้น', readonly=True, store=True, related='matno.unitprice')
+    unitprice = fields.Float('ราคา/ชิ้น', readonly=True, store=True, compute='_set_unitprice')
     currency = fields.Char('สกุลเงิน', readonly=True, store=False, related='matno.currency')
     balance_rs = fields.Integer('จำนวนขอเบิกรออนุมัติ', readonly=True, related='matno.qty_rs')
     uom = fields.Char('หน่วยนับ', readonly=True, store=True, related='matno.uom')
@@ -110,7 +110,7 @@ class nstda_bst_dbill(models.Model):
                                ('wait_approvers', 'รอเบิก'),
                                ('pick', 'รอจัดเตรียมสินค้า'),
                                ('ready', 'รอรับสินค้า'),
-                               ('success', 'รับสินค้าแล้ว')], 'สถานะ', store=True, readonly=True, track_visibility='always', related='tbill_ids.status')
+                               ('success', 'รับสินค้าแล้ว')], 'สถานะ', store=True, readonly=True, related='tbill_ids.status')
 
     inv_b = fields.Boolean('Check boss', store=False, readonly=True, compute='_get_inv_b')
     inv_p = fields.Boolean('Check prjm', store=False, readonly=True, compute='_get_inv_p')
@@ -164,6 +164,13 @@ class nstda_bst_dbill(models.Model):
     @api.depends('matno')
     def _get_inv_r(self):
         self.inv_r = self.tbill_ids.inv_r
+        
+        
+    @api.one
+    @api.onchange('matno')
+    @api.depends('matno')
+    def _set_unitprice(self):
+        self.unitprice = self.matno.unitprice
                 
                 
     @api.one
@@ -181,11 +188,7 @@ class nstda_bst_dbill(models.Model):
     @api.depends('qty_res','tbill_ids')
     @api.onchange('qty_res','tbill_ids')
     def check_qty_more(self):
-        if self.status != 'success':
-            if self.qty_res > self.qty:
-                self.cut_stock = False
-            else:
-                self.cut_stock = True
+        self.cut_stock = False
 
 
     def _set_dup_tb(self, cr, uid, ids, context=None):

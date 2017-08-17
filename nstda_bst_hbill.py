@@ -150,26 +150,18 @@ class nstda_bst_hbill(models.Model):
 
 
     @api.one
-    @api.depends('empid','costct_prjno_selection')
-    @api.onchange('empid','costct_prjno_selection')
+    @api.depends('empid','costct_prjno_selection','prjm_emp_id')
+    @api.onchange('empid','costct_prjno_selection','prjm_emp_id')
     def _set_prj_cct(self):
         try:
             if self.costct_prjno_selection == 'costct':
                 self.costct = self.empid.emp_dpm_id.dpm_cct_id.id
+            elif self.costct_prjno_selection == 'prjno':
+                if (self.prjm_emp_id):
+                    self.costct = self.prjm_emp_id.emp_dpm_id.dpm_cct_id.id
         except:
             pass
-        
-        
-    @api.one
-    @api.depends('prjm_emp_id')
-    @api.onchange('prjm_emp_id')
-    def _set_prjm_cct(self):
-        try:
-            if self.costct_prjno_selection == 'prjno':
-                self.costct = self.prjm_emp_id.emp_dpm_id.dpm_cct_id.id
-        except:
-            pass
-        
+
     
     @api.one
     @api.depends('costct')
@@ -225,8 +217,7 @@ class nstda_bst_hbill(models.Model):
     def _set_prjm_info(self):
         if(self.prjm_id):
             self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
-            
-            self._set_prjm_cct()
+            self.costct = self.prjm_emp_id.emp_dpm_id.dpm_cct_id.id
             
             if(self.prjm_emp_id):
                 self.prjmname = self.prjm_emp_id.emp_fname + ' ' + self.prjm_emp_id.emp_lname
@@ -387,7 +378,7 @@ class nstda_bst_hbill(models.Model):
                                                ('prjno', 'โครงการ')], 'ประเภทเบิก', required=True)
     costct = fields.Many2one(
                              'nstdamas.costcenter',
-                             'หน่วยงานที่เบิก', default=_set_prj_cct)
+                             'หน่วยงานที่เบิก', compute=_set_prj_cct)
     cct_group = fields.Char('cctgroup', compute=_set_cct_group)
     
     prjno = fields.Many2one('nstdamas.project', 'โครงการที่เบิก', domain=[('prj_end', '>=', datetime.now().strftime('%Y-%m-%d'))])
@@ -406,11 +397,11 @@ class nstda_bst_hbill(models.Model):
     adate = fields.Datetime('วันที่เจ้าหน้าที่อนุมัติ', readonly=True)
     pick_date = fields.Datetime('วันที่เบิกสินค้า', readonly=True)
     post_date = fields.Datetime('วันที่ทำรายการสำเร็จ', readonly=True)
-    
-    docno_intf = fields.Char('เลขที่เอกสารการตัด Stock')
-    fiscalyear_docno_intf = fields.Char('ปีงบประมาณของเลขที่เอกสาร Internal Charge')
-    icno_intf = fields.Char('เลขที่เอกสาร Internal Charge')
-    fiscalyear_icno_intf = fields.Char('ปีงบประมาณของเลขที่เอกสารการตัด Stock')
+   
+    icno_intf = fields.Char('เลขที่เอกสาร Internal Charge', readonly=True) 
+    docno_intf = fields.Char('เลขที่เอกสารการตัด Stock', readonly=True)
+    fiscalyear_docno_intf = fields.Char('ปีงบประมาณของเลขที่เอกสาร Internal Charge', readonly=True)
+    fiscalyear_icno_intf = fields.Char('ปีงบประมาณของเลขที่เอกสารการตัด Stock', readonly=True)
     is_success_sap = fields.Boolean('SAP to Odoo', default=False, store=True)
     
     emp_email = fields.Char(string='Email', store=True, compute='_set_emp_info')

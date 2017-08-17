@@ -33,10 +33,10 @@
 					<field name="receive_emp_id" />
 					<field name="matno" />
 					<field name="matdesc" />
-					<field name="qty" />
+					<field name="qty_res" />
 					<field name="uom" />
-					<field name="unitprice" />
-					<field name="amount_after_discount" />
+					<field name="unitprice" options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
 					
 				</tree>
 			</field>

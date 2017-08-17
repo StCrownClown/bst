@@ -67,11 +67,11 @@
 					<field name="dbill_empname" string="ชื่อผู้เบิก" />
 					<field name="dbill_prj_cct" string="หน่วยงาน/โครงการ" />
 					<field name="create_date" string="วันที่เบิก" />
-					<field name="unitprice" string="ราคา" />
+					<field name="unitprice" string="ราคา" options="{'currency_field': 'currency_id'}" />
 					<field name="dbill_discount" string="ส่วนลด(%)" />
-					<field name="qty" string="จำนวน" />
+					<field name="qty_res" string="จำนวน" />
 					<field name="uom" string="หน่วยนับ" />
-					<field name="dbill_discount_sum" string="ราคารวม(ส่วนลด)" />
+					<field name="dbill_discount_sum" string="ราคารวม(ส่วนลด)" options="{'currency_field': 'currency_id'}" />
 				</tree>
 			</field>
 		</record>
@@ -86,7 +86,7 @@
 				<form string="nstda_bst_dbill" class="nstda_bst_dbill_form" >
 					<group>
 						<field name="status" invisible="1" />
-						<field name="matno" />
+						<field name="matno" style="width: 50%%" />
 <!-- 						<field name="matdesc" /> -->
 						
 						<label for="balance" />
