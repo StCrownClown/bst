@@ -138,7 +138,7 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_report_tree_1" />
-			<field name="domain">[('costct_prjno_selection','=','costct'),('empid.emp_rusers_id.id','=','uid'),('status','=','success')]</field>
+			<field name="domain">[('costct_prjno_selection','=','costct'),('empid.emp_rusers_id.id','=',uid),('status','=','success')]</field>
 		</record>
 		
 		<record model="ir.actions.act_window" id="action_nstda_bst_prjno_hbill">
