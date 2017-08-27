@@ -70,10 +70,11 @@ class nstda_bst_stock(models.Model):
         
         for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
             find_mat = self.pool.get('nstda.bst.stock').browse(cr, uid, mat_bill.matno.id)
-            if mat_bill.status != 'reject' and mat_bill.last_cs != 0:
+            if mat_bill.status == 'reject' and mat_bill.last_cs != 0:
                 
-                find_mat.qty += mat_bill.last_cs - mat_bill.qty_res
+                find_mat.qty += mat_bill.last_cs
                 self.pool.get('nstda.bst.dbill').write(cr, uid, mat_bill.id, {'return_stock': True}, context=context)
+                self.pool.get('nstda.bst.dbill').write(cr, uid, mat_bill.id, {'last_cs': 0}, context=context)
         
     
     _name = 'nstda.bst.stock'

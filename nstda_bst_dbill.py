@@ -86,7 +86,7 @@ class nstda_bst_dbill(models.Model):
     qty_res = fields.Integer('จำนวนที่ต้องการ', store=True, readonly=False)
     sum_res = fields.Float(string="ราคารวม", store=True, compute='_set_sum_res')
     cut_stock = fields.Boolean('ตัดสต็อกสำเร็จ', store=True, default=False, compute='check_qty_more')
-    return_stock = fields.Boolean('คืนสต็อกสำเร็จ', store=True, compute='check_qty_equal')
+    return_stock = fields.Boolean('คืนสต็อกสำเร็จ', store=True, default=False)
     dbill_discount_sum = fields.Float(string="ราคารวม(ส่วนลด)", store=True, compute='_set_discount')
     
     matdesc = fields.Char('รายละเอียดสินค้า', readonly=True, related='matno.matdesc') 
@@ -98,8 +98,9 @@ class nstda_bst_dbill(models.Model):
     uom_1 = fields.Char('หน่วยนับ', readonly=True, store=False, related='uom')
     uom_2 = fields.Char('หน่วยนับ', readonly=True, store=False, related='uom')
     last_cs = fields.Integer('จำนวนตัดสต็อกล่าสุด', readonly=True)
+    is_success_sap = fields.Boolean('SAP to Odoo', default=False, store=True)
 
-    dbill_discount = fields.Float('nstda.bst.hbill', readonly=True, store=False, related='hbill_ids.discount')
+    dbill_discount = fields.Float('nstda.bst.hbill', readonly=True, store=True, related='hbill_ids.discount')
     dbill_empname = fields.Char('nstda.bst.hbill', readonly=True, store=False, related='hbill_ids.empname')
     dbill_prj_cct = fields.Char('nstda.bst.hbill', readonly=True, store=False, related='hbill_ids.prj_cct')
     
@@ -171,17 +172,6 @@ class nstda_bst_dbill(models.Model):
     @api.depends('matno')
     def _set_unitprice(self):
         self.unitprice = self.matno.unitprice
-                
-                
-    @api.one
-    @api.depends('qty_res','tbill_ids')
-    @api.onchange('qty_res','tbill_ids')
-    def check_qty_equal(self):
-        if self.status != 'success':
-            if self.qty_res == self.qty:
-                self.return_stock = True
-            else:
-                self.return_stock = False
                 
                 
     @api.one

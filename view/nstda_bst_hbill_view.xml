@@ -45,7 +45,8 @@
 					colors="red:status=='reject';
 							blue:status=='wait_prjm';blue:status=='wait_boss';
 							orange:status=='wait_approvers';orange:status=='pick';orange:status=='ready';
-							limegreen:status=='success'">
+							limegreen:status=='success'"
+					create="true" delete="false" edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -70,7 +71,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_boss" create="true" delete="false" edit="true" >
+				<tree string="nstda_bst_hbill_tree_boss" create="false" delete="false"
+					edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -94,7 +96,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_wait" create="true" delete="false" edit="true" >
+				<tree string="nstda_bst_hbill_tree_wait" create="false" delete="false"
+					edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -118,7 +121,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_sup" create="true" delete="false" edit="true" 
+				<tree string="nstda_bst_hbill_tree_sup" create="false" delete="false"
+					edit="true"
 					colors="red:status=='reject';
 							blue:status=='wait_prjm';blue:status=='wait_boss';
 							orange:status=='wait_approvers';orange:status=='pick';orange:status=='ready';
@@ -152,7 +156,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_ready" create="true" delete="false" edit="true" >
+				<tree string="nstda_bst_hbill_tree_ready" create="false"
+					delete="false" edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -178,7 +183,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_success" create="true" delete="false" edit="true" >
+				<tree string="nstda_bst_hbill_tree_success" create="false"
+					delete="false" edit="false">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
 					<field name="objdesc" />
@@ -296,37 +302,37 @@
 						</group>
 
 						<group>
-						
+
 							<label for="cr_user_id" string="พนักงานผู้บันทึก" />
 							<div>
 								<span>
-									<field name="cr_user_id" style="width: 300px" 
+									<field name="cr_user_id" style="width: 300px"
 										attrs="{'readonly':[('status','!=','draft')]}" />
 								</span>
 
 								<span>
-									<label for="icno_intf" string="เลขที่เอกสาร Internal Charge" 
+									<label for="icno_intf" string="เลขที่เอกสาร Internal Charge"
 										attrs="{'invisible':[('status','!=','success')]}" />
-									<field name="icno_intf" style="width: 150px" 
+									<field name="icno_intf" style="width: 150px"
 										attrs="{'invisible':[('status','!=','success')]}" />
 								</span>
 							</div>
-							
+
 							<label for="empid" string="พนักงานผู้เบิก" />
 							<div>
 								<span>
-									<field name="empid" style="width: 300px" 
+									<field name="empid" style="width: 300px"
 										attrs="{'readonly':[('status','!=','draft')]}" />
 								</span>
 
 								<span>
-									<label for="docno_intf" string="เลขที่เอกสารการตัด Stock" 
+									<label for="docno_intf" string="เลขที่เอกสารการตัด Stock"
 										attrs="{'invisible':[('status','!=','success')]}" />
-									<field name="docno_intf" style="width: 150px" 
+									<field name="docno_intf" style="width: 150px"
 										attrs="{'invisible':[('status','!=','success')]}" />
 								</span>
 							</div>
-							
+
 							<field name="costct_prjno_selection" attrs="{'readonly':[('status','!=','draft')]}" />
 							<field name="costct" style="display:inline;"
 								attrs="{'invisible':['|','|',('costct_prjno_selection','=','prjno'), ('costct_prjno_selection','=',False)],
@@ -400,8 +406,8 @@
 						<label for="d_bill_ids" string="รายละเอียดสินค้า" colspan="3" />
 						<field name="d_bill_ids" nolabel="1" colspan="6"
 							context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree'}"
-							attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
-									'readonly':[('inv_c','=',False)]}" />
+							attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])],}" />
+						<!-- 'readonly':[('inv_c','=',False),('status','=','draft')]}" /> -->
 						<field name="t_bill_ids" nolabel="1" colspan="6"
 							context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree_2'}"
 							attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
@@ -500,6 +506,7 @@
 							</group>
 						</footer>
 
+						<field name="discount" invisible="1" />
 						<field name="prjm_id" invisible="1" />
 						<field name="boss_id" invisible="1" />
 						<field name="approver" invisible="1" />
@@ -510,6 +517,7 @@
 						<field name="inv_a" invisible="1" />
 						<field name="inv_k" invisible="1" />
 						<field name="inv_r" invisible="1" />
+						<field name="inv_j" invisible="1" />
 
 					</sheet>
 

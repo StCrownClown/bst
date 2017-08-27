@@ -60,7 +60,7 @@ class nstda_bst_note(osv.osv_memory):
                                                        'fiscalyear_icno_intf':datetime.datetime.now().year
                                                         })
         
-        self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
         
         return {'type': 'ir.actions.act_window_close'}
     

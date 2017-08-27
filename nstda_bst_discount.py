@@ -25,14 +25,11 @@ class nstda_bst_discount(models.Model):
     @api.one
     @api.onchange('discount')
     def set_discount(self):  
-        if(self.discount):
-            self.discount = self.discount
-        else: 
-            res = self.env['nstda.bst.discount'].search([],limit=1,order="id DESC")
-            if(res.discount):
-                self.discount = res.discount  
-            else:
-                self.discount = 0
+        res = self.env['nstda.bst.discount'].search([],limit=1,order="id DESC")
+        if(res.discount):
+            self.discount = res.discount  
+        else:
+            self.discount = 0
     
     _name = 'nstda.bst.discount'
     _inherit = 'res.config.settings'

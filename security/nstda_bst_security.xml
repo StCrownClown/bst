@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <openerp>
-	<data noupdate="1">
+	<data noupdate="0">
 
 		<record model="res.groups" id="base.group_nstda_bst_user">
 			<field name="name">User</field>

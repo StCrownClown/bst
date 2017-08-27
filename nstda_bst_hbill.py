@@ -31,7 +31,7 @@ import collections
 ####################################################################################################
 
 
-class nstda_bst_hbill(models.Model):  
+class nstda_bst_hbill(models.Model):
     
     
     @api.model
@@ -102,17 +102,6 @@ class nstda_bst_hbill(models.Model):
                 mail_mail_obj.send(cr, uid, [msg_id], context=context)
                 self.write(cr, uid, env_refs.id, {'is_mail_approved':True}, context=context)
         return True
-    
-    
-    @api.one
-    @api.depends('d_bill_ids')
-    def _set_discount(self):
-        if self.discount == False :
-            res = self.env['nstda.bst.discount'].search([], limit=1, order="id DESC")
-            if(res.discount):
-                self.discount = res.discount       
-            else:
-                self.discount = 0
         
         
 #     @api.one
@@ -267,8 +256,6 @@ class nstda_bst_hbill(models.Model):
                 self.inv_p = True
             else:
                 self.inv_p = False
-#         if self._uid == 1:
-#             self.inv_p = True
 
 
     @api.one
@@ -327,6 +314,21 @@ class nstda_bst_hbill(models.Model):
             else:
                 self.inv_c = False
 
+
+    @api.one
+    @api.onchange('user_id')
+    def _inv_j(self):
+        user_id = self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]).id
+        if costct_prjno_selection == 'prjno':
+            pj_mem = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',prjno.id)]).prjm_emp_id
+            for emp in pj_mem:
+                if emp.id == user_id:
+                    self.inv_j = True
+                else:
+                    self.inv_j = False
+        else:
+            self.inv_j = False
+
             
     @api.one
     @api.onchange('t_bill_ids','status')
@@ -378,7 +380,7 @@ class nstda_bst_hbill(models.Model):
                                                ('prjno', 'โครงการ')], 'ประเภทเบิก', required=True)
     costct = fields.Many2one(
                              'nstdamas.costcenter',
-                             'หน่วยงานที่เบิก', compute=_set_prj_cct)
+                             'หน่วยงานที่เบิก', store=True, compute=_set_prj_cct)
     cct_group = fields.Char('cctgroup', compute=_set_cct_group)
     
     prjno = fields.Many2one('nstdamas.project', 'โครงการที่เบิก', domain=[('prj_end', '>=', datetime.now().strftime('%Y-%m-%d'))])
@@ -419,7 +421,7 @@ class nstda_bst_hbill(models.Model):
                                ('ready', 'รอรับสินค้า'),
                                ('success', 'รับสินค้าแล้ว')], 'สถานะ', default='draft')
                   
-    discount = fields.Float('ส่วนลด(%)', store=True, compute='_set_discount') 
+    discount = fields.Float('ส่วนลด(%)', store=True, default=lambda self:self.env['nstda.bst.discount'].search([], limit=1, order="id DESC").discount) 
     
 #     discount_value = fields.Float('ส่วนลด', store=False, readonly=True, compute=compute_amount_before_approve)
 #     amount_before_discount = fields.Float(string='รวม', store=False, readonly=True, compute=compute_amount_before_approve)
@@ -447,6 +449,7 @@ class nstda_bst_hbill(models.Model):
     inv_a = fields.Boolean('Check approver', readonly=True, compute='_inv_a')
     inv_k = fields.Boolean('Check pick', readonly=True, compute='_inv_k')
     inv_r = fields.Boolean('Check ready', readonly=True, compute='_inv_r')
+    inv_j = fields.Boolean('Check prj member', readonly=True, compute='_inv_j')
 
     
     @api.one
@@ -475,7 +478,8 @@ class nstda_bst_hbill(models.Model):
 #         2[3  2     1         1   1       0   ]
 
 #         dbill = self.env['nstda.bst.dbill'].search([('hbill_ids','=',self.id)])
-#         d_list = [item for item, count in collections.Counter(dbill).items() if count > 1]
+#         d_list = [item for item, count in collections.Counter(dbill.matno).items() if count > 1]
+        
 
         if self.status == 'draft' :
             self.env.cr.execute("""
@@ -496,7 +500,7 @@ class nstda_bst_hbill(models.Model):
                 AND y1.id < y2.id
                 AND ( %s ))); 
                 """ % res)
-            
+             
         elif self.status in ['wait_boss','wait_approvers']:
             self.env.cr.execute("""
                 UPDATE nstda_bst_dbill SET qty = t2.result, qty_res = t2.result
@@ -516,7 +520,7 @@ class nstda_bst_hbill(models.Model):
                 AND y1.id < y2.id
                 AND ( %s ))); 
                 """ % res)
-              
+               
         else:
             self.env.cr.execute("""
                 UPDATE nstda_bst_dbill SET qty = t2.result, qty_res = t2.result_res
@@ -545,10 +549,7 @@ class nstda_bst_hbill(models.Model):
   
             for v in self.t_bill_ids:
                 if v.matno.qty - v.qty < 0:
-                    return {'warning': {
-                            'title': _('Warning'),
-                            'message': _('จำนวนสินค้าในสต็อกไม่เพียงพอ')
-                            }}
+                    raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
                       
                 else:
                     if self.costct_prjno_selection == 'costct':
@@ -573,17 +574,14 @@ class nstda_bst_hbill(models.Model):
                                     break
                             self.boss_id = boss_id
                         except:
-                            return {'warning': {
-                                    'title': _('Warning'),
-                                    'message': _('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชาของท่าน')
-                                    }}
+                            raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชาของท่าน')
                           
                     elif self.costct_prjno_selection == 'prjno':
-                        Project_Leader = str(self.prjno.id)
-                        self.env.cr.execute("SELECT prjm_emp_id FROM nstdamas_projectmember WHERE prjm_prj_id = " + Project_Leader + " AND prjm_position = '00'")
+                        Project_id = str(self.prjno.id)
+                        self.env.cr.execute("SELECT prjm_emp_id FROM nstdamas_projectmember WHERE prjm_prj_id = " + Project_id + " AND prjm_position = '00'")
                         pjboss_obj = self.env.cr.fetchone()[0]
                         if pjboss_obj == False:
-                            pjboss_obj = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',Project_Leader), ('prjm_position','=','00')]).prjm_emp_id
+                            pjboss_obj = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',Project_id), ('prjm_position','=','00')]).prjm_emp_id
                         get_prjm_id = self.env['nstdamas.employee'].search([['id', '=', pjboss_obj]]).emp_rusers_id.id
                         self.prjm_id = get_prjm_id
                           
@@ -602,10 +600,7 @@ class nstda_bst_hbill(models.Model):
                                         break
                                 self.boss_id = boss_id
                             except:
-                                return {'warning': {
-                                        'title': _('Warning'),
-                                        'message': _('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชาของท่าน')
-                                        }}
+                                raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชาของท่าน')
       
             self.book_date = datetime.now()
       
@@ -618,11 +613,11 @@ class nstda_bst_hbill(models.Model):
                 self.sendmail_approve()
             except:
                 pass
-          
-            if self.costct_prjno_selection == 'costct':
-                self.status = 'wait_boss'
-            elif self.costct_prjno_selection == 'prjno':
-                self.status = 'wait_prjm'
+
+#             if self.costct_prjno_selection == 'costct':
+#                 self.status = 'wait_boss'
+#             elif self.costct_prjno_selection == 'prjno':
+#                 self.status = 'wait_prjm'
                   
         else:
             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
@@ -635,15 +630,23 @@ class nstda_bst_hbill(models.Model):
             
             if self.amount_after_discount <= 10000:
                 if self.inv_p == True:
-                    self.boss_adate = datetime.now()
-                    self.status = 'wait_approvers'
+                    for v in self.t_bill_ids:
+                        if v.matno.qty - v.qty < 0:
+                            raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                        else:
+                            self.boss_adate = datetime.now()
+                            self.status = 'wait_approvers'
                 else:
                     raise Warning('สำหรับหัวหน้าโครงการอนุมัติ')
                 
             if self.amount_after_discount > 10000:
                 if self.inv_p == True:
-                    self.boss_adate = datetime.now()
-                    self.status = 'wait_boss'
+                    for v in self.t_bill_ids:
+                        if v.matno.qty - v.qty < 0:
+                            raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                        else:
+                            self.boss_adate = datetime.now()
+                            self.status = 'wait_boss'
                 else:
                     raise Warning('สำหรับหัวหน้าโครงการอนุมัติ')
             else:    
@@ -662,8 +665,12 @@ class nstda_bst_hbill(models.Model):
         if self.amount_after_t > 0:
             
             if self.inv_b == True:
-                self.boss_adate = datetime.now()
-                self.status = 'wait_approvers'
+                for v in self.t_bill_ids:
+                    if v.matno.qty - v.qty < 0:
+                        raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                    else:
+                        self.boss_adate = datetime.now()
+                        self.status = 'wait_approvers'
             else:
                 raise Warning('สำหรับผู้บังคับบัญชาอนุมัติ')
             
@@ -679,17 +686,15 @@ class nstda_bst_hbill(models.Model):
     @api.one    
     def bst_submit_approval(self):
         if self.inv_a == True:
-            self.approver = self._uid
-            self.adate = datetime.now()
             
             for v in self.t_bill_ids:
                 if v.matno.qty - v.qty < 0:
-                    return {'warning': {
-                            'title': _('Warning'),
-                            'message': _('จำนวนสินค้าในสต็อกไม่เพียงพอ')
-                            }}
-            self.status = 'pick'
-            
+                    raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                else:
+                    self.status = 'pick'
+                    self.approver = self._uid
+                    self.adate = datetime.now()
+                    
         else:
             raise Warning('สำหรับเจ้าหน้าที่อนุมัติ')
     
@@ -697,14 +702,19 @@ class nstda_bst_hbill(models.Model):
     @api.one     
     def bst_submit_pick(self):
         if self.inv_k == True:
-            self.pick_date = datetime.now()
-            self.pick_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]).id
+            
+            for v in self.t_bill_ids:
+                if v.matno.qty - v.qty < 0:
+                    raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                else:
+                    self.status = 'ready'
+                    self.pick_date = datetime.now()
+                    self.pick_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]).id
             
             try:
                 self.sendmail_alert()
             except:
                 pass
-            self.status = 'ready'
         else:
             raise Warning('สำหรับเจ้าหน้าที่อนุมัติ')
         
