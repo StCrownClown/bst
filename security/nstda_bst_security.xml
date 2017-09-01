@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <openerp>
-	<data noupdate="0">
+	<data noupdate="1">
 
 		<record model="res.groups" id="base.group_nstda_bst_user">
 			<field name="name">User</field>
@@ -18,7 +18,8 @@
 				(4, ref('nstdaperm.group_nstda_emp002598')),
 				(4, ref('nstdaperm.group_nstda_emp001974')),
 				(4, ref('nstdaperm.group_nstda_emp000377')),
-				(4, ref('nstdaperm.group_nstda_emp003453')),]" 
+				(4, ref('nstdaperm.group_nstda_emp003453')),
+				]" 
 				/>
 		</record>
 
@@ -72,6 +73,7 @@
 			<field name="perm_unlink" eval="True" />
 			<field name="domain_force">[(1,'=',1)]</field>
 <!--  			<field name="domain_force">['|','|','|','|',('inv_a','=',True),('inv_b','=',True),('inv_c','=',True),('inv_p','=',True),('inv_r','=',True)] -->
+<!-- 			</field> -->
 		</record>
 
 

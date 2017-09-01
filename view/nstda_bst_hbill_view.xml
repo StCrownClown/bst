@@ -518,6 +518,7 @@
 						<field name="inv_k" invisible="1" />
 						<field name="inv_r" invisible="1" />
 						<field name="inv_j" invisible="1" />
+						<field name="inv_s" invisible="1" />
 
 					</sheet>
 

@@ -22,8 +22,11 @@
                 'view/nstda_bst_mail_template_view.xml',
                 'view/nstda_bst_bill_report_view.xml',
                 'view/nstda_bst_pick_report_view.xml',
+                'view/nstda_bst_bosslevel_view.xml',
                 'view/nstda_bst_view.xml',
                 'view/nstda_bst_menu_view.xml',
+                
+                'data/nstda.bst.bosslevel.csv',
 
         ],
         'qweb': ['static/views/base.xml'],

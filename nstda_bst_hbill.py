@@ -319,15 +319,30 @@ class nstda_bst_hbill(models.Model):
     @api.onchange('user_id')
     def _inv_j(self):
         user_id = self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]).id
-        if costct_prjno_selection == 'prjno':
-            pj_mem = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',prjno.id)]).prjm_emp_id
+        if self.costct_prjno_selection == 'prjno':
+            pj_mem = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',self.prjno.id)])
             for emp in pj_mem:
-                if emp.id == user_id:
+                if emp.prjm_emp_id == user_id:
                     self.inv_j = True
                 else:
                     self.inv_j = False
         else:
             self.inv_j = False
+            
+            
+    @api.one
+    @api.onchange('user_id')
+    def _inv_s(self):
+        user_id = self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)])
+        if self.costct_prjno_selection == 'costct':
+            if (user_id):
+                user_cct = user_id.emp_dpm_id.dpm_cct_id.id
+                if self.costct == user_cct:
+                    self.inv_s = True
+                else:
+                    self.inv_s = False
+            else:
+                self.inv_s = False
 
             
     @api.one
@@ -450,6 +465,7 @@ class nstda_bst_hbill(models.Model):
     inv_k = fields.Boolean('Check pick', readonly=True, compute='_inv_k')
     inv_r = fields.Boolean('Check ready', readonly=True, compute='_inv_r')
     inv_j = fields.Boolean('Check prj member', readonly=True, compute='_inv_j')
+    inv_s = fields.Boolean('Check cct member', readonly=True, compute='_inv_s')
 
     
     @api.one
@@ -614,10 +630,10 @@ class nstda_bst_hbill(models.Model):
             except:
                 pass
 
-#             if self.costct_prjno_selection == 'costct':
-#                 self.status = 'wait_boss'
-#             elif self.costct_prjno_selection == 'prjno':
-#                 self.status = 'wait_prjm'
+            if self.costct_prjno_selection == 'costct':
+                self.status = 'wait_boss'
+            elif self.costct_prjno_selection == 'prjno':
+                self.status = 'wait_prjm'
                   
         else:
             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')

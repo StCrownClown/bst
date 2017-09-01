@@ -1,0 +1,7 @@
+id,create_uid/id,create_date,write_uid/id,write_date,boss_level,approve_amount
+__import__.nstda_bst_bosslevel_1,,,,,1,10000
+__import__.nstda_bst_bosslevel_2,,,,,2,60000
+__import__.nstda_bst_bosslevel_3,,,,,3,60000
+__import__.nstda_bst_bosslevel_4,,,,,4,150000
+__import__.nstda_bst_bosslevel_5,,,,,5,150000
+__import__.nstda_bst_bosslevel_6,,,,,6,150000
