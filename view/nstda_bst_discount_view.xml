@@ -3,20 +3,21 @@
 	<data>
 
 
-	    <record model="ir.ui.view" id="view_nstda_bst_discount_form">
-	        <field name="name">nstda.bst.discount.form</field>
-	        <field name="model">nstda.bst.discount</field>
-	        <field name="type">form</field>
+		<record model="ir.ui.view" id="view_nstda_bst_discount_form">
+			<field name="name">nstda.bst.discount.form</field>
+			<field name="model">nstda.bst.discount</field>
+			<field name="type">form</field>
 			<field name="arch" type="xml">
-		       <form string="ตั้งค่าส่วนลด" version="7.0" class="oe_form_configuration" create="true" edit="false" delete="false">
+				<form string="ตั้งค่าส่วนลด" version="7.0" class="oe_form_configuration"
+					create="true" edit="false" delete="false">
 					<div class="oe_inline">
-		            <label for="discount" string="แก้ไขส่วนลด" />
-		                <field name="discount"/>
-		            </div>
+						<label for="discount" string="แก้ไขส่วนลด" />
+						<field name="discount" />
+					</div>
 				</form>
-	        </field>
-	    </record>
+			</field>
+		</record>
 
-		
+
 	</data>
 </openerp>

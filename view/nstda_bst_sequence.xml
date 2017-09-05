@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
- 
-<data noupdate="0">
+
+	<data noupdate="0">
 
 
-        <!-- Sequences for nstda.bst -->
-        <record id="seq_bst_type" model="ir.sequence.type">
-            <field name="name">nstda.bst.hbill</field>
-            <field name="code">nstda.bst.hbill</field>
-        </record>
+		<!-- Sequences for nstda.bst -->
+		<record id="seq_bst_type" model="ir.sequence.type">
+			<field name="name">nstda.bst.hbill</field>
+			<field name="code">nstda.bst.hbill</field>
+		</record>
 
-        <record id="seq_bst" model="ir.sequence">
-            <field name="name">nnstda.bst.hbill</field>
-            <field name="code">nstda.bst.hbill</field>
-            <field name="prefix">SV%(y)s</field>
-            <field name="padding">6</field>
-        </record>
-        
+		<record id="seq_bst" model="ir.sequence">
+			<field name="name">nnstda.bst.hbill</field>
+			<field name="code">nstda.bst.hbill</field>
+			<field name="prefix">SV%(y)s</field>
+			<field name="padding">6</field>
+		</record>
 
- </data>
+
+	</data>
 </openerp>

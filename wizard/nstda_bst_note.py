@@ -12,12 +12,10 @@ class nstda_bst_note(osv.osv_memory):
     _name = "nstda.bst.note"
     _description = "Bookstore Note"
     
-    
     _columns = {
         'bst_note': fields.text('Note'),
-        'receive_emp_id': fields.many2one('nstdamas.employee','ผู้รับสินค้า'),
+        'receive_emp_id': fields.many2one('nstdamas.employee', 'ผู้รับสินค้า'),
     }
-    
     
     _defaults = {
     }
@@ -52,8 +50,8 @@ class nstda_bst_note(osv.osv_memory):
         if context is None:
             context = {}
         if 'bst_id' in context:
-            bst_obj.write(cr, uid, context['bst_id'], {'status': context['status'], 
-                                                       'receive_emp_id': wizard.receive_emp_id.id, 
+            bst_obj.write(cr, uid, context['bst_id'], {'status': context['status'],
+                                                       'receive_emp_id': wizard.receive_emp_id.id,
                                                        'assign_emp_id': emp.id,
                                                        'post_date':datetime.datetime.now(timezone('UTC')),
                                                        'fiscalyear_docno_intf':datetime.datetime.now().year,
@@ -61,6 +59,8 @@ class nstda_bst_note(osv.osv_memory):
                                                         })
         
         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_success(cr, uid, context['bst_id'], context=context)
+#         self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
         return {'type': 'ir.actions.act_window_close'}
     
@@ -68,6 +68,7 @@ class nstda_bst_note(osv.osv_memory):
     def bst_send_approval(self, cr, uid, ids, context=None):
         self.pool.get('nstda.bst.dbill')._set_dup_tb(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill').bst_send_approval(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_approve(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.dbill')._set_res_tb(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._compute_amount_last(cr, uid, context['bst_id'], context=context)
         
@@ -76,26 +77,23 @@ class nstda_bst_note(osv.osv_memory):
         self.pool.get('nstda.bst.hbill').bst_prjm_submit(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.dbill')._set_res_tb(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
-#         self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
         
     def bst_submit_limit(self, cr, uid, ids, context=None):   
         self.pool.get('nstda.bst.hbill').bst_submit_limit(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.dbill')._set_res_tb(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
-#         self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
         
     def bst_submit_approval(self, cr, uid, ids, context=None):   
         self.pool.get('nstda.bst.hbill').bst_submit_approval(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
-#         self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
         
         
     def bst_submit_pick(self, cr, uid, ids, context=None):    
         self.pool.get('nstda.bst.hbill').bst_submit_pick(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._submit_cut_stock(cr, uid, context['bst_id'], context=context)
-#         self.pool.get('nstda.bst.hbill')._submit_return_stock(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_alert(cr, uid, context['bst_id'], context=context)
         
 
 nstda_bst_note()

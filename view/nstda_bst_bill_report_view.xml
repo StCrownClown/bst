@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
 	<data>
-	
+
 		<record model="ir.ui.view" id="nstda_bst_bill_report_search">
 			<field name="name">nstda.bst.bill.report.search</field>
 			<field name="model">nstda.bst.bill.report</field>
@@ -20,7 +20,8 @@
 			<field name="name">nstda.bst.bill.report.tree.view</field>
 			<field name="model">nstda.bst.bill.report</field>
 			<field name="arch" type="xml">
-				<tree string="nstda_bst_bill_report_tree_view" create="false" edit="false" delete="false">
+				<tree string="nstda_bst_bill_report_tree_view" create="false"
+					edit="false" delete="false">
 					<field name="docno" />
 					<field name="book_date" />
 					<field name="empid" />
@@ -37,11 +38,11 @@
 					<field name="uom" />
 					<field name="unitprice" options="{'currency_field': 'currency_id'}" />
 					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
-					
+
 				</tree>
 			</field>
 		</record>
-		
+
 		<!-- window action -->
 		<!-- The following tag is an action definition for a "window action", that 
 			is an action opening a view or a set of views -->

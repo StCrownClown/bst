@@ -9,7 +9,8 @@
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_pick_report_tree_view" create="false" edit="false" delete="false">
+				<tree string="nstda_bst_pick_report_tree_view" create="false"
+					edit="false" delete="false">
 					<field name="status" invisible="1" />
 					<field name="matno" />
 					<field name="matdesc" />
@@ -19,7 +20,7 @@
 				</tree>
 			</field>
 		</record>
-		
+
 		<!-- window action -->
 		<!-- The following tag is an action definition for a "window action", that 
 			is an action opening a view or a set of views -->

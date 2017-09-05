@@ -7,12 +7,14 @@ from pychart.tick_mark import Null
 from dateutil import parser
 from datetime import datetime,timedelta
 from datetime import datetime
+
 #from openerp.tools.translate import _
 #from email import _name
 #from bsddb.dbtables import _columns
 #from openerp import tools
 #import re
 #from openerp import SUPERUSER_ID
+
 
 ####################################################################################################
 
@@ -58,9 +60,7 @@ class nstda_bst_stock(models.Model):
         for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
             find_mat = self.pool.get('nstda.bst.stock').browse(cr, uid, mat_bill.matno.id)
             find_mat.qty += mat_bill.last_cs - mat_bill.qty_res
-#             context['last_cs'] = mat_bill.qty_res
-            
-#             self.pool.get('nstda.bst.dbill')._dbill_cut_success(cr, uid, mat_bill.id, context=context)
+
             self.pool.get('nstda.bst.dbill').write(cr, uid, mat_bill.id, {'last_cs': mat_bill.qty_res}, context=context)
 #             self.pool.get('nstda.bst.dbill').write(cr, uid, mat_bill.id, {'cut_stock': True}, context=context)
 
@@ -82,18 +82,28 @@ class nstda_bst_stock(models.Model):
  
     saleorg = fields.Char('รหัสหน่วยงานขาย', readonly=True)
     distribution = fields.Char('ช่องทางการขาย', readonly=True)
-    matno = fields.Char('รหัสสินค้า')
+    matno = fields.Char('รหัสสินค้า', readonly=True)
     matdesc = fields.Char('รายละเอียดสินค้า')
-    barno = fields.Char('รหัสบาร์โค้ดสินค้า')
-    taxcode = fields.Char('รหัสสาขาผู้เสียภาษีภาษี')
-    uom = fields.Char('หน่วยนับ')
+    barno = fields.Char('รหัสบาร์โค้ดสินค้า', readonly=True)
+    taxcode = fields.Char('รหัสสาขาผู้เสียภาษีภาษี', readonly=True)
+    uom = fields.Char('หน่วยนับ', readonly=True)
     unitprice = fields.Float('ราคา/ชิ้น')
     currency = fields.Char('สกุลเงิน', readonly=True, default='บาท')
     plant = fields.Char('ศูนย์ที่จัดเก็บสินค้า', readonly=True)
     storage = fields.Char('คลังที่จัดเก็บสินค้า', readonly=True)
     qty = fields.Integer('จำนวนคงเหลือ')
     qty_rs = fields.Integer('จำนวนขอเบิกรออนุมัติ', readonly=True, store=False, compute=_set_qty)
-    pacode = fields.Char('รหัสปี')
+    pacode = fields.Char('รหัสปี', readonly=True)
+    is_auth_admin = fields.Boolean('Check Author or Admin', readonly=True, compute='chk_auth_admin')
+    
+    
+    @api.one
+    @api.onchange('user_id')
+    def chk_auth_admin(self):
+        if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
+            self.is_auth_admin = True
+        else:
+            self.is_auth_admin = False
 
 
 nstda_bst_stock()

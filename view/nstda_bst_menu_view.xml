@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <openerp>
 	<data>
-	
-	
+
+
 		<menuitem name="Bookstore" id="menu_bst" />
-		
+
 		<menuitem name="Menu" id="menu_nstda_bst_main" parent="menu_bst"
 			sequence="1" />
 
-		<menuitem name="Master" id="menu_nstda_bst_stock_main" parent="menu_bst"
-			sequence="2" 
-			groups="base.group_nstda_bst_admin" />
+		<menuitem name="Master" id="menu_nstda_bst_stock_main"
+			parent="menu_bst" sequence="2" groups="base.group_nstda_bst_authorities" />
 
 		<menuitem name="Report" id="menu_nstda_bst_report" parent="menu_bst"
 			sequence="3" />
-			
+
 		<menuitem name="Help" id="menu_nstda_bst_help" parent="menu_bst"
 			sequence="4" />
-			
-		<menuitem name="สิทธิ์การเข้าใช้งาน" id="menu_nstda_bst_group_roles" parent="menu_bst" 
-			sequence="5" 
-			groups="base.group_nstda_bst_authorities" />
+
+		<menuitem name="สิทธิ์การเข้าใช้งาน" id="menu_nstda_bst_group_roles"
+			parent="menu_bst" sequence="5" groups="base.group_nstda_bst_authorities" />
 
 
 		<record model="ir.actions.act_window" id="action_nstda_bst_group_roles">
@@ -38,7 +36,8 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_tree" />
-			<field name="act_window_id" ref="view_nstda_bst_hbill_form"/>
+			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="context">{}</field>
 			<field name="domain">['|',('cr_user_id.emp_rusers_id.id','=',uid),('empid.emp_rusers_id.id','=',uid)]
 			</field>
@@ -50,7 +49,8 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_tree_sup" />
-			<field name="act_window_id" ref="view_nstda_bst_hbill_form"/>
+			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="domain">[('status','!=',False)]</field>
 			<field name="context">{}</field>
 		</record>
@@ -61,7 +61,8 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_tree_boss" />
-			<field name="act_window_id" ref="view_nstda_bst_hbill_form"/>
+			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="context">{}</field>
 			<field name="domain">['|','&amp;',('status','=','wait_prjm'),('prjm_id','=',uid),'&amp;',('status','=','wait_boss'),('boss_id','=',uid)]
 			</field>
@@ -73,7 +74,8 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_tree_wait" />
-			<field name="act_window_id" ref="view_nstda_bst_hbill_form"/>
+			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="domain">[('status','=','wait_approvers')]</field>
 			<field name="context">{}</field>
 		</record>
@@ -84,40 +86,55 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_tree_wait" />
-			<field name="act_window_id" ref="view_nstda_bst_hbill_form"/>
+			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="domain">[('status','=','pick')]</field>
 			<field name="context">{}</field>
 		</record>
-		
+
 		<record model="ir.actions.act_window" id="action_nstda_bst_hbill_ready">
 			<field name="name">รอรับสินค้า</field>
 			<field name="res_model">nstda.bst.hbill</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_tree_ready" />
-			<field name="act_window_id" ref="view_nstda_bst_hbill_form"/>
+			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="domain">[('status','=','ready')]</field>
 			<field name="context">{}</field>
 		</record>
-		
+
 		<record model="ir.actions.act_window" id="action_nstda_bst_hbill_success">
 			<field name="name">รับสินค้าแล้ว</field>
 			<field name="res_model">nstda.bst.hbill</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_tree_success" />
-			<field name="act_window_id" ref="view_nstda_bst_hbill_form"/>
+			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="domain">[('status','=','success')]</field>
 			<field name="context">{}</field>
-<!-- 			<field name="domain">['&amp;',('status','=','success'),'|',('cr_user_id.emp_rusers_id.id','=',uid),'|',('empid.emp_rusers_id.id','=',uid),('inv_a','=',True)]</field> -->
+			<!-- <field name="domain">['&amp;',('status','=','success'),'|',('cr_user_id.emp_rusers_id.id','=',uid),'|',('empid.emp_rusers_id.id','=',uid),('inv_a','=',True)]</field> -->
 		</record>
-		
-<!-- 		<record model="ir.actions.act_window" id="action_nstda_bst_report"> -->
-<!-- 			<field name="name">รายงาน</field> -->
-<!-- 			<field name="res_model">nstda.bst.report</field> -->
-<!-- 			<field name="view_type">form</field> -->
-<!-- 			<field name="view_mode">form</field> -->
-<!-- 		</record> -->
+
+		<record model="ir.actions.act_window" id="action_nstda_bst_report">
+			<field name="name">รายงาน</field>
+			<field name="res_model">nstda.bst.report</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+		</record>
+
+		<record model="ir.actions.act_window" id="action_nstda_bst_hbill_pick_sup_view">
+			<field name="name">รายการเบิกคลัง</field>
+			<field name="res_model">nstda.bst.hbill</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="view_nstda_bst_hbill_tree_sup" />
+			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
+			<field name="domain">[('status','=','pick')]</field>
+			<field name="context">{}</field>
+		</record>
 
 		<record model="ir.actions.act_window" id="action_nstda_bst_dbill_report">
 			<field name="name">รายงานการเบิกตามสินค้า</field>
@@ -125,34 +142,40 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">tree</field>
 			<field name="view_id" ref="view_nstda_bst_dbill_report_tree" />
-			<field name="domain">[('status','=','success'),('hbill_ids','!=',False)]</field>
+			<field name="domain">[('status','=','success'),('hbill_ids','!=',False)]
+			</field>
 		</record>
-		
+
 		<record model="ir.actions.act_window" id="action_nstda_bst_admin_hbill">
 			<field name="name">รายงานเบิกสินค้าทั้งหมด</field>
 			<field name="res_model">nstda.bst.hbill</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_report_tree_1" />
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="domain">[('status','=','success')]</field>
 		</record>
-		
+
 		<record model="ir.actions.act_window" id="action_nstda_bst_costct_hbill">
 			<field name="name">รายงานเบิกสินค้า (Costcenter)</field>
 			<field name="res_model">nstda.bst.hbill</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_report_tree_1" />
-			<field name="domain">[('costct_prjno_selection','=','costct'),('inv_s','=',True),('status','=','success')]</field>
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
+			<field name="domain">[('costct_prjno_selection','=','costct'),('inv_s','=',True),('status','=','success')]
+			</field>
 		</record>
-		
+
 		<record model="ir.actions.act_window" id="action_nstda_bst_prjno_hbill">
 			<field name="name">รายงานเบิกสินค้า (Project)</field>
 			<field name="res_model">nstda.bst.hbill</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_report_tree_1" />
-			<field name="domain">[('costct_prjno_selection','=','prjno'),('inv_j','=',True),('status','=','success')]</field>
+			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
+			<field name="domain">[('costct_prjno_selection','=','prjno'),('inv_j','=',True),('status','=','success')]
+			</field>
 		</record>
 
 		<record model="ir.actions.act_window" id="action_nstda_bst_stock">
@@ -163,16 +186,16 @@
 			<field name="view_id" ref="view_nstda_bst_stock" />
 			<field name="search_view_id" ref="view_nstda_bst_stock_search" />
 		</record>
-		
-		<record model="ir.actions.act_window" id="action_nstda_bst_discount_setting" >
+
+		<record model="ir.actions.act_window" id="action_nstda_bst_discount_setting">
 			<field name="name">แก้ไขส่วนลด</field>
 			<field name="res_model">nstda.bst.discount</field>
 			<field name="type">ir.actions.act_window</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
 		</record>
-		
-		<record model="ir.actions.act_window" id="action_nstda_bst_bosslevel_setting" >
+
+		<record model="ir.actions.act_window" id="action_nstda_bst_bosslevel_setting">
 			<field name="name">ตารางวงเงิน</field>
 			<field name="res_model">nstda.bst.bosslevel</field>
 			<field name="view_type">form</field>
@@ -185,99 +208,85 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
 		</record>
-		
+
 
 		<menuitem name="เบิกสินค้า" id="menu_nstda_bst_hbill" parent="menu_nstda_bst_main"
 			sequence="1" />
 
-		<menuitem name="เบิกสินค้า" id="menu_nstda_bst_hbill_sub" parent="menu_nstda_bst_hbill"
-			action="action_nstda_bst_hbill" 
+		<menuitem name="เบิกสินค้า" id="menu_nstda_bst_hbill_sub"
+			parent="menu_nstda_bst_hbill" action="action_nstda_bst_hbill"
 			sequence="2" />
-			
-		<menuitem name="รายการเบิกสินค้า" id="menu_nstda_bst_hbill_sup" parent="menu_nstda_bst_hbill"
-			action="action_nstda_bst_hbill_sup" 
-			sequence="3" 
-			groups="base.group_nstda_bst_authorities" />
 
-		<menuitem name="รายการรออนุมัติ" id="menu_nstda_bst_hbill_boss" parent="menu_nstda_bst_hbill"
-			action="action_nstda_bst_hbill_boss" 
+		<menuitem name="รายการเบิกสินค้า" id="menu_nstda_bst_hbill_sup"
+			parent="menu_nstda_bst_hbill" action="action_nstda_bst_hbill_sup"
+			sequence="3" groups="base.group_nstda_bst_authorities" />
+
+		<menuitem name="รายการรออนุมัติ" id="menu_nstda_bst_hbill_boss"
+			parent="menu_nstda_bst_hbill" action="action_nstda_bst_hbill_boss"
 			sequence="4" />
 
-		<menuitem name="รายการรอเบิก" id="menu_nstda_bst_hbill_wait" parent="menu_nstda_bst_hbill"
-			action="action_nstda_bst_hbill_wait" 
-			sequence="5" 
-			groups="base.group_nstda_bst_authorities" />
+		<menuitem name="รายการรอเบิก" id="menu_nstda_bst_hbill_wait"
+			parent="menu_nstda_bst_hbill" action="action_nstda_bst_hbill_wait"
+			sequence="5" groups="base.group_nstda_bst_authorities" />
 
-		<menuitem name="รอจัดเตรียมสินค้า" id="menu_nstda_bst_hbill_pick" parent="menu_nstda_bst_hbill"
-			action="action_nstda_bst_hbill_pick" 
-			sequence="6"
-			groups="base.group_nstda_bst_authorities" />
-			
-		<menuitem name="รอรับสินค้า" id="menu_nstda_bst_hbill_ready" parent="menu_nstda_bst_hbill"
-			action="action_nstda_bst_hbill_ready" 
-			sequence="7"
-			groups="base.group_nstda_bst_authorities" />
-			
-		<menuitem name="รับสินค้าแล้ว" id="menu_nstda_bst_hbill_success" parent="menu_nstda_bst_hbill"
-			action="action_nstda_bst_hbill_success" 
-			sequence="8"
-			groups="base.group_nstda_bst_authorities" />
-			
-		<menuitem name="รายการเบิกคลัง" id="menu_nstda_bst_pick_report" parent="menu_nstda_bst_stock_main"
-			action="action_nstda_bst_pick_report_tree_view"
-			sequence="9"
-			groups="base.group_nstda_bst_authorities" />
-			
-		<menuitem name="สต็อกสินค้า" id="menu_nstda_bst_stock" parent="menu_nstda_bst_stock_main"
-			action="action_nstda_bst_stock" 
-			sequence="10" 
-			groups="base.group_nstda_bst_admin" />
-			
-		<menuitem name="แก้ไขส่วนลด" id="menu_nstda_bst_discount" parent="menu_nstda_bst_stock_main" 
-			action="action_nstda_bst_discount_setting"
-			sequence="11" 
-			groups="base.group_nstda_bst_authorities" />
-			
-<!-- 		<menuitem name="รายงาน" id="nstda_bst_report" parent="menu_nstda_bst_report" -->
-<!-- 			action="action_nstda_bst_report" -->
-<!-- 			sequence="91" /> -->
-			
-		<menuitem name="รายงานการเบิกตามสินค้า" id="menu_nstda_bst_dbill_report" parent="menu_nstda_bst_report"
-			action="action_nstda_bst_dbill_report" 
+		<menuitem name="รอจัดเตรียมสินค้า" id="menu_nstda_bst_hbill_pick"
+			parent="menu_nstda_bst_hbill" action="action_nstda_bst_hbill_pick"
+			sequence="6" groups="base.group_nstda_bst_authorities" />
+
+		<menuitem name="รอรับสินค้า" id="menu_nstda_bst_hbill_ready"
+			parent="menu_nstda_bst_hbill" action="action_nstda_bst_hbill_ready"
+			sequence="7" groups="base.group_nstda_bst_authorities" />
+
+		<menuitem name="รับสินค้าแล้ว" id="menu_nstda_bst_hbill_success"
+			parent="menu_nstda_bst_hbill" action="action_nstda_bst_hbill_success"
+			sequence="8" groups="base.group_nstda_bst_authorities" />
+
+		<menuitem name="รายการเบิกคลัง" id="menu_nstda_bst_hbill_pick_sup"
+			parent="menu_nstda_bst_stock_main" action="action_nstda_bst_hbill_pick_sup_view"
+			sequence="9" groups="base.group_nstda_bst_authorities" />
+
+		<menuitem name="สต็อกสินค้า" id="menu_nstda_bst_stock"
+			parent="menu_nstda_bst_stock_main" action="action_nstda_bst_stock"
+			sequence="10" groups="base.group_nstda_bst_admin" />
+
+		<menuitem name="แก้ไขส่วนลด" id="menu_nstda_bst_discount"
+			parent="menu_nstda_bst_stock_main" action="action_nstda_bst_discount_setting"
+			sequence="11" groups="base.group_nstda_bst_authorities" />
+
+		<menuitem name="รายงาน" id="nstda_bst_report" parent="menu_nstda_bst_report"
+			action="action_nstda_bst_report" sequence="91" />
+
+		<menuitem name="รายงานการเบิกตามสินค้า" id="menu_nstda_bst_dbill_report"
+			parent="menu_nstda_bst_report" action="action_nstda_bst_dbill_report"
 			sequence="92" />
-			
-		<menuitem name="รายงานเบิกสินค้า (Costcenter)" id="menu_nstda_bst_costct_hbill" parent="menu_nstda_bst_report"
-			action="action_nstda_bst_costct_hbill" 
+
+		<menuitem name="รายงานเบิกสินค้า (Costcenter)" id="menu_nstda_bst_costct_hbill"
+			parent="menu_nstda_bst_report" action="action_nstda_bst_costct_hbill"
 			sequence="93" />
-			
-		<menuitem name="รายงานเบิกสินค้า (Project) " id="menu_nstda_bst_prjno_hbill" parent="menu_nstda_bst_report"
-			action="action_nstda_bst_prjno_hbill" 
+
+		<menuitem name="รายงานเบิกสินค้า (Project) " id="menu_nstda_bst_prjno_hbill"
+			parent="menu_nstda_bst_report" action="action_nstda_bst_prjno_hbill"
 			sequence="94" />
-			
-		<menuitem name="รายงานเบิกสินค้าทั้งหมด" id="menu_nstda_bst_admin_hbill" parent="menu_nstda_bst_report"
-			action="action_nstda_bst_admin_hbill" 
-			sequence="95" 
-			groups="base.group_nstda_bst_authorities" />
-			
-		<menuitem name="สรุปรายงาน (ETL)" id="menu_nstda_bst_bill_report" parent="menu_nstda_bst_report"
-			action="action_nstda_bst_bill_report"
-			sequence="96"
-			groups="base.group_nstda_bst_admin" />
-			
-		<menuitem name="ตารางวงเงิน" id="menu_nstda_bst_bosslevel_setting" parent="menu_nstda_bst_group_roles"
-			action="action_nstda_bst_bosslevel_setting"
-			sequence="97" 
-			groups="base.group_nstda_bst_admin" />
-			
-		<menuitem name="สิทธิ์" id="menu_nstda_bst_group_roles_sub" parent="menu_nstda_bst_group_roles"
-			action="action_nstda_bst_group_roles"
-			sequence="98" 
-			groups="base.group_nstda_bst_admin" />
+
+		<menuitem name="รายงานเบิกสินค้าทั้งหมด" id="menu_nstda_bst_admin_hbill"
+			parent="menu_nstda_bst_report" action="action_nstda_bst_admin_hbill"
+			sequence="95" groups="base.group_nstda_bst_authorities" />
+
+		<menuitem name="สรุปรายงาน (ETL)" id="menu_nstda_bst_bill_report"
+			parent="menu_nstda_bst_report" action="action_nstda_bst_bill_report"
+			sequence="96" groups="base.group_nstda_bst_admin" />
+
+		<menuitem name="ตารางวงเงิน" id="menu_nstda_bst_bosslevel_setting"
+			parent="menu_nstda_bst_group_roles" action="action_nstda_bst_bosslevel_setting"
+			sequence="97" groups="base.group_nstda_bst_admin" />
+
+		<menuitem name="สิทธิ์" id="menu_nstda_bst_group_roles_sub"
+			parent="menu_nstda_bst_group_roles" action="action_nstda_bst_group_roles"
+			sequence="98" groups="base.group_nstda_bst_admin" />
 
 		<menuitem name="คู่มือระบบ" id="menu_nstda_manual" parent="menu_nstda_bst_help"
-			action="action_nstda_bst_manual"
-			sequence="99"  />
-			
+			action="action_nstda_bst_manual" sequence="99" />
+
 
 	</data>
 </openerp>

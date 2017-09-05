@@ -16,6 +16,4 @@ from openerp import tools, models, fields, api, exceptions, _
 class nstda_bst_manual(models.Model): 
      
     _name = 'nstda.bst.manual'
-    
-    #emp_name = fields.Many2one('nstdamas.employee','ชื่อพนักงาน')
 

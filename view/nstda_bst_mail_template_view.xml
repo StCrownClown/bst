@@ -1,48 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data noupdate="0">
+	<data noupdate="0">
 
-    	<!-- Email Template Alert -->
-    	<record id="nstda_bst_mail_alert" model="email.template">
-            <field name="name">nstda_bst_mail_alert</field>
-            <field name="model">nstda.bst.hbill</field>
-            <field name="model_id" search="[('model','=','nstda.bst.hbill')]" model="ir.model"/>
-            <field name="user_signature" eval="False"/>
-            <field name="email_from"><![CDATA[nstdabookstore@nstda.or.th]]></field>
-            <field name="email_to"><![CDATA[suree@nstda.or.th]]></field>
-            <field name="auto_delete" eval="True"/>
-            <field name="mail_server_id" search="[('name','=','Outgoing Mail')]" model="ir.mail_server"/>
-            <field name="subject"><![CDATA[ขณะนี้ ศูนย์หนังสือ สวทช. ได้ทำการจัดเตรียมสินค้าให้ท่านเรียบร้อยแล้ว]]></field>
-            <field name="body_html"><![CDATA[
-            	{to}
+		<!-- Email Template Alert -->
+		<record id="nstda_bst_mail_alert" model="email.template">
+			<field name="name">nstda_bst_mail_alert</field>
+			<field name="model">nstda.bst.hbill</field>
+			<field name="model_id" search="[('model','=','nstda.bst.hbill')]"
+				model="ir.model" />
+			<field name="user_signature" eval="False" />
+			<field name="email_from"><![CDATA[nstdabookstore@nstda.or.th]]></field>
+			<field name="email_to"><![CDATA[suree@nstda.or.th]]></field>
+			<field name="auto_delete" eval="True" />
+			<field name="mail_server_id" search="[('name','=','Outgoing Mail')]"
+				model="ir.mail_server" />
+			<field name="subject"><![CDATA[แจ้งรับสินค้าที่ขอเบิกจากศูนย์หนังสือ สวทช.]]></field>
+			<field name="body_html"><![CDATA[
+            	<p>เรียนคุณ </p> {dear}
+            	<p></p>
 				<p>ขณะนี้ ศูนย์หนังสือ สวทช. ได้ทำการจัดเตรียมสินค้าให้ท่านเรียบร้อยแล้ว</p>
+				<p>ตามเอกสาร เลขที่ {docno} ราคารวมสุทธิ {amount} บาท</p>
 				<p>สามารถมารับสินค้าได้ในวันทำการ (จันทร์-ศุกร์) เวลา 14:00 - 15:00 น.</p>
+				<p></p>
 				<p>สอบถามข้อมูลเพิ่มเติมได้ที่ nstdabookstore@nstda.or.th</p>
+				<p>โทรศัพท์ 02-564700 ต่อ 1179-80 </p>
+				<p></p>
+				<p>ศูนย์หนังสือ สวทช.</p>
             ]]></field>
-        </record>
+		</record>
 
 
-    	<!-- Email Template Approval -->
-    	<record id="nstda_bst_mail_approval" model="email.template">
-            <field name="name">nstda_bst_mail_approval</field>
-            <field name="model">nstda.bst.hbill</field>
-            <field name="model_id" search="[('model','=','nstda.bst.hbill')]" model="ir.model"/>
-            <field name="user_signature" eval="False"/>
-            <field name="email_from"><![CDATA[nstdabookstore@nstda.or.th]]></field>
-            <field name="email_to"><![CDATA[suree@nstda.or.th]]></field>
-            <field name="auto_delete" eval="True"/>
-            <field name="mail_server_id" search="[('name','=','Outgoing Mail')]" model="ir.mail_server"/>
-            <field name="subject"><![CDATA[ขณะนี้  มีเอกสาร เบิกสินค้าที่ระลึก ขออนุมัติ]]></field>
-            <field name="body_html"><![CDATA[
+		<!-- Email Template Approval -->
+		<record id="nstda_bst_mail_approval" model="email.template">
+			<field name="name">nstda_bst_mail_approval</field>
+			<field name="model">nstda.bst.hbill</field>
+			<field name="model_id" search="[('model','=','nstda.bst.hbill')]"
+				model="ir.model" />
+			<field name="user_signature" eval="False" />
+			<field name="email_from"><![CDATA[nstdabookstore@nstda.or.th]]></field>
+			<field name="email_to"><![CDATA[suree@nstda.or.th]]></field>
+			<field name="auto_delete" eval="True" />
+			<field name="mail_server_id" search="[('name','=','Outgoing Mail')]"
+				model="ir.mail_server" />
+			<field name="subject"><![CDATA[โปรดคลิกอนุมัติคำขอเบิกสินค้าจากศูนย์หนังสือ สวทช.]]></field>
+			<field name="body_html"><![CDATA[
             	<p>เรียนคุณ {dear}</p>
-            	{to}
-				<p>ขณะนี้  มีเอกสาร เบิกสินค้าที่ระลึก ขออนุมัติ</p> 
+            	<p></p>
+				<p>ขณะนี้ มีเอกสารเบิกสินค้า โดย {docby}</p> 
+				<p>รออนุมัติ เลขที่ {docno} ยอดเบิกสุทธิ {amount} บาท</p>
 				<p>กรุณาเข้า อนุมัติที่  url:</p> 
-				<a href="{bst_id}">คลิกที่นี่</a>
+				<a href="{bst_url}">คลิกที่นี่</a>
+				<p></p>
 				<p>สอบถามข้อมูลเพิ่มเติมได้ที่ nstdabookstore@nstda.or.th</p>
+				<p>โทรศัพท์ 02-564700 ต่อ 1179-80 </p>
+				<p></p>
+				<p>ศูนย์หนังสือ สวทช.</p>
             ]]></field>
-        </record>
-        
+		</record>
+
+
+		<!-- Email Template Success -->
+		<record id="nstda_bst_mail_success" model="email.template">
+			<field name="name">nstda_bst_mail_success</field>
+			<field name="model">nstda.bst.hbill</field>
+			<field name="model_id" search="[('model','=','nstda.bst.hbill')]"
+				model="ir.model" />
+			<field name="user_signature" eval="False" />
+			<field name="email_from"><![CDATA[nstdabookstore@nstda.or.th]]></field>
+			<field name="email_to"><![CDATA[suree@nstda.or.th]]></field>
+			<field name="auto_delete" eval="True" />
+			<field name="mail_server_id" search="[('name','=','Outgoing Mail')]"
+				model="ir.mail_server" />
+			<field name="subject"><![CDATA[แจ้งรับสินค้าที่ขอเบิกจากศูนย์หนังสือ สวทช. เรียบร้อยแล้ว]]></field>
+			<field name="body_html"><![CDATA[
+            	<p>เรียนคุณ {dear}</p>
+            	<p></p>
+				<p>ตามเอกสาร เลขที่ {docno} ราคารวมสุทธิ {amount} บาท</p> 
+				<p>ได้มารับสินค้าได้ในวันที่ {pdate}</p>
+				<p>ผู้มารับสินค้าคือ {receive}</p> 
+				<p></p>
+				<p>สอบถามข้อมูลเพิ่มเติมได้ที่ nstdabookstore@nstda.or.th</p>
+				<p>โทรศัพท์ 02-564700 ต่อ 1179-80 </p>
+				<p></p>
+				<p>ศูนย์หนังสือ สวทช.</p>
+            ]]></field>
+		</record>
+
 	</data>
 </openerp>
 	

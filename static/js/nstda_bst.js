@@ -95,26 +95,22 @@ openerp.nstda_bst = function(instance) {
 			var match = regex.exec(data);
 			
 			if ($.inArray(res_model, MODELS_TO_HIDE) != -1) {
-				var button_t = setInterval(
-						function() {
-				
-							if (match) {
-								var id = match[1];
-								self.fetch('nstda.bst.hbill',['status'],[['id','=',id]]).then(function(status){
-									get_status = status;
-									if(get_status){
-										if (get_status[0].status == 'success') {
-											$(".oe_form_button_edit").hide();
-											$(".oe_form_button_edit").text('hide');
-										} else {
-											$(".oe_form_button_edit").show();
-										}
-									}
-								});
+				if (match) {
+					var id = match[1];
+					self.fetch('nstda.bst.hbill',['status'],[['id','=',id]]).then(function(status){
+						get_status = status;
+						if(get_status){
+							if (get_status[0].status == 'success') {
+								$(".oe_form_button_edit").hide();
+								$(".oe_form_button_edit").text('hide');
+							} else {
+								$(".oe_form_button_edit").show();
 							}
-							if ($(".oe_form_button_edit").text() == 'hide')
-								clearInterval(button_t);
-						}, 50);
+						}
+					});
+				}
+				if ($(".oe_form_button_edit").text() == 'hide')
+					clearInterval(button_t);
 			}
 				
 //			if ($.inArray(res_model, MODELS_TO_HIDE) != -1) {

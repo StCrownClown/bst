@@ -1,81 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
-    
-    
-        <record id="view_nstda_bst_note_cancel" model="ir.ui.view">
-            <field name="name">nstda.bst.note.cancel.wizard</field>
-            <field name="model">nstda.bst.note</field>
-            <field name="arch" type="xml">
-                <form string="Cancel" version="7.0" >
-                	<label string="คุณต้องการยกเลิกการเบิกสินค้า ?"/>
-                    <group>
-                        <field name="bst_note" class="oe_inline" string='เหตุผลการยกเลิก' placeholder="โปรดระบุเหตุผลในการยกเลิก" required="1" />
-                 	</group>
-                    <footer>
-                        <button name="send_cancel_x" string="ยืนยัน" type="object" class="oe_highlight"/>
-                        <button string="ปิด" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
+	<data>
 
-        <record id="action_view_nstda_bst_note_cancel" model="ir.actions.act_window">
-            <field name="name">ยกเลิกการเบิกสินค้า</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">nstda.bst.note</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="view_nstda_bst_note_cancel"/>
-            <field name="target">new</field>
-        </record>
-  
-        
-        <record id="view_nstda_bst_note_ready" model="ir.ui.view">
-            <field name="name">nstda.bst.note.ready.wizard</field>
-            <field name="model">nstda.bst.note</field>
-            <field name="arch" type="xml">
-                <form string="Receive" >
-                    <group>
-                        <field name="receive_emp_id" string='ผู้รับสินค้า' placeholder="โปรดระบุผู้รับสินค้า" style="width:400px" required="1" />
-                 	</group>
-                    <footer>
-                        <button name="send_ready_x" string="ยืนยัน" type="object" class="oe_highlight"/>
-                        <button string="ปิด" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-        
-		<record id="action_view_nstda_bst_note_ready" model="ir.actions.act_window">
-            <field name="name">ผู้รับสินค้า</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">nstda.bst.note</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="view_nstda_bst_note_ready"/>
-            <field name="target">new</field>
-        </record>
-        
-        
-        <!-- hbill action send approval wizard -->
-		<record id="view_nstda_bst_hbill_send_approval" model="ir.ui.view">
-            <field name="name">nstda.bst.send.approval.wizard</field>
-            <field name="model">nstda.bst.note</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Confirm" >
-                	<group>
-						<label string="คุณต้องการยืนยันการเบิกสินค้า ?"/>
+
+		<record id="view_nstda_bst_note_cancel" model="ir.ui.view">
+			<field name="name">nstda.bst.note.cancel.wizard</field>
+			<field name="model">nstda.bst.note</field>
+			<field name="arch" type="xml">
+				<form string="Cancel" version="7.0">
+					<label string="คุณต้องการยกเลิกการเบิกสินค้า ?" />
+					<group>
+						<field name="bst_note" class="oe_inline" string='เหตุผลการยกเลิก'
+							placeholder="โปรดระบุเหตุผลในการยกเลิก" required="1" />
 					</group>
-                    <footer>
-                        <button name="bst_send_approval" string="ยืนยัน" type="object" class="oe_highlight"/>
-                        <button string="ปิด" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-        
+					<footer>
+						<button name="send_cancel_x" string="ยืนยัน" type="object"
+							class="oe_highlight" />
+						<button string="ปิด" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_view_nstda_bst_note_cancel" model="ir.actions.act_window">
+			<field name="name">ยกเลิกการเบิกสินค้า</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">nstda.bst.note</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_nstda_bst_note_cancel" />
+			<field name="target">new</field>
+		</record>
+
+
+		<record id="view_nstda_bst_note_ready" model="ir.ui.view">
+			<field name="name">nstda.bst.note.ready.wizard</field>
+			<field name="model">nstda.bst.note</field>
+			<field name="arch" type="xml">
+				<form string="Receive">
+					<group>
+						<field name="receive_emp_id" string='ผู้รับสินค้า'
+							placeholder="โปรดระบุผู้รับสินค้า" style="width:400px" required="1" />
+					</group>
+					<footer>
+						<button name="send_ready_x" string="ยืนยัน" type="object"
+							class="oe_highlight" />
+						<button string="ปิด" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_view_nstda_bst_note_ready" model="ir.actions.act_window">
+			<field name="name">ผู้รับสินค้า</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">nstda.bst.note</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="view_nstda_bst_note_ready" />
+			<field name="target">new</field>
+		</record>
+
+
+		<!-- hbill action send approval wizard -->
+		<record id="view_nstda_bst_hbill_send_approval" model="ir.ui.view">
+			<field name="name">nstda.bst.send.approval.wizard</field>
+			<field name="model">nstda.bst.note</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Confirm">
+					<group>
+						<label string="คุณต้องการยืนยันการเบิกสินค้า ?" />
+					</group>
+					<footer>
+						<button name="bst_send_approval" string="ยืนยัน" type="object"
+							class="oe_highlight" />
+						<button string="ปิด" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
 		<record model="ir.actions.act_window" id="action_view_nstda_bst_hbill_send_approval">
 			<field name="name">ยืนยันการเบิกสินค้า</field>
 			<field name="type">ir.actions.act_window</field>
@@ -83,28 +88,29 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_send_approval" />
-    		<field name="target">new</field>
+			<field name="target">new</field>
 		</record>
-		
-		
+
+
 		<!-- hbill action prjm wizard -->
 		<record id="view_nstda_bst_hbill_prjm_submit" model="ir.ui.view">
-            <field name="name">nstda.bst.prjm.submit.wizard</field>
-            <field name="model">nstda.bst.note</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Confirm" >
-                	<group>
-						<label string="คุณต้องการอนุมัติการเบิกสินค้า ?"/>
+			<field name="name">nstda.bst.prjm.submit.wizard</field>
+			<field name="model">nstda.bst.note</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Confirm">
+					<group>
+						<label string="คุณต้องการอนุมัติการเบิกสินค้า ?" />
 					</group>
-                    <footer>
-                        <button name="bst_prjm_submit" string="ยืนยัน" type="object" class="oe_highlight"/>
-                        <button string="ปิด" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-        
+					<footer>
+						<button name="bst_prjm_submit" string="ยืนยัน" type="object"
+							class="oe_highlight" />
+						<button string="ปิด" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
 		<record model="ir.actions.act_window" id="action_view_nstda_bst_hbill_prjm_submit">
 			<field name="name">หัวหน้าโครงการอนุมัติ</field>
 			<field name="type">ir.actions.act_window</field>
@@ -112,28 +118,29 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_prjm_submit" />
-    		<field name="target">new</field>
+			<field name="target">new</field>
 		</record>
-		
-		
+
+
 		<!-- hbill action submit limit wizard -->
 		<record id="view_nstda_bst_hbill_submit_limit" model="ir.ui.view">
-            <field name="name">nstda.bst.submit.limit.wizard</field>
-            <field name="model">nstda.bst.note</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Confirm" >
-                	<group>
-						<label string="คุณต้องการอนุมัติวงเงินการเบิก ?"/>
+			<field name="name">nstda.bst.submit.limit.wizard</field>
+			<field name="model">nstda.bst.note</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Confirm">
+					<group>
+						<label string="คุณต้องการอนุมัติวงเงินการเบิก ?" />
 					</group>
-                    <footer>
-                        <button name="bst_submit_limit" string="ยืนยัน" type="object" class="oe_highlight"/>
-                        <button string="ปิด" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-        
+					<footer>
+						<button name="bst_submit_limit" string="ยืนยัน" type="object"
+							class="oe_highlight" />
+						<button string="ปิด" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
 		<record model="ir.actions.act_window" id="action_view_nstda_bst_hbill_submit_limit">
 			<field name="name">อนุมัติวงเงินการเบิก</field>
 			<field name="type">ir.actions.act_window</field>
@@ -141,28 +148,29 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_submit_limit" />
-    		<field name="target">new</field>
+			<field name="target">new</field>
 		</record>
-		
-		
+
+
 		<!-- hbill action submit approval wizard -->
 		<record id="view_nstda_bst_hbill_submit_approval" model="ir.ui.view">
-            <field name="name">nstda.bst.submit.approval.wizard</field>
-            <field name="model">nstda.bst.note</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Confirm" >
-                	<group>
-						<label string="คุณต้องการอนุมัติการเบิกสินค้า?"/>
+			<field name="name">nstda.bst.submit.approval.wizard</field>
+			<field name="model">nstda.bst.note</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Confirm">
+					<group>
+						<label string="คุณต้องการอนุมัติการเบิกสินค้า?" />
 					</group>
-                    <footer>
-                        <button name="bst_submit_approval" string="ยืนยัน" type="object" class="oe_highlight"/>
-                        <button string="ปิด" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-        
+					<footer>
+						<button name="bst_submit_approval" string="ยืนยัน" type="object"
+							class="oe_highlight" />
+						<button string="ปิด" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
 		<record model="ir.actions.act_window" id="action_view_nstda_bst_hbill_submit_approval">
 			<field name="name">อนุมัติการเบิก</field>
 			<field name="type">ir.actions.act_window</field>
@@ -170,28 +178,29 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_submit_approval" />
-    		<field name="target">new</field>
+			<field name="target">new</field>
 		</record>
-        
-        
-       <!-- hbill action submit pick wizard -->
+
+
+		<!-- hbill action submit pick wizard -->
 		<record id="view_nstda_bst_hbill_submit_pick" model="ir.ui.view">
-            <field name="name">nstda.bst.submit.pick.wizard</field>
-            <field name="model">nstda.bst.note</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Confirm" >
-                	<group>
-						<label string="คุณต้องการยืนยันการเตรียมสินค้า?"/>
+			<field name="name">nstda.bst.submit.pick.wizard</field>
+			<field name="model">nstda.bst.note</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Confirm">
+					<group>
+						<label string="คุณต้องการยืนยันการเตรียมสินค้า?" />
 					</group>
-                    <footer>
-                        <button name="bst_submit_pick" string="ยืนยัน" type="object" class="oe_highlight"/>
-                        <button string="ปิด" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-        
+					<footer>
+						<button name="bst_submit_pick" string="ยืนยัน" type="object"
+							class="oe_highlight" />
+						<button string="ปิด" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
 		<record model="ir.actions.act_window" id="action_view_nstda_bst_hbill_submit_pick">
 			<field name="name">ยืนยันการเตรียมสินค้า</field>
 			<field name="type">ir.actions.act_window</field>
@@ -199,27 +208,28 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_submit_pick" />
-    		<field name="target">new</field>
+			<field name="target">new</field>
 		</record>
-		
-		
+
+
 		<!-- hbill action check qty wizard -->
 		<record id="view_nstda_bst_hbill_check_qty" model="ir.ui.view">
-            <field name="name">nstda.bst.check.qty.wizard</field>
-            <field name="model">nstda.bst.note</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Confirm" >
-                	<group>
-						<label string="ในสต๊อคไม่มีสินค้า กรุณาแจ้งกลับผู้เบิก เพื่อเปลี่ยนสินค้า หรือ ยกเลิกใบเบิกนี้"/>
+			<field name="name">nstda.bst.check.qty.wizard</field>
+			<field name="model">nstda.bst.note</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Confirm">
+					<group>
+						<label
+							string="ในสต๊อคไม่มีสินค้า กรุณาแจ้งกลับผู้เบิก เพื่อเปลี่ยนสินค้า หรือ ยกเลิกใบเบิกนี้" />
 					</group>
-                    <footer>
-                        <button string="ปิด" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-        
+					<footer>
+						<button string="ปิด" special="cancel" />
+					</footer>
+				</form>
+			</field>
+		</record>
+
 		<record model="ir.actions.act_window" id="action_view_nstda_bst_hbill_check_qty">
 			<field name="name">ตรวจสอบ</field>
 			<field name="type">ir.actions.act_window</field>
@@ -227,9 +237,9 @@
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
 			<field name="view_id" ref="view_nstda_bst_hbill_check_qty" />
-    		<field name="target">new</field>
+			<field name="target">new</field>
 		</record>
-		
 
-    </data>
+
+	</data>
 </openerp>

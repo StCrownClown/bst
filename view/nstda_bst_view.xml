@@ -15,15 +15,16 @@
 				</tree>
 			</field>
 		</record>
-		
-		
-		<!-- TreeView Cost Center-->
+
+
+		<!-- TreeView Cost Center -->
 		<record model="ir.ui.view" id="view_nstdamas_costcenter_tree_2">
 			<field name="name">nstdamas.costcenter.tree</field>
 			<field name="model">nstdamas.costcenter</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
-				<tree string="nstdamas_costcenter_tree_2" create="false" delete="false" edit="false" >
+				<tree string="nstdamas_costcenter_tree_2" create="false"
+					delete="false" edit="false">
 					<field name="cct_id" />
 					<field name="cct_shortname" />
 					<field name="cct_name" />
@@ -33,7 +34,7 @@
 			</field>
 		</record>
 
-		
+
 	</data>
 </openerp>
 

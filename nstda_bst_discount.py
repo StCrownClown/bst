@@ -7,6 +7,7 @@ from pychart.tick_mark import Null
 from dateutil import parser
 from datetime import datetime,timedelta
 from datetime import datetime
+
 #from openerp.tools.translate import _
 #from email import _name
 #from bsddb.dbtables import _columns
@@ -33,7 +34,6 @@ class nstda_bst_discount(models.Model):
     
     _name = 'nstda.bst.discount'
     _inherit = 'res.config.settings'
-    
     
     id = fields.Integer('id')
     discount = fields.Integer('ส่วนลด', default= lambda self:self.env['nstda.bst.discount'].search([],limit=1,order="id DESC").discount, compute='set_discount', readonly=False, store=True)

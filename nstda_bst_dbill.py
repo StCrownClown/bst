@@ -51,12 +51,6 @@ class nstda_bst_dbill(models.Model):
         values['no'] = 0
         res = super(nstda_bst_dbill, self).create(values)
         return res
-    
-    
-#     @api.multi
-#     def write(self, values):
-#         res_id = super(nstda_bst_dbill, self).write(values)
-#         return res_id 
 
 
     def _needaction_count(self, cr, uid, domain=None, context=None):
@@ -119,10 +113,6 @@ class nstda_bst_dbill(models.Model):
     inv_k = fields.Boolean('Check approve', store=False, readonly=True, compute='_get_inv_k')
     inv_r = fields.Boolean('Check ready', store=False, readonly=True, compute='_get_inv_r')
     
-#     _sql_constraints = [
-#                         ('_check_qty', 'กรุณาระบุจำนวนในรายละเอียดสินค้าให้ถูกต้อง(จำนวนต้องไม่น้อยกว่าหรือเท่ากับศูนย์)', ['qty'])
-#     ]
-
 
     @api.constrains('qty')
     def _check_qty(self):
@@ -220,22 +210,6 @@ class nstda_bst_dbill(models.Model):
     @api.onchange('qty_res','tbill_ids')
     def _set_sum_res(self):
         self.sum_res  = self.qty_res * self.unitprice
-        
-        
-#     def _dbill_cut_success(self, cr, uid, ids, context=None):
-#         getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', ids)], context=context)
-#         
-#         for dbill in self.pool.get('nstda.bst.dbill').browse(cr, uid, ids):
-#             find_dbill = self.pool.get('nstda.bst.dbill').browse(cr, uid, dbill.id)
-#             find_dbill.cut_stock = True
-#         
-#         
-#     def _dbill_return_success(self, cr, uid, ids, context=None):
-#         getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('tbill_ids', '=', ids)], context=context)
-#         
-#         for dbill in self.pool.get('nstda.bst.dbill').browse(cr, uid, ids):
-#             find_dbill = self.pool.get('nstda.bst.dbill').browse(cr, uid, dbill.id)
-#             find_dbill.return_stock = True
         
        
     @api.multi

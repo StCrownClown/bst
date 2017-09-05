@@ -3,20 +3,22 @@
 	<data>
 
 
-	<!-- TreeView -->
+		<!-- TreeView -->
 		<record model="ir.ui.view" id="view_nstda_bst_stock">
 			<field name="name">nstda.bst.stock.tree</field>
 			<field name="model">nstda.bst.stock</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_tree_stock" class="nstda_bst_tree_stock">
+				<tree string="nstda_bst_tree_stock" class="nstda_bst_tree_stock"
+					create="false" edit="true" delete="false">
 					<field name="matno" />
-					<field name="matdesc" />
-					<field name="qty" />
+					<field name="matdesc" attrs="{'readonly':[('is_auth_admin','=',False)]}" />
+					<field name="qty" attrs="{'readonly':[('is_auth_admin','=',False)]}" />
 					<field name="qty_rs" />
 					<field name="uom" />
-					<field name="unitprice" />
+					<field name="unitprice" attrs="{'readonly':[('is_auth_admin','=',False)]}" />
+					<field name="is_auth_admin" invisible="1" />
 				</tree>
 			</field>
 		</record>
@@ -36,15 +38,16 @@
 								<field name="saleorg" />
 								<field name="distribution" />
 								<field name="matno" />
-								<field name="matdesc" />
-								<field name="qty" />
+								<field name="matdesc" attrs="{'readonly':[('is_auth_admin','=',False)]}" />
+								<field name="qty" attrs="{'readonly':[('is_auth_admin','=',False)]}" />
 								<field name="qty_rs" />
 								<field name="uom" />
-								<field name="unitprice" />
+								<field name="unitprice" attrs="{'readonly':[('is_auth_admin','=',False)]}" />
 								<field name="barno" />
 								<field name="taxcode" />
 								<field name="plant" />
 								<field name="storage" />
+								<field name="is_auth_admin" invisible="1" />
 							</group>
 
 						</sheet>
@@ -60,16 +63,14 @@
 			<field name="model">nstda.bst.stock</field>
 			<field name="arch" type="xml">
 				<search string="duration">
-			
-					<field name="matdesc" string="ชื่อสินค้า" 
-						filter_domain="[('matdesc','ilike',self)]" />
-					<field name="matno" string="รหัสสินค้า" 
-						filter_domain="[('matno','ilike',self)]"/>
+
+					<field name="matdesc" string="ชื่อสินค้า" filter_domain="[('matdesc','ilike',self)]" />
+					<field name="matno" string="รหัสสินค้า" filter_domain="[('matno','ilike',self)]" />
 
 				</search>
 			</field>
 		</record>
 
-		
+
 	</data>
 </openerp>

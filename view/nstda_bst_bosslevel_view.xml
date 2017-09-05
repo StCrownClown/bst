@@ -3,15 +3,16 @@
 	<data>
 
 
-	<!-- TreeView -->
+		<!-- TreeView -->
 		<record model="ir.ui.view" id="view_nstda_bst_bosslevel">
 			<field name="name">nstda.bst.bosslevel.tree</field>
 			<field name="model">nstda.bst.bosslevel</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
-				<tree string="nstda_bst_tree_bosslevel" class="nstda_bst_tree_bosslevel" create="false" delete="false"
-					edit="true" >
+				<tree string="nstda_bst_tree_bosslevel" class="nstda_bst_tree_bosslevel"
+					create="false" delete="false" edit="true" editable="top">
 					<field name="boss_level" />
+					<field name="start_amount" />
 					<field name="approve_amount" />
 				</tree>
 			</field>
@@ -25,17 +26,18 @@
 			<field name="type">form</field>
 			<field name="arch" type="xml">
 				<form string="nstda_bst_bosslevel" create="false" delete="false"
-					edit="true" >
+					edit="true">
 					<sheet>
 						<group>
 							<field name="boss_level" />
+							<field name="start_amount" />
 							<field name="approve_amount" />
 						</group>
 					</sheet>
 				</form>
 			</field>
 		</record>
-		
-		
+
+
 	</data>
 </openerp>
