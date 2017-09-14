@@ -62,7 +62,6 @@ class nstda_bst_mail_alert(models.Model):
             values = email_template_obj.generate_email(cr, uid, template_ids[0], env_refs.id, context=context)
             
             url_rec = str(request.httprequest.host_url) + ':8069/web#id=' + str(env_refs.id) + '&model=nstda.bst.hbill'
-            print env_refs.boss_emp_id
             
             values['body_html'] = values['body_html'].replace("{to}", env_refs.boss_emp_id.emp_email)
             values['body_html'] = values['body_html'].replace("{dear}", env_refs.bossname)

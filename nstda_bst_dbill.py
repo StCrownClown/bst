@@ -79,7 +79,7 @@ class nstda_bst_dbill(models.Model):
     sum = fields.Float(string="ราคารวม", store=True, compute='_set_sum')
     qty_res = fields.Integer('จำนวนที่ต้องการ', store=True, readonly=False)
     sum_res = fields.Float(string="ราคารวม", store=True, compute='_set_sum_res')
-    cut_stock = fields.Boolean('ตัดสต็อกสำเร็จ', store=True, default=False, compute='check_qty_more')
+    cut_stock = fields.Boolean('ตัดสต็อกสำเร็จ', store=True, default=False, compute='check_qty_is_edit')
     return_stock = fields.Boolean('คืนสต็อกสำเร็จ', store=True, default=False)
     dbill_discount_sum = fields.Float(string="ราคารวม(ส่วนลด)", store=True, compute='_set_discount')
     
@@ -115,7 +115,7 @@ class nstda_bst_dbill(models.Model):
     
 
     @api.constrains('qty')
-    def _check_qty(self):
+    def _check_qty_not_zero(self):
         if self.tbill_ids.status not in ['wait_boss','wait_prjm','wait_approvers','pick','ready'] or self.status != False:
             for record in self:
                 if record.qty <= 0:
@@ -167,25 +167,10 @@ class nstda_bst_dbill(models.Model):
     @api.one
     @api.depends('qty_res','tbill_ids')
     @api.onchange('qty_res','tbill_ids')
-    def check_qty_more(self):
+    def check_qty_is_edit(self):
         self.cut_stock = False
-
-
-    def _set_dup_tb(self, cr, uid, ids, context=None):
-        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('hbill_ids', '=', context['bst_id'])], context=context)
-         
-        for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
-            mat_bill.tbill_ids = mat_bill.hbill_ids
-    
-    
-    def _set_res_tb(self, cr, uid, ids, context=None):
-        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('hbill_ids', '=', context['bst_id'])], context=context)
-         
-        for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
-            mat_bill.sum = mat_bill.qty * mat_bill.unitprice
-            mat_bill.sum_res = mat_bill.qty_res * mat_bill.unitprice
-
-       
+        
+        
     @api.one
     @api.onchange('qty','matno')
     @api.depends('qty','matno')
@@ -269,3 +254,20 @@ class nstda_bst_dbill(models.Model):
                 return neg
             
             self.hbill_ids = self.tbill_ids
+
+
+    def set_t_field(self, cr, uid, ids, context=None):
+        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('hbill_ids', '=', context['bst_id'])], context=context)
+         
+        for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
+            mat_bill.tbill_ids = mat_bill.hbill_ids
+    
+    
+    def compute_sum_res(self, cr, uid, ids, context=None):
+        getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('hbill_ids', '=', context['bst_id'])], context=context)
+         
+        for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
+            mat_bill.sum = mat_bill.qty * mat_bill.unitprice
+            mat_bill.sum_res = mat_bill.qty_res * mat_bill.unitprice
+
+       

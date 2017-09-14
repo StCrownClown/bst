@@ -109,8 +109,6 @@ openerp.nstda_bst = function(instance) {
 						}
 					});
 				}
-				if ($(".oe_form_button_edit").text() == 'hide')
-					clearInterval(button_t);
 			}
 				
 //			if ($.inArray(res_model, MODELS_TO_HIDE) != -1) {

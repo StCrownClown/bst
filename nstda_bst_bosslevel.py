@@ -23,9 +23,9 @@ class nstda_bst_bosslevel(models.Model):
     _name = 'nstda.bst.bosslevel'
  
     boss_level = fields.Integer('Boss Level', readonly=True)
+    start_amount = fields.Float('วงเงินเริ่มต้น', readonly=True, store=True, compute='set_start_amount')
     approve_amount = fields.Float('จำนวนเงินที่สามารถอนุมัติ')
-    start_amount = fields.Float('วงเงินเริ่มต้น', readonly=True, compute='set_start_amount')
-    
+
     
     @api.one
     @api.depends('approve_amount')
@@ -33,10 +33,14 @@ class nstda_bst_bosslevel(models.Model):
     def set_start_amount(self):
         if self.boss_level == 1:
             self.start_amount = 1
+        elif self.boss_level == 3:
+            level = 2
+            find_amount = self.env['nstda.bst.bosslevel'].search([('boss_level','=',level)], limit=1).start_amount
+            self.start_amount = find_amount
         else :
-            lower = self.boss_level - 1
-            find_lower = self.env['nstda.bst.bosslevel'].search([('boss_level','=',lower)], limit=1).approve_amount
-            self.start_amount = find_lower + 1
+            level = self.boss_level - 1
+            find_amount = self.env['nstda.bst.bosslevel'].search([('boss_level','=',level)], limit=1).approve_amount
+            self.start_amount = find_amount + 1
 
 
 nstda_bst_bosslevel()

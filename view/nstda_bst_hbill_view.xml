@@ -241,39 +241,63 @@
 					<header>
 						<div class="oe_inline">
 
-							<button name="%(action_view_nstda_bst_hbill_send_approval)d"
+							<button name="%(action_view_nstda_bst_note_send_request)d"
 								string="ยืนยันการเบิก" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':[('status','!=','draft')]}" context="{'bst_id': id}" />
 							<!-- attrs="{'invisible':[('inv_c','=',False)]}" -->
 							<!-- confirm="คุณต้องการยืนยันการเบิกสินค้า ?" /> -->
 
-							<button name="%(action_view_nstda_bst_hbill_prjm_submit)d"
+							<button name="%(action_view_nstda_bst_note_prjm_submit)d"
 								string="หัวหน้าโครงการอนุมัติ" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':[('status','!=','wait_prjm')]}" context="{'bst_id': id}" />
 							<!-- attrs="{'invisible':[('inv_p','=',False)]}" -->
 							<!-- confirm="คุณต้องการอนุมัติการเบิกสินค้า ?" /> -->
 
-							<button name="%(action_view_nstda_bst_hbill_submit_limit)d"
+							<button name="%(action_view_nstda_bst_note_boss_submit)d"
 								string="อนุมัติวงเงินการเบิก" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':[('status','!=','wait_boss')]}" context="{'bst_id': id}" />
 							<!-- attrs="{'invisible':[('inv_b','=',False)]}" -->
 							<!-- confirm="คุณต้องการอนุมัติวงเงินการเบิก?" /> -->
+							
+							<button name="%(action_view_nstda_bst_note_prsd_submit)d"
+								string="อนุมัติวงเงินการเบิก" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':[('status','!=','wait_prsd')]}" context="{'bst_id': id}" />
+							<!-- attrs="{'invisible':[('inv_b','=',False)]}" -->
+							<!-- confirm="คุณต้องการอนุมัติวงเงินการเบิก?" /> -->
+							
+							<button name="%(action_view_nstda_bst_note_bss_lv4_submit)d"
+								string="อนุมัติวงเงินการเบิก" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':[('status','!=','wait_bss_lv4')]}" context="{'bst_id': id}" />
+							<!-- attrs="{'invisible':[('inv_b','=',False)]}" -->
+							<!-- confirm="คุณต้องการอนุมัติวงเงินการเบิก?" /> -->
+							
+							<button name="%(action_view_nstda_bst_note_bss_lv5_submit)d"
+								string="อนุมัติวงเงินการเบิก" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':[('status','!=','wait_bss_lv5')]}" context="{'bst_id': id}" />
+							<!-- attrs="{'invisible':[('inv_b','=',False)]}" -->
+							<!-- confirm="คุณต้องการอนุมัติวงเงินการเบิก?" /> -->
+							
+							<button name="%(action_view_nstda_bst_note_bss_lv6_submit)d"
+								string="อนุมัติวงเงินการเบิก" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':[('status','!=','wait_bss_lv6')]}" context="{'bst_id': id}" />
+							<!-- attrs="{'invisible':[('inv_b','=',False)]}" -->
+							<!-- confirm="คุณต้องการอนุมัติวงเงินการเบิก?" /> -->
 
-							<button name="%(action_view_nstda_bst_hbill_submit_approval)d"
+							<button name="%(action_view_nstda_bst_note_approver_submit)d"
 								string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_check','=',False)]}"
 								context="{'bst_id': id}" groups="base.group_nstda_bst_authorities" />
 							<!-- attrs="{'invisible':['|',('inv_a','=',False),('status','!=','wait_approvers')]}" -->
 							<!-- confirm="คุณต้องการอนุมัติการเบิกสินค้า?" -->
 
-							<button name="%(action_view_nstda_bst_hbill_check_qty)d"
+							<button name="%(action_view_nstda_bst_note_check_qty)d"
 								string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_check','!=',False)]}"
 								context="{'bst_id': id}" groups="base.group_nstda_bst_authorities" />
 							<!-- attrs="{'invisible':['|',('inv_r','=',False),('status','!=','pick')]}" -->
 							<!-- confirm="คุณต้องการยืนยันการเตรียมสินค้า?" -->
 
-							<button name="%(action_view_nstda_bst_hbill_submit_pick)d"
+							<button name="%(action_view_nstda_bst_note_submit_pick)d"
 								string="ยืนยันการเตรียมสินค้า" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':[('status','!=','pick')]}" context="{'bst_id': id}"
 								groups="base.group_nstda_bst_authorities" />
@@ -289,10 +313,22 @@
 								string="ยกเลิกการเบิก" type="action" class="oe_read_only oe_highlight"
 								attrs="{'invisible':[('status','in',['reject','success'])]}"
 								context="{'bst_id': id, 'status':'reject'}" />
-
+								
+							<button name="%(action_view_nstda_bst_note_re_workflow)d"
+								string="re-workflow" type="action" class="oe_read_only oe_highlight"
+								attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_prsd','wait_bss_lv4','wait_bss_lv5','wait_bss_lv6']),('should_reworkflow','=',True)]}"
+								context="{'bst_id': id}" 
+								groups="base.group_nstda_bst_admin" />
+								
 							<field name="status" widget="statusbar"
-								statusbar_visible="reject,draft,wait_prjm,wait_boss,wait_approvers,pick,ready,success" />
-						</div>
+								statusbar_visible="reject,draft,wait_boss,wait_prsd,wait_bss_lv4,wait_bss_lv5,wait_bss_lv6,wait_approvers,pick,ready,success" 
+								attrs="{'invisible':[('costct_prjno_selection','!=','costct')]}" />
+								
+							<field name="status_pj" widget="statusbar"
+								statusbar_visible="reject,draft,wait_prjm,wait_boss,wait_bss_lv4,wait_bss_lv5,wait_bss_lv6,wait_approvers,pick,ready,success" 
+								attrs="{'invisible':[('costct_prjno_selection','!=','prjno')]}"/>
+								
+						</div>		
 					</header>
 
 					<sheet>
@@ -384,9 +420,9 @@
 								</span>
 
 								<span>
-									<label for="adate" string="วันที่เจ้าหน้าที่อนุมัติ"
+									<label for="approver_adate" string="วันที่เจ้าหน้าที่อนุมัติ"
 										attrs="{'invisible':[('status','=','draft')]}" />
-									<field name="adate" style="width: 200px"
+									<field name="approver_adate" style="width: 200px"
 										attrs="{'invisible':[('status','=','draft')]}" />
 								</span>
 							</div>
@@ -415,11 +451,11 @@
 						<label for="d_bill_ids" string="รายละเอียดสินค้า" colspan="3" />
 						<field name="d_bill_ids" nolabel="1" colspan="6"
 							context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree'}"
-							attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])],}" />
+							attrs="{'invisible':[('status','!=','draft')],}" />
 						<!-- 'readonly':[('inv_c','=',False),('status','=','draft')]}" /> -->
 						<field name="t_bill_ids" nolabel="1" colspan="6"
 							context="{'group_by':'matno', 'tree_view_ref' : 'nstda_bst.view_nstda_bst_dbill_tree_2'}"
-							attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])], 
+							attrs="{'invisible':[('status','=','draft')], 
 									'readonly':[('inv_b','=',False),('inv_p','=',False),('inv_a','=',False),('inv_k','=',False),('inv_r','=',False)]}" />
 
 						<group>
@@ -427,35 +463,35 @@
 							<group class="oe_subtotal_footer oe_left" name="sale_total">
 								<field name="amount_before_discount" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','=','draft')]}" />
 								<field name="discount_value" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','=','draft')]}" />
 								<field name="amount_before_approve" class="oe_subtotal_footer_separator"
 									widget='monetary' options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','=','draft')]}" />
 							</group>
 
 							<group class="oe_subtotal_footer oe_right" name="sale_total">
 								<field name="amount_before_discount_right" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','!=','draft')]}" />
 								<field name="discount_value_right" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','!=','draft')]}" />
 								<field name="amount_after_discount" class="oe_subtotal_footer_separator"
 									widget='monetary' options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','!=','draft')]}" />
 
 								<field name="amount_before_t" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','=','draft')]}" />
 								<field name="discount_t" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','=','draft')]}" />
 								<field name="amount_after_t" class="oe_subtotal_footer_separator"
 									widget='monetary' options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_approvers','pick','ready','success'])]}" />
+									attrs="{'invisible':[('status','=','draft')]}" />
 							</group>
 						</group>
 
@@ -521,6 +557,7 @@
 						<field name="boss_id" invisible="1" />
 						<field name="approver" invisible="1" />
 						<field name="qty_check" invisible="1" />
+					    <field name="should_reworkflow" invisible="1" />
 						<field name="inv_c" invisible="1" />
 						<field name="inv_p" invisible="1" />
 						<field name="inv_b" invisible="1" />
@@ -528,7 +565,7 @@
 						<field name="inv_k" invisible="1" />
 						<field name="inv_r" invisible="1" />
 						<field name="inv_j" invisible="1" />
-						<field name="inv_s" invisible="1" />
+						<field name="inv_t" invisible="1" />
 
 					</sheet>
 

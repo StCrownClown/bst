@@ -64,7 +64,14 @@
 			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
 			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="context">{}</field>
-			<field name="domain">['|','&amp;',('status','=','wait_prjm'),('prjm_id','=',uid),'&amp;',('status','=','wait_boss'),('boss_id','=',uid)]
+			<field name="domain">['|','&amp;',('status','=','wait_prjm'),('prjm_id','=',uid),
+								'|','&amp;',('status','=','wait_boss'),('boss_id','=',uid),
+								'|','&amp;',('status','=','wait_prsd'),('prsd_id','=',uid),
+								'|','&amp;',('status','=','wait_bss_lv4'),('bss_lv4_id','=',uid),
+								'|','&amp;',('status','=','wait_bss_lv5'),('bss_lv5_id','=',uid),
+								'&amp;',('status','=','wait_bss_lv6'),('bss_lv6_id','=',uid),
+								
+								]
 			</field>
 		</record>
 
@@ -163,7 +170,7 @@
 			<field name="view_mode">tree,form</field>
 			<field name="view_id" ref="view_nstda_bst_report_tree_1" />
 			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
-			<field name="domain">[('costct_prjno_selection','=','costct'),('inv_s','=',True),('status','=','success')]
+			<field name="domain">[('costct_prjno_selection','=','costct'),('inv_t','=',True),('status','=','success')]
 			</field>
 		</record>
 

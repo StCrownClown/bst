@@ -59,7 +59,7 @@ class nstda_bst_hbill(models.Model):
     @api.one
     @api.depends('d_bill_ids','t_bill_ids')
     @api.onchange('d_bill_ids','t_bill_ids')
-    def _compute_amount_right(self):
+    def _compute_amount_rightside(self):
         if self.status == 'draft':
             self.amount_before_discount_right = sum((line.qty * line.unitprice) for line in self.d_bill_ids)
             self.discount_value_right = (self.amount_before_discount_right * self.discount) / 100
@@ -77,22 +77,22 @@ class nstda_bst_hbill(models.Model):
     @api.one
     @api.depends('t_bill_ids')
     @api.onchange('t_bill_ids')
-    def _compute_amount_last(self):
+    def _compute_amount_leftside(self):
         self.amount_before_t = sum((line.qty_res * line.unitprice) for line in self.t_bill_ids)
         self.discount_t = (self.amount_before_t * self.discount) / 100
         self.amount_after_t = self.amount_before_t - self.discount_t
 
 
     @api.one
-    @api.depends('empid','costct','prjm_emp_id')
-    @api.onchange('empid','costct_prjno_selection','prjm_emp_id')
+    @api.depends('empid','costct_prjno_selection','prjno')
+    @api.onchange('empid','costct_prjno_selection')
     def _set_prj_cct(self):
         try:
             if self.costct_prjno_selection == 'costct':
                 self.costct = self.empid.emp_dpm_id.dpm_cct_id.id
             elif self.costct_prjno_selection == 'prjno':
-                if (self.prjm_emp_id):
-                    self.costct = self.prjm_emp_id.emp_dpm_id.dpm_cct_id.id
+                pjboss_obj = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',self.prjno.id),('prjm_position','=','00')]).prjm_emp_id
+                self.costct = pjboss_obj.emp_dpm_iddpm_cct_idid
         except:
             pass
 
@@ -128,7 +128,7 @@ class nstda_bst_hbill(models.Model):
             
     @api.one
     @api.depends('cr_user_id')
-    def _set_cr_info(self):
+    def _set_create_user_info(self):
         if(self.cr_user_id):
             self.cr_user_name = self.cr_user_id.emp_fname + ' ' + self.cr_user_id.emp_lname
         
@@ -143,6 +143,18 @@ class nstda_bst_hbill(models.Model):
                 self.bossname = self.boss_emp_id.emp_fname + ' ' + self.boss_emp_id.emp_lname
             else:
                 self.bossname = 'ไม่พบข้อมูล'
+                
+                
+    @api.one
+    @api.depends('prsd_id')
+    @api.onchange('prsd_id')
+    def _set_prsd_info(self):
+        if(self.prsd_id):
+            self.prsd_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prsd_id.id)]).id
+            if(self.prsd_emp_id):
+                self.prsdname = self.prsd_emp_id.emp_fname + ' ' + self.prsd_emp_id.emp_lname
+            else:
+                self.prsdname = 'ไม่พบข้อมูล'
         
         
     @api.one
@@ -151,8 +163,6 @@ class nstda_bst_hbill(models.Model):
     def _set_prjm_info(self):
         if(self.prjm_id):
             self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
-            self._set_prj_cct()
-            
             if(self.prjm_emp_id):
                 self.prjmname = self.prjm_emp_id.emp_fname + ' ' + self.prjm_emp_id.emp_lname
             else:
@@ -169,6 +179,42 @@ class nstda_bst_hbill(models.Model):
                 self.approvername = self.approver_id.emp_fname + ' ' + self.approver_id.emp_lname
             else:
                 self.approvername = 'ไม่พบข้อมูล'
+                
+                
+    @api.one
+    @api.depends('bss_lv4_id')
+    @api.onchange('bss_lv4_id')
+    def _set_bss_lv4_info(self):
+        if(self.bss_lv4_id):
+            self.bss_lv4_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.bss_lv4_id.id)]).id
+            if(self.bss_lv4_emp_id):
+                self.bss_lv4name = self.bss_lv4_emp_id.emp_fname + ' ' + self.bss_lv4_emp_id.emp_lname
+            else:
+                self.bss_lv4name = 'ไม่พบข้อมูล'
+                
+                
+    @api.one
+    @api.depends('bss_lv5_id')
+    @api.onchange('bss_lv5_id')
+    def _set_bss_lv5_info(self):
+        if(self.bss_lv5_id):
+            self.bss_lv5_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.bss_lv5_id.id)]).id
+            if(self.bss_lv5_emp_id):
+                self.bss_lv5name = self.bss_lv5_emp_id.emp_fname + ' ' + self.bss_lv5_emp_id.emp_lname
+            else:
+                self.bss_lv5name = 'ไม่พบข้อมูล'
+            
+                
+    @api.one
+    @api.depends('bss_lv6_id')
+    @api.onchange('bss_lv6_id')
+    def _set_bss_lv6_info(self):
+        if(self.bss_lv6_id):
+            self.bss_lv6_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.bss_lv6_id.id)]).id
+            if(self.bss_lv6_emp_id):
+                self.bss_lv6name = self.bss_lv6_emp_id.emp_fname + ' ' + self.bss_lv6_emp_id.emp_lname
+            else:
+                self.bss_lv6name = 'ไม่พบข้อมูล'
             
             
     @api.one
@@ -195,7 +241,7 @@ class nstda_bst_hbill(models.Model):
     @api.one
     @api.onchange('cr_user_id','status')
     @api.depends('cr_user_id','status')
-    def _inv_p(self):
+    def _check_prjm(self):
         if self.status == 'wait_prjm':
             if self.prjm_id.id == self._uid or self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_p = True
@@ -206,7 +252,7 @@ class nstda_bst_hbill(models.Model):
     @api.one
     @api.onchange('cr_user_id','status')
     @api.depends('cr_user_id','status')
-    def _inv_b(self):
+    def _check_boss(self):
         if self.status == 'wait_boss':
             if self.boss_id.id == self._uid or self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_b = True
@@ -217,7 +263,7 @@ class nstda_bst_hbill(models.Model):
     @api.one
     @api.onchange('cr_user_id','status')
     @api.depends('cr_user_id','status')
-    def _inv_a(self):
+    def _check_approver(self):
         if self.status == 'wait_approvers':
             if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_a = True
@@ -228,7 +274,7 @@ class nstda_bst_hbill(models.Model):
     @api.one
     @api.onchange('cr_user_id','status')
     @api.depends('cr_user_id','status')
-    def _inv_k(self):
+    def _check_pick(self):
         if self.status == 'pick':
             if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_k = True
@@ -239,7 +285,7 @@ class nstda_bst_hbill(models.Model):
     @api.one
     @api.onchange('cr_user_id','status')
     @api.depends('cr_user_id','status')
-    def _inv_r(self):
+    def _check_ready(self):
         if self.status == 'ready':
             if self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
                 self.inv_r = True
@@ -250,7 +296,7 @@ class nstda_bst_hbill(models.Model):
     @api.one
     @api.onchange('cr_user_id','status')
     @api.depends('cr_user_id','status')
-    def _inv_c(self):
+    def _check_user(self):
         if self.status == 'draft':
             cr_user = self.cr_user_id.emp_rusers_id.id
             emp_user = self.empid.emp_rusers_id.id
@@ -262,7 +308,7 @@ class nstda_bst_hbill(models.Model):
 
     @api.one
     @api.onchange('user_id')
-    def _inv_j(self):
+    def _check_prj_member(self):
         user_id = self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]).id
         if self.costct_prjno_selection == 'prjno':
             pj_mem = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',self.prjno.id)])
@@ -277,23 +323,23 @@ class nstda_bst_hbill(models.Model):
             
     @api.one
     @api.onchange('user_id')
-    def _inv_s(self):
+    def _check_cct_member(self):
         user_id = self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)])
         if self.costct_prjno_selection == 'costct':
             if (user_id):
                 user_cct = user_id.emp_dpm_id.dpm_cct_id.id
                 if self.costct.id == user_cct:
-                    self.inv_s = True
+                    self.inv_t = True
                 else:
-                    self.inv_s = False
+                    self.inv_t = False
             else:
-                self.inv_s = False
+                self.inv_t = False
 
             
     @api.one
     @api.onchange('t_bill_ids','status')
     @api.depends('t_bill_ids','status')
-    def _check(self):
+    def _check_qty_less_than_stock(self):
         for v in self.t_bill_ids:
             if v.matno.qty - v.qty < 0:
                 self.qty_check = False
@@ -302,7 +348,7 @@ class nstda_bst_hbill(models.Model):
                 
                 
     @api.constrains('amount_after_t')
-    def _check_limit(self):
+    def _check_amount_limit(self):
         if self.status not in ['draft','wait_boss','wait_prjm']:
             if self.amount_after_t > self.amount_after_discount:
                 raise ValidationError("ไม่สามารถแก้ไขรายการเบิกได้ เนื่องจากจำนวนเงินสุทธิเกินวงเงินที่อนุมัติ")
@@ -314,23 +360,39 @@ class nstda_bst_hbill(models.Model):
     _rec_name = 'docno'
     
     docno = fields.Char('เลขที่เอกสาร', size=10, readonly=True)
-    empid = fields.Many2one('nstdamas.employee', 'พนักงานผู้เบิก', required=True, default=lambda self:self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]))   
-    prjm_id = fields.Many2one('res.users', 'หัวหน้าโครงการ', readonly=True)
-    boss_id = fields.Many2one('res.users', 'ผู้อนุมัติ', readonly=True)
-    approver = fields.Many2one('res.users', 'เจ้าหน้าที่ศูนย์หนังสือ', readonly=True)
-
+    empid = fields.Many2one('nstdamas.employee', 'พนักงานผู้เบิก', required=True, default=lambda self:self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]))
     emp_code = fields.Char('รหัสผู้เบิก', readonly=True, compute='_set_emp_info')
     empname = fields.Char('พนักงานผู้เบิก', readonly=True, compute='_set_emp_info')
+    emp_email = fields.Char(string='Email', store=True, compute='_set_emp_info')
+    cr_user_id = fields.Many2one('nstdamas.employee', 'พนักงานผู้บันทึก', readonly=True, required=True, default=lambda self:self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]))
+    cr_user_name = fields.Char('ผู้บันทึก', readonly=True, compute='_set_create_user_info')
+       
+    prjm_id = fields.Many2one('res.users', 'หัวหน้าโครงการ', readonly=True)
+    boss_id = fields.Many2one('res.users', 'ผู้อนุมัติเบิกจ่าย', readonly=True)
+    prsd_id = fields.Many2one('res.users', 'ผู้อนุมัติ', readonly=True)
+    approver = fields.Many2one('res.users', 'เจ้าหน้าที่ศูนย์หนังสือ', readonly=True)
     
     boss_emp_id = fields.Many2one('nstdamas.employee', 'ผู้อนุมัติเบิกจ่าย', readonly=True, store=False, compute='_set_boss_info')
     prjm_emp_id = fields.Many2one('nstdamas.employee', 'หัวหน้าโครงการ', readonly=True, store=False, compute='_set_prjm_info')
+    prsd_emp_id = fields.Many2one('nstdamas.employee', 'ผู้อนุมัติ', readonly=True, store=False, compute='_set_prsd_info')
     approver_id = fields.Many2one('nstdamas.employee', 'เจ้าหน้าที่ศูนย์หนังสือ', readonly=True, compute='_set_approve_info')
-    bossname = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_boss_info')
-    prjmname = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_prjm_info')
+    
+    bossname = fields.Char('ผู้อนุมัติเบิกจ่าย', readonly=True, store=False, compute='_set_boss_info')
+    prjmname = fields.Char('หัวหน้าโครงการ', readonly=True, store=False, compute='_set_prjm_info')
+    prsdname = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_prsd_info')
     approvername = fields.Char('เจ้าหน้าที่ศูนย์หนังสือ', readonly=True, store=False, compute='_set_approve_info')
     
-    cr_user_id = fields.Many2one('nstdamas.employee', 'พนักงานผู้บันทึก', readonly=True, required=True, default=lambda self:self.env['nstdamas.employee'].search([('emp_rusers_id', '=', self._uid)]))
-    cr_user_name = fields.Char('ผู้บันทึก', readonly=True, compute='_set_cr_info')
+    bss_lv4_id = fields.Many2one('res.users', 'ผู้อนุมัติ', readonly=True)
+    bss_lv5_id = fields.Many2one('res.users', 'ผู้อนุมัติ', readonly=True)
+    bss_lv6_id = fields.Many2one('res.users', 'ผู้อนุมัติ', readonly=True)
+    
+    bss_lv4_emp_id = fields.Many2one('nstdamas.employee', 'ผู้อนุมัติ', readonly=True, store=False, compute='_set_bss_lv4_info')
+    bss_lv5_emp_id = fields.Many2one('nstdamas.employee', 'ผู้อนุมัติ', readonly=True, store=False, compute='_set_bss_lv5_info')
+    bss_lv6_epm_id = fields.Many2one('nstdamas.employee', 'ผู้อนุมัติ', readonly=True, store=False, compute='_set_bss_lv6_info')
+    
+    bss_lv4name = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_bss_lv4_info')
+    bss_lv5name = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_bss_lv5_info')
+    bss_lv6name = fields.Char('ผู้อนุมัติ', readonly=True, store=False, compute='_set_bss_lv6_info')
 
     org = fields.Many2one('nstdamas.org', 'ศูนย์ที่สังกัด', readonly=True, store=True, compute='_set_emp_info')
     division = fields.Many2one('nstdamas.division', 'ฝ่ายที่สังกัด', readonly=True, store=True, compute='_set_emp_info')
@@ -344,8 +406,9 @@ class nstda_bst_hbill(models.Model):
     cct_group = fields.Char('cctgroup', compute=_set_cct_group)
     
     prjno = fields.Many2one('nstdamas.project', 'โครงการที่เบิก', domain=[('prj_end', '>=', datetime.now().strftime('%Y-%m-%d'))])
-    objdesc = fields.Text('วัตถุประสงค์ในการเบิก', required=True)
     prj_cct = fields.Char('หน่วยงาน/โครงการ', readonly=True, compute='_set_prj_cct_name', store=True)
+    
+    objdesc = fields.Text('วัตถุประสงค์ในการเบิก', required=True)
     
     pick_emp_id = fields.Many2one('nstdamas.employee', 'ผู้จัดเตรียมสินค้า', readonly=True)
     assign_emp_id = fields.Many2one('nstdamas.employee', 'ผู้จ่ายสินค้า', readonly=True)
@@ -356,7 +419,12 @@ class nstda_bst_hbill(models.Model):
     
     book_date = fields.Datetime('วันที่ยืนยันการเบิก', readonly=True)
     boss_adate = fields.Datetime('วันที่อนุมัติเบิกจ่าย', readonly=True)
-    adate = fields.Datetime('วันที่เจ้าหน้าที่อนุมัติ', readonly=True)
+    prjm_adate = fields.Datetime('วันที่อนุมัติเบิกจ่าย', readonly=True)
+    prsd_adate = fields.Datetime('วันที่อนุมัติ', readonly=True)
+    approver_adate = fields.Datetime('วันที่เจ้าหน้าที่อนุมัติ', readonly=True)
+    bss_lv4_adate = fields.Datetime('วันที่อนุมัติ', readonly=True)
+    bss_lv5_adate = fields.Datetime('วันที่อนุมัติ', readonly=True)
+    bss_lv6_adate = fields.Datetime('วันที่อนุมัติ', readonly=True)
     pick_date = fields.Datetime('วันที่เบิกสินค้า', readonly=True)
     post_date = fields.Datetime('วันที่ทำรายการสำเร็จ', readonly=True)
    
@@ -364,10 +432,7 @@ class nstda_bst_hbill(models.Model):
     docno_intf = fields.Char('เลขที่เอกสารการตัด Stock', readonly=True)
     fiscalyear_docno_intf = fields.Char('ปีงบประมาณของเลขที่เอกสาร Internal Charge', readonly=True)
     fiscalyear_icno_intf = fields.Char('ปีงบประมาณของเลขที่เอกสารการตัด Stock', readonly=True)
-    is_success_sap = fields.Boolean('SAP to Odoo', default=False, store=True)
     
-    emp_email = fields.Char(string='Email', store=True, compute='_set_emp_info')
-    is_mail_approved = fields.Boolean('Is mail approved', default=False)
     bst_quicknote = fields.Char('หมายเหตุ')
     bst_note = fields.Text('Note', track_visibility='onchange')
     bst_cancel_uid = fields.Many2one('nstdamas.employee', 'Cancel', readonly=True, track_visibility='onchange')
@@ -377,10 +442,16 @@ class nstda_bst_hbill(models.Model):
                                ('draft', 'ร่าง'),
                                ('wait_prjm', 'รออนุมัติ'),
                                ('wait_boss', 'รออนุมัติ'),
+                               ('wait_prsd', 'รออนุมัติ'),
+                               ('wait_bss_lv4', 'LV4'),
+                               ('wait_bss_lv5', 'LV5'),
+                               ('wait_bss_lv6', 'LV6'),
                                ('wait_approvers', 'รอเบิก'),
                                ('pick', 'รอจัดเตรียมสินค้า'),
                                ('ready', 'รอรับสินค้า'),
                                ('success', 'รับสินค้าแล้ว')], 'สถานะ', default='draft')
+    
+    status_pj = fields.Selection([], 'สถานะ', related='status')
                   
     discount = fields.Float('ส่วนลด(%)', store=True, default=lambda self:self.env['nstda.bst.discount'].search([], limit=1, order="id DESC").discount) 
 
@@ -388,27 +459,30 @@ class nstda_bst_hbill(models.Model):
     amount_before_discount = fields.Float(string='รวม', store=False, readonly=True, related='amount_before_discount_right')
     amount_before_approve = fields.Float(string='ยอดเบิกสุทธิ', store=False, readonly=True, related='amount_after_discount')   
     
-    discount_value_right = fields.Float('ส่วนลด', compute='_compute_amount_right')
-    amount_before_discount_right = fields.Float(string='รวม', readonly=True, compute='_compute_amount_right',)
-    amount_after_discount = fields.Float(string='ราคารวมสุทธิ', store=True, readonly=True, compute='_compute_amount_right')
+    discount_value_right = fields.Float('ส่วนลด', compute='_compute_amount_rightside')
+    amount_before_discount_right = fields.Float(string='รวม', readonly=True, compute='_compute_amount_rightside',)
+    amount_after_discount = fields.Float(string='ราคารวมสุทธิ', store=True, readonly=True, compute='_compute_amount_rightside')
 
-    discount_t = fields.Float('ส่วนลด', store=False, compute='_compute_amount_last')
-    amount_before_t = fields.Float(string='รวม', readonly=True, compute='_compute_amount_last',)
-    amount_after_t = fields.Float(string='ราคารวมสุทธิ', store=True, readonly=True, compute='_compute_amount_last')
+    discount_t = fields.Float('ส่วนลด', store=False, compute='_compute_amount_leftside')
+    amount_before_t = fields.Float(string='รวม', readonly=True, compute='_compute_amount_leftside',)
+    amount_after_t = fields.Float(string='ราคารวมสุทธิ', store=True, readonly=True, compute='_compute_amount_leftside')
     
     d_bill_ids = fields.One2many('nstda.bst.dbill', 'hbill_ids', 'รายละเอียดสินค้า')
     t_bill_ids = fields.One2many('nstda.bst.dbill', 'tbill_ids', 'รายละเอียดสินค้า')
     
-    qty_check = fields.Boolean('Check qty', readonly=True, compute='_check')
+    qty_check = fields.Boolean('Check qty', readonly=True, compute='_check_qty_less_than_stock')
+    should_reworkflow = fields.Boolean('is should reworkflow ?', readonly=True, compute='_is_should_reworkflow')
+    is_success_sap = fields.Boolean('SAP to Odoo', default=False, store=True)
+    is_mail_approved = fields.Boolean('Is mail approved', default=False)
     
-    inv_c = fields.Boolean('Check user', readonly=True, compute='_inv_c')
-    inv_p = fields.Boolean('Check prjm', readonly=True, compute='_inv_p')
-    inv_b = fields.Boolean('Check boss', readonly=True, compute='_inv_b')
-    inv_a = fields.Boolean('Check approver', readonly=True, compute='_inv_a')
-    inv_k = fields.Boolean('Check pick', readonly=True, compute='_inv_k')
-    inv_r = fields.Boolean('Check ready', readonly=True, compute='_inv_r')
-    inv_j = fields.Boolean('Check prj member', readonly=True, compute='_inv_j')
-    inv_s = fields.Boolean('Check cct member', readonly=True, compute='_inv_s')
+    inv_c = fields.Boolean('Check user', readonly=True, compute='_check_user')
+    inv_p = fields.Boolean('Check prjm', readonly=True, compute='_check_prjm')
+    inv_b = fields.Boolean('Check boss', readonly=True, compute='_check_boss')
+    inv_a = fields.Boolean('Check approver', readonly=True, compute='_check_approver')
+    inv_k = fields.Boolean('Check pick', readonly=True, compute='_check_pick')
+    inv_r = fields.Boolean('Check ready', readonly=True, compute='_check_ready')
+    inv_j = fields.Boolean('Check prj member', readonly=True, compute='_check_prj_member')
+    inv_t = fields.Boolean('Check cct member', readonly=True, compute='_check_cct_member')
 
     
     @api.one
@@ -436,9 +510,6 @@ class nstda_bst_hbill(models.Model):
 #         1[2  2     1         1   1       0   ]
 #         2[3  2     1         1   1       0   ]
 
-#         dbill = self.env['nstda.bst.dbill'].search([('hbill_ids','=',self.id)])
-        
-
         if self.status == 'draft' :
             self.env.cr.execute("""
                 UPDATE nstda_bst_dbill SET qty = t2.result, qty_res = t2.result
@@ -459,7 +530,7 @@ class nstda_bst_hbill(models.Model):
                 AND ( %s ))); 
                 """ % res)
              
-        elif self.status in ['wait_boss','wait_approvers']:
+        elif self.status in ['wait_boss','wait_prjm','wait_prsd']:
             self.env.cr.execute("""
                 UPDATE nstda_bst_dbill SET qty = t2.result, qty_res = t2.result
                 FROM ( SELECT matno,tbill_ids,sum(qty_res) result 
@@ -501,50 +572,136 @@ class nstda_bst_hbill(models.Model):
             
             
     @api.one
+    @api.onchange('prjm_id','boss_id','prsd_id','bss_lv4_id','bss_lv5_id','bss_lv6_id')
+    @api.depends('prjm_id','boss_id','prsd_id','bss_lv4_id','bss_lv5_id','bss_lv6_id')
+    def _is_should_reworkflow(self):
+        if self.costct_prjno_selection == 'costct':
+            if  self.boss_id or self.prsd_id or self.bss_lv4_id or self.bss_lv5_id or self.bss_lv6_id == None:
+                self.should_reworkflow = True
+            else:
+                self.should_reworkflow = False
+        elif self.costct_prjno_selection == 'prjno':
+            if  self.prjm_id or self.boss_id or self.bss_lv4_id or self.bss_lv5_id or self.bss_lv6_id == None:
+                self.should_reworkflow = True
+            else:
+                self.should_reworkflow = False
+            
+            
+    @api.one
     def cct_boss_level(self):
+        get_bosslevel = self.env['nstda.bst.bosslevel']
+        get_mas_boss = self.env['nstdamas.boss']
         try:
-            max_amount = self.env['nstda.bst.bosslevel'].search([('boss_level','=',5)]).approve_amount
+            max_amount = self.env['nstda.bst.bosslevel'].search([], limit=1, order="start_amount DESC").start_amount
+            
             if self.amount_after_discount >= max_amount:
                 level = 6
             else:
-                get_lv = self.env['nstda.bst.bosslevel'].search([('approve_amount','>=',self.amount_after_discount)], limit=1, order="boss_level ASC").boss_level
-                level = str(get_lv)
-                
-            current_boss = self.env['nstdamas.boss'].search([('bss_level','=',level),('bss_emp_id','=',self.empid.id)], limit=1).bss_id
-            boss_uid = current_boss.emp_rusers_id.id
-            self.boss_id = boss_uid
+                get_lv = get_bosslevel.search([('start_amount','<=',self.amount_after_discount),('approve_amount','>=',self.amount_after_discount)], order="boss_level ASC")
+                for find in get_lv:
+                    bss = get_mas_boss.search([('bss_level','=',find.boss_level),('bss_emp_id','=',self.empid.id)])
+                    if (bss.bss_id):
+                        level = find.boss_level
+            
+            boss_must_approve = get_mas_boss.search([('bss_level','<=',level),('bss_emp_id','=',self.empid.id),('bss_level','!=','0')])
+            
+            for set in boss_must_approve:
+                if set.bss_level == '1':
+                    if set.bss_id.id != False:
+                        self.boss_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.boss_id = next_boss.bss_id.emp_rusers_id.id
+                if set.bss_level == '2':
+                    if set.bss_id.id != False:
+                        self.prsd_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 2
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.prsd_id = next_boss.bss_id.emp_rusers_id.id
+                if set.bss_level == '3':
+                    if set.bss_id.id != False and self.prsd_id.id != False:
+                        self.prsd_id = set.bss_id.emp_rusers_id.id
+                    elif set.bss_id.id == False and self.prsd_id.id == False:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.prsd_id = next_boss.bss_id.emp_rusers_id.id
+                if set.bss_level == '4':
+                    if set.bss_id.id != False:
+                        self.bss_lv4_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.bss_lv4_id = next_boss.bss_id.emp_rusers_id.id
+                if set.bss_level == '5':
+                    if set.bss_id.id != False:
+                        self.bss_lv5_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.bss_lv5_id = next_boss.bss_id.emp_rusers_id.id
+                if set.bss_level == '6':
+                    if set.bss_id.id != False:
+                        self.bss_lv6_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        self.should_reworkflow = True
+                        raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชา')
         except:
             raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชาของท่าน')
-          
+
         
     @api.one
     def prj_boss_level(self):
+        get_bosslevel = self.env['nstda.bst.bosslevel']
+        get_mas_boss = self.env['nstdamas.boss']
         try:
             project_id = self.prjno.id
             pjboss_obj = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',project_id),('prjm_position','=','00')]).prjm_emp_id.id
-            if pjboss_obj == None:
+            if pjboss_obj == False:
                 self.env.cr.execute("SELECT prjm_emp_id FROM nstdamas_projectmember WHERE prjm_prj_id = " + str(project_id) + " AND prjm_position = '00'")
                 pjboss_obj = self.env.cr.fetchone()[0]
             get_prjm_id = self.env['nstdamas.employee'].search([['id', '=', pjboss_obj]]).emp_rusers_id.id
             self.prjm_id = get_prjm_id
             
-            min_boss_lv = max_boss_lv = self.env['nstda.bst.bosslevel'].search([('boss_level','=',1)]).approve_amount
+            min_boss_lv = self.env['nstda.bst.bosslevel'].search([], limit=1, order="approve_amount ASC").approve_amount
             
             if self.amount_after_discount <= min_boss_lv:
                 self.boss_id = get_prjm_id
             else:
-                get_lv = self.env['nstda.bst.bosslevel'].search([('approve_amount','>=',self.amount_after_discount)], limit=1, order="boss_level ASC").boss_level
-                level = str(get_lv)
-                    
-                current_boss = self.env['nstdamas.boss'].search([('bss_level','=',level),('bss_emp_id','=',self.empid.id)], limit=1).bss_id
-                boss_uid = current_boss.emp_rusers_id.id
-                self.boss_id = boss_uid
+                if set.bss_level == '2' or set.bss_level == '3':
+                    if set.bss_id != None:
+                        self.boss_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.boss_id = next_boss.bss_id.emp_rusers_id.id
+                elif set.bss_level == '4':
+                    if set.bss_id != None:
+                        self.bss_lv4_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.bss_lv4_id = next_boss.bss_id.emp_rusers_id.id
+                elif set.bss_level == '5':
+                    if set.bss_id != None:
+                        self.bss_lv5_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.bss_lv5_id = next_boss.bss_id.emp_rusers_id.id
+                elif set.bss_level == '6':
+                    if set.bss_id != None:
+                        self.bss_lv6_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        self.should_reworkflow = True
+                        raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชา')
         except:
             raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชาของท่าน')
     
     
     @api.one
-    def bst_send_approval(self):
+    def btn_send_request(self):
         
         if self.amount_after_discount > 0:
   
@@ -554,89 +711,166 @@ class nstda_bst_hbill(models.Model):
                       
                 else:
                     
+                    try:
+                        self.bst_sum_record()
+                    except:
+                        raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
+                        
                     if self.costct_prjno_selection == 'costct':
                         self.book_date = datetime.now()
                         self.cct_boss_level()
-                        try:
-                            self.bst_sum_record()
-                        except:
-                            raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
                         self.status = 'wait_boss'
                     
                     elif self.costct_prjno_selection == 'prjno':
                         self.book_date = datetime.now()
                         self.prj_boss_level()
-                        try:
-                            self.bst_sum_record()
-                        except:
-                            raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
                         self.status = 'wait_prjm'              
         else:
             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
         
 
     @api.one
-    def bst_prjm_submit(self):
+    def btn_prjm_submit(self):
         
         if self.amount_after_t > 0:
+            self.prj_boss_level()
             
-            if self.prjm_id != self.boss_id:
-                if self.inv_p == True:
-                    for v in self.t_bill_ids:
-                        if v.matno.qty - v.qty < 0:
-                            raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
-                        else:
-                            self.boss_adate = datetime.now()
+            if self.inv_p == True:
+                for v in self.t_bill_ids:
+                    if v.matno.qty - v.qty < 0:
+                        raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                    else:
+                        
+                        try:
+                            self.bst_sum_record()
+                        except:
+                            raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
+                        
+                        self.boss_adate = datetime.now()
+                        if self.prjm_id != self.boss_id:
                             self.status = 'wait_boss'
-                else:
-                    raise Warning('สำหรับหัวหน้าโครงการอนุมัติ')
-                
-            else:
-                if self.inv_p == True:
-                    for v in self.t_bill_ids:
-                        if v.matno.qty - v.qty < 0:
-                            raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
                         else:
-                            self.boss_adate = datetime.now()
                             self.status = 'wait_approvers'
-                else:
-                    raise Warning('สำหรับหัวหน้าโครงการอนุมัติ')
-                
-            try:
-                self.bst_sum_record()
-            except:
-                raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
+            else:
+                raise Warning('สำหรับหัวหน้าโครงการอนุมัติ')
             
         else:
             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
  
  
     @api.one
-    def bst_submit_limit(self):
+    def btn_boss_submit(self):
         
         if self.amount_after_t > 0:
+            if self.costct_prjno_selection == 'costct':
+                self.cct_boss_level()
+            elif self.costct_prjno_selection == 'prjno':
+                self.prj_boss_level()
             
             if self.inv_b == True:
                 for v in self.t_bill_ids:
                     if v.matno.qty - v.qty < 0:
                         raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
                     else:
+                        
+                        try:
+                            self.bst_sum_record()
+                        except:
+                            pass
+                        
                         self.boss_adate = datetime.now()
-                        self.status = 'wait_approvers'
+                        if self.costct_prjno_selection == 'costct':
+                            if (self.prsd_id):
+                                self.status = 'wait_prsd'
+                            else:
+                                self.status = 'wait_approvers'
+                        elif self.costct_prjno_selection == 'prjno':
+                            if (self.bss_lv4_id):
+                                self.status = 'wait_bss_lv4'
             else:
                 raise Warning('สำหรับผู้บังคับบัญชาอนุมัติ')
             
-            try:
-                self.bst_sum_record()
-            except:
-                pass
-            
         else:
             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
+
+
+    @api.one    
+    def btn_prsd_submit(self):
+        if self.prsd_id.id == self._uid:
+            
+            for v in self.t_bill_ids:
+                if v.matno.qty - v.qty < 0:
+                    raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                else:
+                    
+                    try:
+                        self.bst_sum_record()
+                    except:
+                        pass
+                    
+                    self.prsd_adate = datetime.now()
+                    if (self.bss_lv4_id):
+                        self.status = 'wait_bss_lv4'
+                    else:
+                        self.status = 'wait_approvers'
+                    
+        else:
+            raise Warning('สำหรับเจ้าหน้าที่อนุมัติ')
+
+
+    @api.one    
+    def btn_bss_lv4_submit(self):
+        if self.bss_lv4_id.id == self._uid:
+            
+            for v in self.t_bill_ids:
+                if v.matno.qty - v.qty < 0:
+                    raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                else:
+                    self.bss_lv4_adate = datetime.now()
+                    if (self.bss_lv5_id):
+                        self.status = 'wait_bss_lv5'
+                    else:
+                        self.status = 'wait_approvers'
+                    
+        else:
+            raise Warning('สำหรับผู้บังคับบัญชาอนุมัติ')
+        
+        
+    @api.one    
+    def btn_bss_lv5_submit(self):
+        if self.bss_lv5_id.id == self._uid:
+            
+            for v in self.t_bill_ids:
+                if v.matno.qty - v.qty < 0:
+                    raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                else:
+                    self.bss_lv5_adate = datetime.now()
+                    if (self.bss_lv6_id):
+                        self.status = 'wait_bss_lv6'
+                    else:
+                        self.status = 'wait_approvers'
+                    
+        else:
+            raise Warning('สำหรับผู้บังคับบัญชาอนุมัติ')
+        
+        
+    @api.one    
+    def btn_bss_lv6_submit(self):
+        if self.bss_lv6_id.id == self._uid:
+            
+            for v in self.t_bill_ids:
+                if v.matno.qty - v.qty < 0:
+                    raise Warning('จำนวนสินค้าในสต็อกไม่เพียงพอ')
+                else:
+                    self.bss_lv6_adate = datetime.now()
+                    self.status = 'wait_approvers'
+                    
+        else:
+            raise Warning('สำหรับผู้บังคับบัญชาอนุมัติ')
   
   
     @api.one    
-    def bst_submit_approval(self):
+    def btn_approver_submit(self):
         if self.inv_a == True:
             
             for v in self.t_bill_ids:
@@ -645,14 +879,14 @@ class nstda_bst_hbill(models.Model):
                 else:
                     self.status = 'pick'
                     self.approver = self._uid
-                    self.adate = datetime.now()
+                    self.approver_adate = datetime.now()
                     
         else:
             raise Warning('สำหรับเจ้าหน้าที่อนุมัติ')
     
     
     @api.one     
-    def bst_submit_pick(self):
+    def btn_submit_pick(self):
         if self.inv_k == True:
             
             for v in self.t_bill_ids:
@@ -667,10 +901,10 @@ class nstda_bst_hbill(models.Model):
             raise Warning('สำหรับเจ้าหน้าที่อนุมัติ')
         
         
-    def _submit_cut_stock(self, cr, uid, ids, context=None):
+    def submit_cut_stock(self, cr, uid, ids, context=None):
         self.pool.get('nstda.bst.stock')._cut_stock(cr, uid, context['bst_id'], context=context)
         
     
-    def _submit_return_stock(self, cr, uid, ids, context=None):
+    def submit_return_stock(self, cr, uid, ids, context=None):
         self.pool.get('nstda.bst.stock')._return_stock(cr, uid, context['bst_id'], context=context)
         
