@@ -68,7 +68,8 @@ class nstda_bst_note(osv.osv_memory):
     def btn_send_request(self, cr, uid, ids, context=None):
         self.pool.get('nstda.bst.dbill').set_t_field(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill').btn_send_request(cr, uid, context['bst_id'], context=context)
-        self.pool.get('nstda.bst.mail.alert').sendmail_approve(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_boss(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_prjm(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.dbill').compute_sum_res(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._compute_amount_leftside(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill')._compute_amount_rightside(cr, uid, context['bst_id'], context=context)
@@ -78,24 +79,29 @@ class nstda_bst_note(osv.osv_memory):
         self.pool.get('nstda.bst.hbill').btn_prjm_submit(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.dbill').compute_sum_res(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill').submit_cut_stock(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_boss(cr, uid, context['bst_id'], context=context)
         
         
     def btn_boss_submit(self, cr, uid, ids, context=None):   
         self.pool.get('nstda.bst.hbill').btn_boss_submit(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.dbill').compute_sum_res(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill').submit_cut_stock(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_prsd(cr, uid, context['bst_id'], context=context)
     
     
     def btn_prsd_submit(self, cr, uid, ids, context=None):    
         self.pool.get('nstda.bst.hbill').btn_prsd_submit(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_bss_lv4(cr, uid, context['bst_id'], context=context)
         
         
     def btn_bss_lv4_submit(self, cr, uid, ids, context=None):    
         self.pool.get('nstda.bst.hbill').btn_bss_lv4_submit(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_bss_lv5(cr, uid, context['bst_id'], context=context)
         
         
     def btn_bss_lv5_submit(self, cr, uid, ids, context=None):    
         self.pool.get('nstda.bst.hbill').btn_bss_lv5_submit(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_bss_lv6(cr, uid, context['bst_id'], context=context)
         
         
     def btn_bss_lv6_submit(self, cr, uid, ids, context=None):    
@@ -110,13 +116,7 @@ class nstda_bst_note(osv.osv_memory):
     def btn_submit_pick(self, cr, uid, ids, context=None):    
         self.pool.get('nstda.bst.hbill').btn_submit_pick(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill').submit_cut_stock(cr, uid, context['bst_id'], context=context)
-        self.pool.get('nstda.bst.mail.alert').sendmail_alert(cr, uid, context['bst_id'], context=context)
-        
-        
-    def btn_submit_pick(self, cr, uid, ids, context=None):    
-        self.pool.get('nstda.bst.hbill').btn_submit_pick(cr, uid, context['bst_id'], context=context)
-        self.pool.get('nstda.bst.hbill').submit_cut_stock(cr, uid, context['bst_id'], context=context)
-        self.pool.get('nstda.bst.mail.alert').sendmail_alert(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.mail.alert').sendmail_ready(cr, uid, context['bst_id'], context=context)
         
         
     def btn_re_workflow(self, cr, uid, ids, context=None):    

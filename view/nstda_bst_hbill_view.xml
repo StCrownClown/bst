@@ -316,7 +316,7 @@
 								
 							<button name="%(action_view_nstda_bst_note_re_workflow)d"
 								string="re-workflow" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':[('status','in',['wait_boss','wait_prjm','wait_prsd','wait_bss_lv4','wait_bss_lv5','wait_bss_lv6']),('should_reworkflow','=',True)]}"
+								attrs="{'invisible':[('status','not in',['wait_boss','wait_prjm','wait_prsd','wait_bss_lv4','wait_bss_lv5','wait_bss_lv6']),('should_reworkflow','!=',True)]}"
 								context="{'bst_id': id}" 
 								groups="base.group_nstda_bst_admin" />
 								
