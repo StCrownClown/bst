@@ -3,20 +3,6 @@
 	<data>
 
 
-		<!-- TreeView -->
-		<record model="ir.ui.view" id="view_nstda_bst">
-			<field name="name">nstda.bst.tree</field>
-			<field name="model">nstda.bst</field>
-			<field name="type">tree</field>
-			<field name="arch" type="xml">
-
-				<tree string="nstda_bst_tree">
-
-				</tree>
-			</field>
-		</record>
-
-
 		<!-- TreeView Cost Center -->
 		<record model="ir.ui.view" id="view_nstdamas_costcenter_tree_2">
 			<field name="name">nstdamas.costcenter.tree</field>

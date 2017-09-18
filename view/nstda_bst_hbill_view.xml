@@ -38,7 +38,7 @@
 
 		<!-- TreeView Default -->
 		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree">
-			<field name="name">nstda.bst.tree</field>
+			<field name="name">nstda.bst.hbill.tree</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
@@ -68,13 +68,13 @@
 
 
 		<!-- TreeView Boss -->
-		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_boss">
-			<field name="name">nstda.bst.tree</field>
+		<record model="ir.ui.view" id="view_nstda_bst_hbill_boss_tree">
+			<field name="name">nstda.bst.hbill.boss.tree</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_boss" create="false" delete="false"
+				<tree string="nstda_bst_hbill_boss_tree" create="false" delete="false"
 					edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
@@ -93,13 +93,13 @@
 
 
 		<!-- TreeView Wait Suppliers -->
-		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_wait">
-			<field name="name">nstda.bst.tree</field>
+		<record model="ir.ui.view" id="view_nstda_bst_hbill_wait_tree">
+			<field name="name">nstda.bst.hbill.wait.tree</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_wait" create="false" delete="false"
+				<tree string="nstda_bst_hbill_wait_tree" create="false" delete="false"
 					edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
@@ -118,13 +118,13 @@
 
 
 		<!-- TreeView Suppliers Master -->
-		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_sup">
-			<field name="name">nstda.bst.tree</field>
+		<record model="ir.ui.view" id="view_nstda_bst_hbill_sup_tree">
+			<field name="name">nstda.bst.hbill.sup.tree</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_sup" create="false" delete="false"
+				<tree string="nstda_bst_hbill_sup_tree" create="false" delete="false"
 					edit="true"
 					colors="red:status=='reject';
 							blue:status=='wait_prjm';blue:status=='wait_boss';
@@ -153,13 +153,13 @@
 
 
 		<!-- TreeView Ready -->
-		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_ready">
-			<field name="name">nstda.bst.tree</field>
+		<record model="ir.ui.view" id="view_nstda_bst_hbill_ready_tree">
+			<field name="name">nstda.bst.hbill.ready.tree</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_ready" create="false"
+				<tree string="nstda_bst_hbill_ready_tree" create="false"
 					delete="false" edit="true">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
@@ -180,13 +180,13 @@
 
 
 		<!-- TreeView Success -->
-		<record model="ir.ui.view" id="view_nstda_bst_hbill_tree_success">
-			<field name="name">nstda.bst.tree</field>
+		<record model="ir.ui.view" id="view_nstda_bst_hbill_success_tree">
+			<field name="name">nstda.bst.hbill.success.tree</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_hbill_tree_success" create="false"
+				<tree string="nstda_bst_hbill_success_tree" create="false"
 					delete="false" edit="false">
 					<field name="create_date" string="วันที่." />
 					<field name="docno" />
@@ -210,14 +210,14 @@
 		</record>
 
 
-		<!-- TreeView Report 1 -->
-		<record model="ir.ui.view" id="view_nstda_bst_report_tree_1">
-			<field name="name">nstda.bst.tree</field>
+		<!-- TreeView Report -->
+		<record model="ir.ui.view" id="view_nstda_bst_hbill_report_tree">
+			<field name="name">nstda.bst.hbill.report.tree</field>
 			<field name="model">nstda.bst.hbill</field>
 			<field name="type">tree</field>
 			<field name="arch" type="xml">
 
-				<tree string="nstda_bst_report_tree_1" create="false" delete="false"
+				<tree string="nstda_bst_hbill_report_tree" create="false" delete="false"
 					edit="false">
 					<field name="docno" string="เลขที่เอกสาร" />
 					<field name="emp_code" string="รหัสผู้เบิก" />
@@ -335,7 +335,7 @@
 
 						<img src="nstda_bst/static/src/img/bst_info.jpg" width="100%%"
 							attrs="{'invisible':[('status','!=','draft')]}" />
-						<hr />
+						<hr attrs="{'invisible':[('status','!=','draft')]}" />
 						<br />
 
 						<group>
@@ -394,7 +394,9 @@
 						<group>
 							<field name="prjm_emp_id"
 								attrs="{'invisible':['|',('status','=','draft'),('costct_prjno_selection','=','costct')]}" />
-
+						</group>
+						
+						<group>
 							<label for="boss_emp_id" string="ผู้อนุมัติเบิกจ่าย"
 								attrs="{'invisible':[('status','=','draft')]}" />
 							<div>

@@ -749,6 +749,7 @@ class nstda_bst_hbill(models.Model):
                         self.boss_adate = datetime.now()
                         if self.prjm_id != self.boss_id:
                             self.status = 'wait_boss'
+                            self.prjm_adate = datetime.now()
                         else:
                             self.status = 'wait_approvers'
             else:
@@ -796,7 +797,7 @@ class nstda_bst_hbill(models.Model):
 
     @api.one    
     def btn_prsd_submit(self):
-        if self.prsd_id.id == self._uid:
+        if self.prsd_id.id == self._uid or self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
             
             for v in self.t_bill_ids:
                 if v.matno.qty - v.qty < 0:
@@ -820,7 +821,7 @@ class nstda_bst_hbill(models.Model):
 
     @api.one    
     def btn_bss_lv4_submit(self):
-        if self.bss_lv4_id.id == self._uid:
+        if self.bss_lv4_id.id == self._uid or self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
             
             for v in self.t_bill_ids:
                 if v.matno.qty - v.qty < 0:
@@ -838,7 +839,7 @@ class nstda_bst_hbill(models.Model):
         
     @api.one    
     def btn_bss_lv5_submit(self):
-        if self.bss_lv5_id.id == self._uid:
+        if self.bss_lv5_id.id == self._uid or self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
             
             for v in self.t_bill_ids:
                 if v.matno.qty - v.qty < 0:
@@ -856,7 +857,7 @@ class nstda_bst_hbill(models.Model):
         
     @api.one    
     def btn_bss_lv6_submit(self):
-        if self.bss_lv6_id.id == self._uid:
+        if self.bss_lv6_id.id == self._uid or self.env['res.users'].has_group('base.group_nstda_bst_authorities') or self.env['res.users'].has_group('base.group_nstda_bst_admin'):
             
             for v in self.t_bill_ids:
                 if v.matno.qty - v.qty < 0:

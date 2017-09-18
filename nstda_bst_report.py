@@ -25,8 +25,8 @@ class nstda_bst_report(models.Model):
 
     _name = 'nstda.bst.report'
     
-    emp_name = fields.Many2one('nstdamas.employee','ชื่อพนักงาน', require=True)
-#     book_date =  fields.Date('ใส่วันที่เบิก')
+    emp_name = fields.Many2one('nstdamas.employee','ชื่อพนักงาน')
+    book_date =  fields.Date('ใส่วันที่เบิก')
 
 
     @api.v7
@@ -37,7 +37,6 @@ class nstda_bst_report(models.Model):
         data['model'] = 'nstda.bst.report'
         data['parameters'] = {
                               'empid': search_detail.emp_name.id,
-                              'status': 'pick',
                               }
         
 #         data['parameters']['ID'] = search_detail.emp_name.id if search_detail.emp_name else 'all'
