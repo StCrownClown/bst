@@ -68,11 +68,9 @@ class nstda_bst_note(osv.osv_memory):
     def btn_send_request(self, cr, uid, ids, context=None):
         self.pool.get('nstda.bst.dbill').set_t_field(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.hbill').btn_send_request(cr, uid, context['bst_id'], context=context)
+        self.pool.get('nstda.bst.dbill').compute_sum_res(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.mail.alert').sendmail_boss(cr, uid, context['bst_id'], context=context)
         self.pool.get('nstda.bst.mail.alert').sendmail_prjm(cr, uid, context['bst_id'], context=context)
-        self.pool.get('nstda.bst.dbill').compute_sum_res(cr, uid, context['bst_id'], context=context)
-        self.pool.get('nstda.bst.hbill')._compute_amount_leftside(cr, uid, context['bst_id'], context=context)
-        self.pool.get('nstda.bst.hbill')._compute_amount_rightside(cr, uid, context['bst_id'], context=context)
         
         
     def btn_prjm_submit(self, cr, uid, ids, context=None):

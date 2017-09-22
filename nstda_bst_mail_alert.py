@@ -124,7 +124,7 @@ class nstda_bst_mail_alert(models.Model):
         email_template_name = 'nstda_bst_mail_bss_lv4'
         template_ids = email_template_obj.search(cr, uid, [('model_id.model','=','nstda.bst.hbill'), ('name','=',email_template_name)], context=context)
         if template_ids:
-            if env_refs.bss_lv6_emp_id.emp_email:
+            if env_refs.bss_lv4_emp_id.emp_email:
                 values = email_template_obj.generate_email(cr, uid, template_ids[0], env_refs.id, context=context)
                 
                 url_rec = str(request.httprequest.host_url) + ':8069/web#id=' + str(env_refs.id) + '&model=nstda.bst.hbill'

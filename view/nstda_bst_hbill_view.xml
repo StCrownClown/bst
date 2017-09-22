@@ -208,8 +208,8 @@
 				</tree>
 			</field>
 		</record>
-
-
+		
+		
 		<!-- TreeView Report -->
 		<record model="ir.ui.view" id="view_nstda_bst_hbill_report_tree">
 			<field name="name">nstda.bst.hbill.report.tree</field>
@@ -224,6 +224,62 @@
 					<field name="empname" string="ชื่อผู้เบิก" />
 					<field name="prj_cct" string="หน่วยงาน/โครงการ" />
 					<field name="book_date" string="วันที่เบิก" />
+				    <field name="prjm_emp_id" string="หัวหน้าโครงการ" />
+					<field name="boss_emp_id" string="ผู้อนุมัติ" />
+				    <field name="prsd_emp_id" string="ผู้อนุมัติ" />
+					<field name="bss_lv4_emp_id" string="ผู้อนุมัติ" />
+				    <field name="bss_lv5_emp_id" string="ผู้อนุมัติ" />
+				    <field name="bss_lv6_epm_id" string="ผู้อนุมัติ" />
+					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+				</tree>
+			</field>
+		</record>
+
+
+		<!-- TreeView cct Report -->
+		<record model="ir.ui.view" id="view_nstda_bst_hbill_cctreport_tree">
+			<field name="name">nstda.bst.hbill.cctreport.tree</field>
+			<field name="model">nstda.bst.hbill</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+
+				<tree string="nstda_bst_hbill_report_tree" create="false" delete="false"
+					edit="false">
+					<field name="docno" string="เลขที่เอกสาร" />
+					<field name="emp_code" string="รหัสผู้เบิก" />
+					<field name="empname" string="ชื่อผู้เบิก" />
+					<field name="prj_cct" string="หน่วยงาน/โครงการ" />
+					<field name="book_date" string="วันที่เบิก" />
+				    <field name="boss_emp_id" string="ผู้อนุมัติ" />
+				    <field name="prsd_emp_id" string="ผู้อนุมัติ" />
+					<field name="bss_lv4_emp_id" string="ผู้อนุมัติ" />
+				    <field name="bss_lv5_emp_id" string="ผู้อนุมัติ" />
+				    <field name="bss_lv6_epm_id" string="ผู้อนุมัติ" />
+					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+				</tree>
+			</field>
+		</record>
+		
+		
+		<!-- TreeView prj Report -->
+		<record model="ir.ui.view" id="view_nstda_bst_hbill_prjreport_tree">
+			<field name="name">nstda.bst.hbill.prjreport.tree</field>
+			<field name="model">nstda.bst.hbill</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+
+				<tree string="nstda_bst_hbill_report_tree" create="false" delete="false"
+					edit="false">
+					<field name="docno" string="เลขที่เอกสาร" />
+					<field name="emp_code" string="รหัสผู้เบิก" />
+					<field name="empname" string="ชื่อผู้เบิก" />
+					<field name="prj_cct" string="หน่วยงาน/โครงการ" />
+					<field name="book_date" string="วันที่เบิก" />
+				    <field name="prjm_emp_id" string="หัวหน้าโครงการ" />
+				    <field name="boss_emp_id" string="ผู้อนุมัติ" />
+					<field name="bss_lv4_emp_id" string="ผู้อนุมัติ" />
+				    <field name="bss_lv5_emp_id" string="ผู้อนุมัติ" />
+				    <field name="bss_lv6_epm_id" string="ผู้อนุมัติ" />
 					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
 				</tree>
 			</field>
@@ -477,23 +533,23 @@
 							<group class="oe_subtotal_footer oe_right" name="sale_total">
 								<field name="amount_before_discount_right" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','!=','draft')]}" />
+									attrs="{'invisible':[('status','=','draft')]}" />
 								<field name="discount_value_right" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','!=','draft')]}" />
+									attrs="{'invisible':[('status','=','draft')]}" />
 								<field name="amount_after_discount" class="oe_subtotal_footer_separator"
 									widget='monetary' options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','!=','draft')]}" />
+									attrs="{'invisible':[('status','=','draft')]}" />
 
 								<field name="amount_before_t" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','=','draft')]}" />
+									attrs="{'invisible':[('status','!=','draft')]}" />
 								<field name="discount_t" widget='monetary'
 									options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','=','draft')]}" />
+									attrs="{'invisible':[('status','!=','draft')]}" />
 								<field name="amount_after_t" class="oe_subtotal_footer_separator"
 									widget='monetary' options="{'currency_field': 'currency_id'}"
-									attrs="{'invisible':[('status','=','draft')]}" />
+									attrs="{'invisible':[('status','!=','draft')]}" />
 							</group>
 						</group>
 

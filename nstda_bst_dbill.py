@@ -76,9 +76,9 @@ class nstda_bst_dbill(models.Model):
     tbill_ids = fields.Many2one('nstda.bst.hbill','รายละเอียดสินค้า', store=True)
 
     qty = fields.Integer('จำนวนที่ต้องการ', required=False)
-    sum = fields.Float(string="ราคารวม", store=True, compute='_set_sum')
+    sum = fields.Float(string="ราคารวม", store=False, compute='_set_sum')
     qty_res = fields.Integer('จำนวนที่ต้องการ', store=True, readonly=False)
-    sum_res = fields.Float(string="ราคารวม", store=True, compute='_set_sum_res')
+    sum_res = fields.Float(string="ราคารวม", store=False, compute='_set_sum_res')
     cut_stock = fields.Boolean('ตัดสต็อกสำเร็จ', store=True, default=False, compute='check_qty_is_edit')
     return_stock = fields.Boolean('คืนสต็อกสำเร็จ', store=True, default=False)
     dbill_discount_sum = fields.Float(string="ราคารวม(ส่วนลด)", store=True, compute='_set_discount')
@@ -191,8 +191,8 @@ class nstda_bst_dbill(models.Model):
 
 
     @api.one
-    @api.depends('qty_res','tbill_ids')
-    @api.onchange('qty_res','tbill_ids')
+    @api.depends('qty_res')
+    @api.onchange('qty_res')
     def _set_sum_res(self):
         self.sum_res  = self.qty_res * self.unitprice
         
@@ -265,9 +265,7 @@ class nstda_bst_dbill(models.Model):
     
     def compute_sum_res(self, cr, uid, ids, context=None):
         getbill_rec = self.pool.get('nstda.bst.dbill').search(cr, uid, [('hbill_ids', '=', context['bst_id'])], context=context)
-         
+          
         for mat_bill in self.pool.get('nstda.bst.dbill').browse(cr, uid, getbill_rec):
             mat_bill.sum = mat_bill.qty * mat_bill.unitprice
             mat_bill.sum_res = mat_bill.qty_res * mat_bill.unitprice
-
-       

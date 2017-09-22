@@ -20,12 +20,12 @@
 }
 
 .nstda_bst_dbill_tree_2 th[data-id='qty_res'] {
-	background:#00cc00;
+	background:LightGreen;
 	border: 1px solid #ccc;
 }
 
 .nstda_bst_dbill_tree_2 th[data-id='sum_res'] {
-	background:#00cc00;
+	background:LightGreen;
 	border: 1px solid #ccc;
 }
 

@@ -168,7 +168,7 @@
 			<field name="res_model">nstda.bst.hbill</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
-			<field name="view_id" ref="view_nstda_bst_hbill_report_tree" />
+			<field name="view_id" ref="view_nstda_bst_hbill_cctreport_tree" />
 			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="domain">[('costct_prjno_selection','=','costct'),('inv_t','=',True),('status','=','success')]
 			</field>
@@ -179,7 +179,7 @@
 			<field name="res_model">nstda.bst.hbill</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
-			<field name="view_id" ref="view_nstda_bst_hbill_report_tree" />
+			<field name="view_id" ref="view_nstda_bst_hbill_prjreport_tree" />
 			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
 			<field name="domain">[('costct_prjno_selection','=','prjno'),('inv_j','=',True),('status','=','success')]
 			</field>
