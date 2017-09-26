@@ -381,7 +381,7 @@
 								attrs="{'invisible':[('costct_prjno_selection','!=','costct')]}" />
 								
 							<field name="status_pj" widget="statusbar"
-								statusbar_visible="reject,draft,wait_prjm,wait_boss,wait_bss_lv4,wait_bss_lv5,wait_bss_lv6,wait_approvers,pick,ready,success" 
+								statusbar_visible="reject,draft,wait_prjm,wait_boss,wait_prsd,wait_bss_lv4,wait_bss_lv5,wait_bss_lv6,wait_approvers,pick,ready,success" 
 								attrs="{'invisible':[('costct_prjno_selection','!=','prjno')]}"/>
 								
 						</div>		

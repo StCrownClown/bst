@@ -284,7 +284,7 @@
 			sequence="96" groups="base.group_nstda_bst_admin" />
 
 		<menuitem name="ตารางวงเงิน" id="menu_nstda_bst_bosslevel_setting"
-			parent="menu_nstda_bst_group_roles" action="action_nstda_bst_bosslevel_setting"
+			parent="menu_nstda_bst_stock_main" action="action_nstda_bst_bosslevel_setting"
 			sequence="97" groups="base.group_nstda_bst_admin" />
 
 		<menuitem name="สิทธิ์" id="menu_nstda_bst_group_roles_sub"

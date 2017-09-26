@@ -580,16 +580,19 @@ class nstda_bst_hbill(models.Model):
     @api.onchange('prjm_id','boss_id','prsd_id','bss_lv4_id','bss_lv5_id','bss_lv6_id')
     @api.depends('prjm_id','boss_id','prsd_id','bss_lv4_id','bss_lv5_id','bss_lv6_id')
     def _is_should_reworkflow(self):
-        if self.costct_prjno_selection == 'costct':
-            if  self.boss_id or self.prsd_id or self.bss_lv4_id or self.bss_lv5_id or self.bss_lv6_id == None:
-                self.should_reworkflow = True
-            else:
-                self.should_reworkflow = False
-        elif self.costct_prjno_selection == 'prjno':
-            if  self.prjm_id or self.boss_id or self.bss_lv4_id or self.bss_lv5_id or self.bss_lv6_id == None:
-                self.should_reworkflow = True
-            else:
-                self.should_reworkflow = False
+        if self.status != 'success':
+            if self.costct_prjno_selection == 'costct':
+                if  self.boss_id or self.prsd_id or self.bss_lv4_id or self.bss_lv5_id or self.bss_lv6_id == None:
+                    self.should_reworkflow = True
+                else:
+                    self.should_reworkflow = False
+            elif self.costct_prjno_selection == 'prjno':
+                if  self.prjm_id or self.boss_id or self.bss_lv4_id or self.bss_lv5_id or self.bss_lv6_id == None:
+                    self.should_reworkflow = True
+                else:
+                    self.should_reworkflow = False
+        else:
+            self.should_reworkflow = False
             
             
     @api.one
@@ -686,43 +689,55 @@ class nstda_bst_hbill(models.Model):
                         
             boss_must_approve = get_mas_boss.search([('bss_level','<=',level),('bss_emp_id','=',self.empid.id),('bss_level','!=','0')])
             
-            print self.boss_id
-            
-            if self.amount_before_approve <= min_boss_lv:
-                self.boss_id = get_prjm_id
-                
-            else:
-            
-                for set in boss_must_approve:
-                    if set.bss_level == '1':
-                        self.boss_id = get_prjm_id
-                    if set.bss_level == '2' or set.bss_level == '3':
-                        if set.bss_id != None:
-                            self.boss_id = set.bss_id.emp_rusers_id.id
-                        else:
-                            find_next = int(set.bss_level) + 1
-                            next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
-                            self.boss_id = next_boss.bss_id.emp_rusers_id.id
-                    elif set.bss_level == '4':
-                        if set.bss_id != None:
-                            self.bss_lv4_id = set.bss_id.emp_rusers_id.id
-                        else:
-                            find_next = int(set.bss_level) + 1
-                            next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
-                            self.bss_lv4_id = next_boss.bss_id.emp_rusers_id.id
-                    elif set.bss_level == '5':
-                        if set.bss_id != None:
-                            self.bss_lv5_id = set.bss_id.emp_rusers_id.id
-                        else:
-                            find_next = int(set.bss_level) + 1
-                            next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
-                            self.bss_lv5_id = next_boss.bss_id.emp_rusers_id.id
-                    elif set.bss_level == '6':
-                        if set.bss_id != None:
-                            self.bss_lv6_id = set.bss_id.emp_rusers_id.id
-                        else:
-                            self.should_reworkflow = True
-                            raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชา')
+            for set in boss_must_approve:
+                if set.bss_level == '1':
+                    try:
+                        list_boss = self.env['nstdamas.boss'].get_boss(self.prjm_id.id, level=level)
+                        i = 0
+                        while True:
+                            if list_boss[i].bss_id.id != False:
+                                boss_id = list_boss[i].bss_id.emp_rusers_id.id
+                                break
+                            i += 1
+                            if i == 5:
+                                break
+                        self.boss_id = boss_id
+                    except:
+                        raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชาของท่าน')
+                if set.bss_level == '2':
+                    if set.bss_id.id != False:
+                        self.prsd_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 2
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.prsd_id = next_boss.bss_id.emp_rusers_id.id
+                if set.bss_level == '3':
+                    if set.bss_id.id != False and self.prsd_id.id != False:
+                        self.prsd_id = set.bss_id.emp_rusers_id.id
+                    elif set.bss_id.id == False and self.prsd_id.id == False:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.prsd_id = next_boss.bss_id.emp_rusers_id.id
+                elif set.bss_level == '4':
+                    if set.bss_id != None:
+                        self.bss_lv4_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.bss_lv4_id = next_boss.bss_id.emp_rusers_id.id
+                elif set.bss_level == '5':
+                    if set.bss_id != None:
+                        self.bss_lv5_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        find_next = int(set.bss_level) + 1
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        self.bss_lv5_id = next_boss.bss_id.emp_rusers_id.id
+                elif set.bss_level == '6':
+                    if set.bss_id != None:
+                        self.bss_lv6_id = set.bss_id.emp_rusers_id.id
+                    else:
+                        self.should_reworkflow = True
+                        raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชา')
         except:
             raise Warning('ไม่สามารถทำรายการต่อได้ เนื่องจากไม่พบข้อมูลผู้บังคับบัญชาของท่าน')
     
@@ -774,7 +789,7 @@ class nstda_bst_hbill(models.Model):
                             raise Warning('ไม่สามารถทำรายการได้เนื่องจากไม่มีรายการสินค้า หรือรายละเอียดสินค้าไม่ถูกต้อง')
                         
                         self.boss_adate = datetime.now()
-                        if self.prjm_id != self.boss_id:
+                        if (self.boss_id):
                             self.status = 'wait_boss'
                             self.prjm_adate = datetime.now()
                         else:
@@ -807,14 +822,10 @@ class nstda_bst_hbill(models.Model):
                             pass
                         
                         self.boss_adate = datetime.now()
-                        if self.costct_prjno_selection == 'costct':
-                            if (self.prsd_id):
-                                self.status = 'wait_prsd'
-                            else:
-                                self.status = 'wait_approvers'
-                        elif self.costct_prjno_selection == 'prjno':
-                            if (self.bss_lv4_id):
-                                self.status = 'wait_bss_lv4'
+                        if (self.prsd_id):
+                            self.status = 'wait_prsd'
+                        else:
+                            self.status = 'wait_approvers'
             else:
                 raise Warning('สำหรับผู้บังคับบัญชาอนุมัติ')
             
