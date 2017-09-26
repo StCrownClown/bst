@@ -211,9 +211,11 @@
 
 		<record model="ir.actions.act_window" id="action_nstda_bst_manual">
 			<field name="name">คู่มือระบบ</field>
+			<field name="type">ir.actions.act_window</field>
 			<field name="res_model">nstda.bst.manual</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">form</field>
+			<field name="view_id" ref="nstda_bst_manual_form_view" />
 		</record>
 
 
