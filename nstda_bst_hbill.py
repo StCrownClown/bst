@@ -587,7 +587,7 @@ class nstda_bst_hbill(models.Model):
                 else:
                     self.should_reworkflow = False
             elif self.costct_prjno_selection == 'prjno':
-                if  self.prjm_id or self.boss_id or self.bss_lv4_id or self.bss_lv5_id or self.bss_lv6_id == None:
+                if  self.prjm_id or self.prsd_id or self.boss_id or self.bss_lv4_id or self.bss_lv5_id or self.bss_lv6_id == None:
                     self.should_reworkflow = True
                 else:
                     self.should_reworkflow = False
@@ -683,16 +683,16 @@ class nstda_bst_hbill(models.Model):
             else:
                 get_lv = get_bosslevel.search([('start_amount','<=',self.amount_before_approve),('approve_amount','>=',self.amount_before_approve)], order="boss_level ASC")
                 for find in get_lv:
-                    bss = get_mas_boss.search([('bss_level','=',find.boss_level),('bss_emp_id','=',self.empid.id)])
+                    bss = get_mas_boss.search([('bss_level','=',find.boss_level),('bss_emp_id','=',self.prjm_id.id)])
                     if (bss.bss_id):
                         level = find.boss_level
                         
-            boss_must_approve = get_mas_boss.search([('bss_level','<=',level),('bss_emp_id','=',self.empid.id),('bss_level','!=','0')])
+            boss_must_approve = get_mas_boss.search([('bss_level','<=',level),('bss_emp_id','=',pjboss_obj),('bss_level','!=','0')])
             
             for set in boss_must_approve:
                 if set.bss_level == '1':
                     try:
-                        list_boss = self.env['nstdamas.boss'].get_boss(self.prjm_id.id, level=level)
+                        list_boss = self.env['nstdamas.boss'].get_boss(pjboss_obj)
                         i = 0
                         while True:
                             if list_boss[i].bss_id.id != False:
@@ -709,28 +709,28 @@ class nstda_bst_hbill(models.Model):
                         self.prsd_id = set.bss_id.emp_rusers_id.id
                     else:
                         find_next = int(set.bss_level) + 2
-                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',pjboss_obj)])
                         self.prsd_id = next_boss.bss_id.emp_rusers_id.id
                 if set.bss_level == '3':
                     if set.bss_id.id != False and self.prsd_id.id != False:
                         self.prsd_id = set.bss_id.emp_rusers_id.id
                     elif set.bss_id.id == False and self.prsd_id.id == False:
                         find_next = int(set.bss_level) + 1
-                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',pjboss_obj)])
                         self.prsd_id = next_boss.bss_id.emp_rusers_id.id
                 elif set.bss_level == '4':
                     if set.bss_id != None:
                         self.bss_lv4_id = set.bss_id.emp_rusers_id.id
                     else:
                         find_next = int(set.bss_level) + 1
-                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',pjboss_obj)])
                         self.bss_lv4_id = next_boss.bss_id.emp_rusers_id.id
                 elif set.bss_level == '5':
                     if set.bss_id != None:
                         self.bss_lv5_id = set.bss_id.emp_rusers_id.id
                     else:
                         find_next = int(set.bss_level) + 1
-                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',self.empid.id)])
+                        next_boss = get_mas_boss.search([('bss_level','=',str(find_next)),('bss_emp_id','=',pjboss_obj)])
                         self.bss_lv5_id = next_boss.bss_id.emp_rusers_id.id
                 elif set.bss_level == '6':
                     if set.bss_id != None:

@@ -85,7 +85,7 @@
 					<field name="prj_cct" />
 					<field name="boss_id" invisible="1" />
 					<field name="bossname" />
-					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
@@ -110,7 +110,7 @@
 					<field name="prj_cct" />
 					<field name="boss_id" invisible="1" />
 					<field name="bossname" />
-					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
@@ -145,7 +145,7 @@
 					<field name="assign_emp_name" />
 					<field name="receive_emp_id" invisible="1" />
 					<field name="receive_emp_name" />
-					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
@@ -172,7 +172,7 @@
 					<field name="bossname" />
 					<field name="pick_emp_id" invisible="1" />
 					<field name="pick_emp_name" />
-					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
@@ -203,7 +203,7 @@
 					<field name="assign_emp_name" />
 					<field name="receive_emp_id" invisible="1" />
 					<field name="receive_emp_name" />
-					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 					<field name="status" />
 				</tree>
 			</field>
@@ -224,13 +224,13 @@
 					<field name="empname" string="ชื่อผู้เบิก" />
 					<field name="prj_cct" string="หน่วยงาน/โครงการ" />
 					<field name="book_date" string="วันที่เบิก" />
-				    <field name="prjm_emp_id" string="หัวหน้าโครงการ" />
-					<field name="boss_emp_id" string="ผู้อนุมัติ" />
-				    <field name="prsd_emp_id" string="ผู้อนุมัติ" />
-					<field name="bss_lv4_emp_id" string="ผู้อนุมัติ" />
-				    <field name="bss_lv5_emp_id" string="ผู้อนุมัติ" />
-				    <field name="bss_lv6_epm_id" string="ผู้อนุมัติ" />
-					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+				    <field name="prjmname" string="หัวหน้าโครงการ" />
+					<field name="bossname" string="ผู้อนุมัติ" />
+				    <field name="prsdname" string="ผู้อนุมัติ" />
+					<field name="bss_lv4name" string="ผู้อนุมัติ" />
+				    <field name="bss_lv5name" string="ผู้อนุมัติ" />
+				    <field name="bss_lv6name" string="ผู้อนุมัติ" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 				</tree>
 			</field>
 		</record>
@@ -250,12 +250,12 @@
 					<field name="empname" string="ชื่อผู้เบิก" />
 					<field name="prj_cct" string="หน่วยงาน/โครงการ" />
 					<field name="book_date" string="วันที่เบิก" />
-				    <field name="boss_emp_id" string="ผู้อนุมัติ" />
-				    <field name="prsd_emp_id" string="ผู้อนุมัติ" />
-					<field name="bss_lv4_emp_id" string="ผู้อนุมัติ" />
-				    <field name="bss_lv5_emp_id" string="ผู้อนุมัติ" />
-				    <field name="bss_lv6_epm_id" string="ผู้อนุมัติ" />
-					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+				    <field name="bossname" string="ผู้อนุมัติ" />
+				    <field name="prsdname" string="ผู้อนุมัติ" />
+					<field name="bss_lv4name" string="ผู้อนุมัติ" />
+				    <field name="bss_lv5name" string="ผู้อนุมัติ" />
+				    <field name="bss_lv6name" string="ผู้อนุมัติ" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 				</tree>
 			</field>
 		</record>
@@ -275,12 +275,13 @@
 					<field name="empname" string="ชื่อผู้เบิก" />
 					<field name="prj_cct" string="หน่วยงาน/โครงการ" />
 					<field name="book_date" string="วันที่เบิก" />
-				    <field name="prjm_emp_id" string="หัวหน้าโครงการ" />
-				    <field name="boss_emp_id" string="ผู้อนุมัติ" />
-					<field name="bss_lv4_emp_id" string="ผู้อนุมัติ" />
-				    <field name="bss_lv5_emp_id" string="ผู้อนุมัติ" />
-				    <field name="bss_lv6_epm_id" string="ผู้อนุมัติ" />
-					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+				    <field name="prjmname" string="หัวหน้าโครงการ" />
+					<field name="bossname" string="ผู้อนุมัติ" />
+				    <field name="prsdname" string="ผู้อนุมัติ" />
+					<field name="bss_lv4name" string="ผู้อนุมัติ" />
+				    <field name="bss_lv5name" string="ผู้อนุมัติ" />
+				    <field name="bss_lv6name" string="ผู้อนุมัติ" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 				</tree>
 			</field>
 		</record>
