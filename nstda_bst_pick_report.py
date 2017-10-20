@@ -15,10 +15,12 @@ class nstda_bst_pick_report(models.Model):
     _auto = False
     
     id = fields.Integer(string="ID ", readonly=True)
-    status = fields.Char(string="สถานะ", readonly=True)
+    book_date = fields.Date(string="วันที่", readonly=True)
+    docno = fields.Char(string="เลขที่เอกสาร", readonly=True)
+    emp = fields.Char(string="พนักงานผู้เบิก ", readonly=True)
     matno = fields.Char(string="รหัสสินค้า", readonly=True)
     matdesc = fields.Char(string="ชื่อสินค้า", readonly=True)
-    unitprice = fields.Float(string="ราคา", readonly=True)
+    unitprice = fields.Char(string="ราคา", readonly=True)
     qty = fields.Integer(string="จำนวน", readonly=True)
     uom = fields.Char(string="หน่วยนับ", readonly=True)
         
@@ -27,31 +29,22 @@ class nstda_bst_pick_report(models.Model):
         tools.drop_view_if_exists(cr, 'nstda_bst_pick_report')
         cr.execute("""
             create or replace view nstda_bst_pick_report as (
-            SELECT 
-                tb.id,
-                tb.status,
-                tb.matno,
-                tb.matdesc,
-                tb.unitprice,
-                SUM(tb.qty) as qty,
-                tb.uom
-            FROM(
-                SELECT
-                    dbill.status,
-                    stock.id,
-                    stock.matno,
-                    stock.matdesc,
-                    stock.unitprice,
-                    dbill.qty,
-                    stock.uom,
-                    dbill.hbill_ids
-                FROM nstda_bst_dbill dbill
-                left join nstda_bst_stock stock on dbill.matno = stock.id
-                WHERE dbill.status = 'pick'
-                AND dbill.qty != 0
-                AND dbill.hbill_ids != 0
-                GROUP BY dbill.status,stock.id,stock.matno,stock.matdesc,stock.unitprice,dbill.qty,stock.uom,dbill.hbill_ids
-                ORDER BY matno ASC
-            ) tb
-            GROUP BY tb.id,tb.matno,tb.matdesc,tb.status,tb.unitprice,tb.uom
+            SELECT
+                stock.id,
+                hbill.docno,
+                hbill.book_date,
+                concat(masemp.emp_id, ' - ', masemp.emp_fname, ' ', masemp.emp_lname) as emp,
+                stock.matno,
+                stock.matdesc,
+                stock.unitprice::numeric::money,
+                dbill.qty,
+                stock.uom
+            FROM nstda_bst_dbill dbill
+            left join nstda_bst_stock stock on dbill.matno = stock.id
+            left join nstda_bst_hbill hbill on dbill.tbill_ids = hbill.id
+            left join nstdamas_employee masemp on hbill.empid = masemp.id
+            WHERE dbill.status = 'pick'
+            AND dbill.qty != 0
+            AND dbill.tbill_ids != 0
+            ORDER BY docno ASC
         )""")

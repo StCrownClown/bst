@@ -9,10 +9,10 @@
 			sequence="1" />
 
 		<menuitem name="Master" id="menu_nstda_bst_stock_main"
-			parent="menu_bst" sequence="2" groups="base.group_nstda_bst_authorities" />
+			parent="menu_bst" sequence="2" groups="base.group_nstda_bst_admin" />
 
 		<menuitem name="Report" id="menu_nstda_bst_report" parent="menu_bst"
-			sequence="3" />
+			sequence="3" groups="base.group_nstda_bst_authorities" />
 
 		<menuitem name="Help" id="menu_nstda_bst_help" parent="menu_bst"
 			sequence="4" />
@@ -131,18 +131,6 @@
 			<field name="view_mode">form</field>
 		</record>
 
-		<record model="ir.actions.act_window" id="action_nstda_bst_hbill_pick_sup_view">
-			<field name="name">รายการเบิกคลัง</field>
-			<field name="res_model">nstda.bst.hbill</field>
-			<field name="view_type">form</field>
-			<field name="view_mode">tree,form</field>
-			<field name="view_id" ref="view_nstda_bst_hbill_sup_tree" />
-			<field name="act_window_id" ref="view_nstda_bst_hbill_form" />
-			<field name="search_view_id" ref="view_nstda_bst_hbill_search" />
-			<field name="domain">[('status','=','pick')]</field>
-			<field name="context">{}</field>
-		</record>
-
 		<record model="ir.actions.act_window" id="action_nstda_bst_dbill_report">
 			<field name="name">รายงานการเบิกตามสินค้า</field>
 			<field name="res_model">nstda.bst.dbill</field>
@@ -164,7 +152,7 @@
 		</record>
 
 		<record model="ir.actions.act_window" id="action_nstda_bst_costct_hbill">
-			<field name="name">รายงานเบิกสินค้า (Costcenter)</field>
+			<field name="name">รายงานเบิก (Costcenter)</field>
 			<field name="res_model">nstda.bst.hbill</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
@@ -175,7 +163,7 @@
 		</record>
 
 		<record model="ir.actions.act_window" id="action_nstda_bst_prjno_hbill">
-			<field name="name">รายงานเบิกสินค้า (Project)</field>
+			<field name="name">รายงานเบิก (Project)</field>
 			<field name="res_model">nstda.bst.hbill</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree,form</field>
@@ -251,7 +239,7 @@
 			sequence="8" groups="base.group_nstda_bst_authorities" />
 
 		<menuitem name="รายการเบิกคลัง" id="menu_nstda_bst_hbill_pick_sup"
-			parent="menu_nstda_bst_stock_main" action="action_nstda_bst_hbill_pick_sup_view"
+			parent="menu_nstda_bst_stock_main" action="action_nstda_bst_pick_report_tree_view"
 			sequence="9" groups="base.group_nstda_bst_authorities" />
 
 		<menuitem name="สต็อกสินค้า" id="menu_nstda_bst_stock"

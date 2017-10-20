@@ -11,7 +11,9 @@
 
 				<tree string="nstda_bst_pick_report_tree_view" create="false"
 					edit="false" delete="false">
-					<field name="status" invisible="1" />
+					<field name="book_date" />
+					<field name="docno" />
+					<field name="emp" />
 					<field name="matno" />
 					<field name="matdesc" />
 					<field name="unitprice" />
@@ -20,6 +22,41 @@
 				</tree>
 			</field>
 		</record>
+		
+		
+		<!-- Search View -->
+		<record model="ir.ui.view" id="view_nstda_bst_pick_report_search">
+			<field name="name">nstda.bst.pick.report</field>
+			<field name="model">nstda.bst.pick.report</field>
+			<field name="arch" type="xml">
+				<search string="view_nstda_bst_pick_report_search">
+
+					<field string="ทั้งหมด" name="docno"
+						filter_domain="['|','|',
+							('docno','ilike',self),
+			                ('emp','ilike',self),
+			                ('matdesc','ilike',self),
+							]" />
+					<field name="docno" string="เลขที่เอกสาร" filter_domain="[('docno','ilike',self)]" />
+					<field name="emp" string="พนักงานผู้เบิก "
+						filter_domain="[('emp','ilike',self)]" />
+					<field name="matdesc" string="ชื่อสินค้า"
+						filter_domain="[('matdesc','ilike',self)]" />
+
+					<group expand="0" string="Group By">
+						<filter string="เลขที่เอกสาร" domain="[]" 
+							context="{'group_by':'docno'}" />
+						<filter string="พนักงานผู้เบิก" domain="[]"
+							context="{'group_by':'emp'}" />
+						<filter string="ชื่อสินค้า" domain="[]"
+							context="{'group_by':'matdesc'}" />
+					</group>
+
+				</search>
+			</field>
+		</record>
+		
+		
 
 		<!-- window action -->
 		<!-- The following tag is an action definition for a "window action", that 
@@ -29,10 +66,12 @@
 			<field name="res_model">nstda.bst.pick.report</field>
 			<field name="view_type">form</field>
 			<field name="view_mode">tree</field>
-			<field name="context" eval="{}" />
+			<field name="search_view_id" ref="view_nstda_bst_pick_report_search" />
+			<field name="context"
+				eval="{'default_service': 0, 'search_default_group_docno':1}" />
 			<field name="limit">500</field>
 		</record>
-
+		
 
 	</data>
 </openerp>

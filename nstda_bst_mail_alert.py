@@ -37,7 +37,7 @@ class nstda_bst_mail_alert(models.Model):
         email_template_name = 'nstda_bst_mail_boss'
         template_ids = email_template_obj.search(cr, uid, [('model_id.model','=','nstda.bst.hbill'), ('name','=',email_template_name)], context=context)
         if template_ids:
-            if env_refs.prsd_emp_id.emp_email and env_refs.status == 'wait_boss':
+            if env_refs.boss_emp_id.emp_email != None and env_refs.status == 'wait_boss':
                 values = email_template_obj.generate_email(cr, uid, template_ids[0], env_refs.id, context=context)
                 
                 url_rec = str(request.httprequest.host_url) + ':8069/web#id=' + str(env_refs.id) + '&model=nstda.bst.hbill'
@@ -66,7 +66,7 @@ class nstda_bst_mail_alert(models.Model):
         email_template_name = 'nstda_bst_mail_prjm'
         template_ids = email_template_obj.search(cr, uid, [('model_id.model','=','nstda.bst.hbill'), ('name','=',email_template_name)], context=context)
         if template_ids:
-            if env_refs.prsd_emp_id.emp_email and env_refs.status == 'wait_prjm':
+            if env_refs.prjm_emp_id.emp_email != None and env_refs.status == 'wait_prjm':
                 values = email_template_obj.generate_email(cr, uid, template_ids[0], env_refs.id, context=context)
                 
                 url_rec = str(request.httprequest.host_url) + ':8069/web#id=' + str(env_refs.id) + '&model=nstda.bst.hbill'

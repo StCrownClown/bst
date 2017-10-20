@@ -378,11 +378,11 @@
 								groups="base.group_nstda_bst_admin" />
 								
 							<field name="status" widget="statusbar"
-								statusbar_visible="reject,draft,wait_boss,wait_prsd,wait_bss_lv4,wait_bss_lv5,wait_bss_lv6,wait_approvers,pick,ready,success" 
+								statusbar_visible="reject,draft,wait_boss,wait_approvers,pick,ready,success" 
 								attrs="{'invisible':[('costct_prjno_selection','!=','costct')]}" />
 								
 							<field name="status_pj" widget="statusbar"
-								statusbar_visible="reject,draft,wait_prjm,wait_boss,wait_prsd,wait_bss_lv4,wait_bss_lv5,wait_bss_lv6,wait_approvers,pick,ready,success" 
+								statusbar_visible="reject,draft,wait_prjm,wait_approvers,pick,ready,success" 
 								attrs="{'invisible':[('costct_prjno_selection','!=','prjno')]}"/>
 								
 						</div>		
@@ -404,17 +404,17 @@
 
 						<group>
 
-							<label for="cr_user_id" string="พนักงานผู้บันทึก" />
+							<label for="cr_user_id" string="พนักงานผู้บันทึก"/>
 							<div>
 								<span>
-									<field name="cr_user_id" style="width: 300px"
+									<field name="cr_user_id" style="width: 400px"
 										attrs="{'readonly':[('status','!=','draft')]}" />
 								</span>
 
 								<span>
-									<label for="icno_intf" string="เลขที่เอกสาร Internal Charge"
+									<label for="fyear_concat_icno" string="เลขที่เอกสาร Internal Charge"
 										attrs="{'invisible':[('status','!=','success')]}" />
-									<field name="icno_intf" style="width: 150px"
+									<field name="fyear_concat_icno" style="width: 200px"
 										attrs="{'invisible':[('status','!=','success')]}" />
 								</span>
 							</div>
@@ -422,14 +422,14 @@
 							<label for="empid" string="พนักงานผู้เบิก" />
 							<div>
 								<span>
-									<field name="empid" style="width: 300px"
+									<field name="empid" style="width: 400px"
 										attrs="{'readonly':[('status','!=','draft')]}" />
 								</span>
 
 								<span>
-									<label for="docno_intf" string="เลขที่เอกสารการตัด Stock"
+									<label for="fyear_concat_docno" string="เลขที่เอกสารการตัด Stock"
 										attrs="{'invisible':[('status','!=','success')]}" />
-									<field name="docno_intf" style="width: 150px"
+									<field name="fyear_concat_docno" style="width: 200px"
 										attrs="{'invisible':[('status','!=','success')]}" />
 								</span>
 							</div>
@@ -449,32 +449,47 @@
 						</group>
 
 						<group>
-							<field name="prjm_emp_id"
-								attrs="{'invisible':['|',('status','=','draft'),('costct_prjno_selection','=','costct')]}" />
+							<label for="prjm_emp_id" string="หัวหน้าโครงการ"
+									attrs="{'invisible':['|',('status','=','draft'),('costct_prjno_selection','!=','prjno')]}" />
+								<div>
+									<span>
+										<field name="prjm_emp_id" style="width: 400px"
+											attrs="{'invisible':['|',('status','=','draft'),('costct_prjno_selection','!=','prjno')]}" />
+									</span>
+	
+									<span>
+										<label for="prjm_adate" string="วันที่อนุมัติ"
+											attrs="{'invisible':['|',('status','=','draft'),('costct_prjno_selection','!=','prjno')]}" />
+										<field name="prjm_adate" style="width: 200px"
+											attrs="{'invisible':['|',('status','=','draft'),('costct_prjno_selection','!=','prjno')]}" />
+									</span>
+								</div>
 						</group>
 						
 						<group>
 							<label for="boss_emp_id" string="ผู้อนุมัติเบิกจ่าย"
-								attrs="{'invisible':[('status','=','draft')]}" />
+								attrs="{'invisible':['|',('status','=','draft'),('boss_id','=',False)]}" />
 							<div>
 								<span>
-									<field name="boss_emp_id" style="width: 300px"
-										attrs="{'invisible':[('status','=','draft')]}" />
+									<field name="boss_emp_id" style="width: 400px"
+										attrs="{'invisible':['|',('status','=','draft'),('boss_id','=',False)]}" />
 								</span>
 
 								<span>
 									<label for="boss_adate" string="วันที่อนุมัติเบิกจ่าย"
-										attrs="{'invisible':[('status','=','draft')]}" />
+										attrs="{'invisible':['|',('status','=','draft'),('boss_id','=',False)]}" />
 									<field name="boss_adate" style="width: 200px"
-										attrs="{'invisible':[('status','=','draft')]}" />
+										attrs="{'invisible':['|',('status','=','draft'),('boss_id','=',False)]}" />
 								</span>
 							</div>
-
+						</group>
+						
+						<group>
 							<label for="approver_id" string="เจ้าหน้าที่ศูนย์หนังสือ"
 								attrs="{'invisible':[('status','=','draft')]}" />
 							<div>
 								<span>
-									<field name="approver_id" style="width: 300px"
+									<field name="approver_id" style="width: 400px"
 										attrs="{'invisible':[('status','=','draft')]}" />
 								</span>
 
@@ -492,7 +507,7 @@
 								attrs="{'invisible':[('status','!=','success')]}" />
 							<div>
 								<span>
-									<field name="receive_emp_id" style="width: 300px"
+									<field name="receive_emp_id" style="width: 400px"
 										readonly="1" attrs="{'invisible':[('status','!=','success')]}" />
 								</span>
 								<span>
@@ -553,43 +568,6 @@
 									attrs="{'invisible':[('status','!=','draft')]}" />
 							</group>
 						</group>
-
-						<!-- <div class="alert-box ann" -->
-						<!-- style="color:#555;border-radius:10px;font-family:Tahoma,Geneva,Arial,sans-serif;font-size:12px;padding:10px 
-							36px;margin:10px;" -->
-						<!-- attrs="{'invisible':[('status','!=','draft')]}"> -->
-						<!-- <hr /> -->
-						<!-- <span>Info: </span> -->
-						<!-- <br /> -->
-						<!-- ข้อมูลเบื้องต้นสำหรับเบิกสินค้า -->
-						<!-- <br /> -->
-						<!-- "เกณฑ์ในการเบิกสินค้าภายในของสำนักงานฯ" -->
-						<!-- <br /> -->
-						<!-- 1. กรอกแบบฟอร์มการขอเบิกสินค้าในระบบให้สมบูรณ์ -->
-						<!-- ล่วงหน้าวันที่ต้องการรับสินค้าอย่างน้อย 2 วัน -->
-						<!-- <br /> -->
-						<!-- 2. -->
-						<!-- การเบิกสินค้าที่สมบูรณ์จะต้องได้รับการอนุมัติจากผู้บังคับบัญชาของท่าน -->
-						<!-- <br /> -->
-						<!-- 3. สินค้าที่จะเบิก ต้องมีวัตถุประสงค์เพื่อใช้ในกิจการของสำนักงานฯ -->
-						<!-- เท่านั้น และไม่ควรเบิกเก็บไว้เป็นสต็อคของท่าน -->
-						<!-- <br /> -->
-						<!-- หรือเพื่อให้พนักงานนำไปใช้ส่วนตัว -->
-						<!-- <br /> -->
-						<!-- *สำหรับพนักงานที่ต้องการนำไปใช้เองนั้น -->
-						<!-- สามารถซื้อสินค้าดังกล่าวได้ที่หน้าร้านของศูนย์หนังสือ สวทช.* -->
-						<!-- <br /> -->
-						<!-- วงเงินในการอนุมัติเพื่อเบิกสินค้าภายในของสำนักงาน -->
-						<!-- (ตามประกาศในคู่มืออำนาจการดำเนินงานของ สวทช. ณ วันที่ 20/03/2560) -->
-						<!-- <br /> -->
-						<!-- 1. ผช.ผพว./ รอง ผอ.ศูนย์/ รอง ผศจ. ไม่เกิน 150,000 บาท -->
-						<!-- <br /> -->
-						<!-- 2. ผอ.ฝ่าย/ ผอ.หน่วยวิจัย ไม่เกิน 60,000 บาท -->
-						<!-- <br /> -->
-						<!-- 3. หัวหน้างาน/ ผู้จัดการ ไม่เกิน 10,000 บาท -->
-						<!-- <br /> -->
-						<!-- สอบถามข้อมูลเพิ่มเติมได้ที่ nstdabookstore@nstda.or.th -->
-						<!-- </div> -->
 
 						<hr />
 						<footer>

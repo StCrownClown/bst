@@ -52,6 +52,7 @@
 				    			'required':[('status','in',['draft','wait_boss','wait_prjm','wait_approvers','pick','ready',False])]}" />
 					<field name="sum_res" string="ราคารวม(จ่ายจริง)" />
 					<field name="dbill_discount_sum" invisible="1" />
+					<field name="last_cs" invisible="1" />
 				</tree>
 			</field>
 		</record>
@@ -125,6 +126,7 @@
 
 						<field name="sum" invisible="1" />
 						<field name="dbill_discount_sum" invisible="1" />
+						<field name="last_cs" invisible="1" />
 					</group>
 				</form>
 			</field>

@@ -226,14 +226,15 @@ class nstda_bst_dbill(models.Model):
         
         
     @api.multi
-    @api.onchange('qty_res','sum_res')      
+    @api.onchange('qty_res','sum_res')
+    @api.depends('last_cs')  
     def _onchange_qty_res(self):
         res = {}
         limit = {}
         neg = {}
     
         if self.matno.id != False:
-            if self.qty_res > self.balance:
+            if self.qty_res > self.balance + self.last_cs:
                 res = {'warning': {
                     'title': _('Warning'),
                     'message': _('จำนวนสินค้าในสต็อกไม่เพียงพอ')
