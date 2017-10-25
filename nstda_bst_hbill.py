@@ -151,13 +151,19 @@ class nstda_bst_hbill(models.Model):
         
         
     @api.one
-    @api.depends('boss_id')
-    @api.onchange('boss_id')
+    @api.depends('boss_id','prjm_id')
+    @api.onchange('boss_id','prjm_id')
     def _set_boss_info(self):
         if(self.boss_id):
             self.boss_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.boss_id.id)]).id
             if(self.boss_emp_id):
                 self.bossname = self.boss_emp_id.emp_fname + ' ' + self.boss_emp_id.emp_lname
+            else:
+                self.bossname = 'ไม่พบข้อมูล'
+        elif (self.boss_id.id == False) and (self.costct_prjno_selection == 'prjno') and (self.prjm_id):
+            self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
+            if(self.prjm_emp_id):
+                self.bossname = self.prjm_emp_id.emp_fname + ' ' + self.prjm_emp_id.emp_lname
             else:
                 self.bossname = 'ไม่พบข้อมูล'
                 
@@ -259,7 +265,7 @@ class nstda_bst_hbill(models.Model):
     @api.depends('prjno')
     @api.onchange('prjno')
     def set_prjm(self):
-        if (self.empid) and (self.prjno) :
+        if (self.empid) and (self.prjno) and (self.costct_prjno_selection == 'prjno'):
             project_id = self.prjno.id
             pjboss_obj = self.env['nstdamas.projectmember'].search([('prjm_prj_id','=',project_id),('prjm_position','=','00')], limit=1, order="prjm_percentageproject DESC").prjm_emp_id.id
             if pjboss_obj == False:
@@ -269,7 +275,7 @@ class nstda_bst_hbill(models.Model):
             if get_prjm_id:
                 self.prjm_id = get_prjm_id
             else:
-                raise Warning('ไม่พบข้อมูลหัวหน้าโครงการ')
+                pass
             
             
     @api.one
