@@ -342,14 +342,14 @@
 
 							<button name="%(action_view_nstda_bst_note_approver_submit)d"
 								string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_check','=',False)]}"
+								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_less_than_stock','=',False)]}"
 								context="{'bst_id': id}" groups="base.group_nstda_bst_authorities" />
 							<!-- attrs="{'invisible':['|',('inv_a','=',False),('status','!=','wait_approvers')]}" -->
 							<!-- confirm="คุณต้องการอนุมัติการเบิกสินค้า?" -->
 
 							<button name="%(action_view_nstda_bst_note_check_qty)d"
 								string="อนุมัติการเบิก" type="action" class="oe_read_only oe_highlight"
-								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_check','!=',False)]}"
+								attrs="{'invisible':['|',('status','!=','wait_approvers'),('qty_less_than_stock','!=',False)]}"
 								context="{'bst_id': id}" groups="base.group_nstda_bst_authorities" />
 							<!-- attrs="{'invisible':['|',('inv_r','=',False),('status','!=','pick')]}" -->
 							<!-- confirm="คุณต้องการยืนยันการเตรียมสินค้า?" -->
@@ -412,9 +412,9 @@
 								</span>
 
 								<span>
-									<label for="fyear_concat_icno" string="เลขที่เอกสาร Internal Charge"
+									<label for="icno_intf" string="เลขที่เอกสาร Internal Charge"
 										attrs="{'invisible':[('status','!=','success')]}" />
-									<field name="fyear_concat_icno" style="width: 200px"
+									<field name="icno_intf" style="width: 200px"
 										attrs="{'invisible':[('status','!=','success')]}" />
 								</span>
 							</div>
@@ -427,9 +427,9 @@
 								</span>
 
 								<span>
-									<label for="fyear_concat_docno" string="เลขที่เอกสารการตัด Stock"
+									<label for="docno_intf" string="เลขที่เอกสารการตัด Stock"
 										attrs="{'invisible':[('status','!=','success')]}" />
-									<field name="fyear_concat_docno" style="width: 200px"
+									<field name="docno_intf" style="width: 200px"
 										attrs="{'invisible':[('status','!=','success')]}" />
 								</span>
 							</div>
@@ -593,7 +593,7 @@
 						<field name="prjm_id" invisible="1" />
 						<field name="boss_id" invisible="1" />
 						<field name="approver" invisible="1" />
-						<field name="qty_check" invisible="1" />
+						<field name="qty_less_than_stock" invisible="1" />
 					    <field name="should_reworkflow" invisible="1" />
 						<field name="inv_c" invisible="1" />
 						<field name="inv_p" invisible="1" />

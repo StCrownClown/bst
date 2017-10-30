@@ -32,7 +32,7 @@ class nstda_bst_bill_report(models.Model):
     uom = fields.Char(string="หน่วยนับ", readonly=True)
     unitprice = fields.Float(string="ราคา", readonly=True)
     
-    amount_after_t = fields.Float(string="ราคารวมสุทธิ", readonly=True)
+    amount_after_discount = fields.Float(string="ราคารวมสุทธิ", readonly=True)
     
     
     def read(self, cr, uid, ids, fields=None, context=None, load='_classic_read'):
@@ -69,7 +69,7 @@ class nstda_bst_bill_report(models.Model):
                 tb.qty_res,
                 tb.uom,
                 tb.unitprice,
-                tb.amount_after_t
+                tb.amount_after_discount
             FROM(
                 SELECT
                     hbill.id as id,
@@ -88,7 +88,7 @@ class nstda_bst_bill_report(models.Model):
                     dbill.qty_res as qty_res,
                     stock.uom as uom,
                     dbill.unitprice as unitprice,
-                    hbill.amount_after_t as amount_after_t
+                    hbill.amount_after_discount as amount_after_discount
                 FROM nstda_bst_hbill hbill
                 left join nstda_bst_dbill dbill on hbill.id = dbill.hbill_ids
                 left join nstdamas_employee emp on hbill.empid = emp.id

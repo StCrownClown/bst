@@ -29,7 +29,7 @@
 	border: 1px solid #ccc;
 }
 
-.nstda_bst_tree_stock tr td[data-field="qty_res"] {
+.nstda_bst_tree_stock tr td[data-field="qty_rs"] {
 	color:RED !important;
 }
 

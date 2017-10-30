@@ -90,7 +90,7 @@ class nstda_bst_hbill(models.Model):
 
     @api.one
     @api.depends('empid','costct_prjno_selection','prjno')
-    @api.onchange('empid','costct_prjno_selection')
+    @api.onchange('empid','costct_prjno_selection','prjno')
     def _set_prj_cct(self):
         try:
             if self.costct_prjno_selection == 'costct':
@@ -154,18 +154,27 @@ class nstda_bst_hbill(models.Model):
     @api.depends('boss_id','prjm_id')
     @api.onchange('boss_id','prjm_id')
     def _set_boss_info(self):
-        if(self.boss_id):
-            self.boss_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.boss_id.id)]).id
-            if(self.boss_emp_id):
-                self.bossname = self.boss_emp_id.emp_fname + ' ' + self.boss_emp_id.emp_lname
-            else:
-                self.bossname = 'ไม่พบข้อมูล'
-        elif (self.boss_id.id == False) and (self.costct_prjno_selection == 'prjno') and (self.prjm_id):
-            self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
-            if(self.prjm_emp_id):
-                self.bossname = self.prjm_emp_id.emp_fname + ' ' + self.prjm_emp_id.emp_lname
-            else:
-                self.bossname = 'ไม่พบข้อมูล'
+        if self.costct_prjno_selection == 'costct':
+            if(self.boss_id):
+                self.boss_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.boss_id.id)]).id
+                if(self.boss_emp_id):
+                    self.bossname = self.boss_emp_id.emp_fname + ' ' + self.boss_emp_id.emp_lname
+                else:
+                    self.bossname = 'ไม่พบข้อมูล'
+        else:
+            if(self.boss_id):
+                self.boss_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.boss_id.id)]).id
+                if(self.boss_emp_id):
+                    self.bossname = self.boss_emp_id.emp_fname + ' ' + self.boss_emp_id.emp_lname
+                else:
+                    self.bossname = 'ไม่พบข้อมูล'
+                    
+            elif (self.boss_id.id == False) and (self.prjm_id):
+                self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
+                if(self.prjm_emp_id):
+                    self.bossname = self.prjm_emp_id.emp_fname + ' ' + self.prjm_emp_id.emp_lname
+                else:
+                    self.bossname = 'ไม่พบข้อมูล'
                 
                 
     @api.one
@@ -182,7 +191,7 @@ class nstda_bst_hbill(models.Model):
         
     @api.one
     @api.depends('prjm_id')
-    @api.onchange('prjm_id','costct')
+    @api.onchange('prjm_id')
     def _set_prjm_info(self):
         if(self.prjm_id):
             self.prjm_emp_id = self.env['nstdamas.employee'].search([('emp_rusers_id','=',self.prjm_id.id)]).id
@@ -276,18 +285,6 @@ class nstda_bst_hbill(models.Model):
                 self.prjm_id = get_prjm_id
             else:
                 pass
-            
-            
-    @api.one
-    def set_fyear_concat_icno(self):
-        self.fyear_concat_icno = str(self.fiscalyear_icno_intf) + '-' + str(self.icno_intf)
-        return self.fyear_concat_icno
-    
-    
-    @api.one
-    def set_fyear_concat_docno(self):
-        self.fyear_concat_docno = str(self.fiscalyear_docno_intf) + '-' + str(self.docno_intf)
-        return self.fyear_concat_docno
      
      
     @api.one
@@ -465,19 +462,17 @@ class nstda_bst_hbill(models.Model):
 
             
     @api.one
-    @api.onchange('t_bill_ids','status')
-    @api.depends('t_bill_ids','status')
+    @api.onchange('t_bill_ids')
+    @api.depends('t_bill_ids')
     def _check_qty_less_than_stock(self):
-        for v in self.t_bill_ids:
-            if self.status == 'draft':
-                qty_res = v.qty
-            else:
-                qty_res = v.qty_res
-                
-            if v.matno.qty - qty_res < 0:
-                self.qty_check = False
-            else:
-                self.qty_check = True
+        if self.status != 'draft':
+            for v in self.t_bill_ids:
+                if v.matno.qty < v.qty_res:
+                    self.qty_less_than_stock = False
+                else:
+                    self.qty_less_than_stock = True
+        else:
+            self.qty_less_than_stock = False
                 
                 
     @api.constrains('amount_after_discount')
@@ -567,10 +562,6 @@ class nstda_bst_hbill(models.Model):
    
     icno_intf = fields.Char('เลขที่เอกสาร Internal Charge', readonly=True) 
     docno_intf = fields.Char('เลขที่เอกสารการตัด Stock', readonly=True)
-    fiscalyear_icno_intf = fields.Char('ปีงบประมาณของเลขที่เอกสารการตัด Stock', readonly=True)
-    fiscalyear_docno_intf = fields.Char('ปีงบประมาณของเลขที่เอกสาร Internal Charge', readonly=True)
-    fyear_concat_icno = fields.Char('เลขที่เอกสาร Internal Charge', readonly=True, compute='set_fyear_concat_icno') 
-    fyear_concat_docno = fields.Char('เลขที่เอกสารการตัด Stock', readonly=True, compute='set_fyear_concat_docno')
     
     bst_quicknote = fields.Char('หมายเหตุ')
     bst_note = fields.Text('Note', track_visibility='onchange')
@@ -609,7 +600,7 @@ class nstda_bst_hbill(models.Model):
     d_bill_ids = fields.One2many('nstda.bst.dbill', 'hbill_ids', 'รายละเอียดสินค้า')
     t_bill_ids = fields.One2many('nstda.bst.dbill', 'tbill_ids', 'รายละเอียดสินค้า')
     
-    qty_check = fields.Boolean('Check qty', readonly=True, compute='_check_qty_less_than_stock')
+    qty_less_than_stock = fields.Boolean('Check qty', readonly=True, compute='_check_qty_less_than_stock')
     should_reworkflow = fields.Boolean('is should reworkflow ?', readonly=True, compute='_is_should_reworkflow')
     is_success_sap = fields.Boolean('SAP to Odoo', default=False, store=True)
     is_mail_approved = fields.Boolean('Is mail approved', default=False)

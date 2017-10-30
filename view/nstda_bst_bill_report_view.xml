@@ -37,7 +37,7 @@
 					<field name="qty_res" />
 					<field name="uom" />
 					<field name="unitprice" options="{'currency_field': 'currency_id'}" />
-					<field name="amount_after_t" options="{'currency_field': 'currency_id'}" />
+					<field name="amount_after_discount" options="{'currency_field': 'currency_id'}" />
 
 				</tree>
 			</field>
